@@ -1,4 +1,4 @@
-package com.sdt944.chess;
+package com.saigonphantomlabs.chess;
 
 import androidx.appcompat.app.AppCompatActivity;
 

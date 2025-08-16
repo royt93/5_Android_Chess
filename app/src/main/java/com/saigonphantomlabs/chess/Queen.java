@@ -1,4 +1,4 @@
-package com.sdt944.chess;
+package com.saigonphantomlabs.chess;
 
 
 public class Queen extends Chessman {

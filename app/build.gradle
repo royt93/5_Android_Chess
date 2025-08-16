@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    namespace("com.sdt944.chess")
+    namespace("com.saigonphantomlabs.chess")
     compileSdk 36
     buildToolsVersion "36.0.0"
 
     defaultConfig {
-        applicationId "com.sdt944.chess"
+        applicationId "com.saigonphantomlabs.chess"
         minSdkVersion 24
         targetSdkVersion 36
         versionCode 20250816
