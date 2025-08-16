@@ -1,6 +1,5 @@
 package com.saigonphantomlabs.chess;
 
-
 public class Queen extends Chessman {
 
     public Queen(Point p, PlayerColor color, int minDimension, Chess parent) {

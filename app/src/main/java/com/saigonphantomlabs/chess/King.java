@@ -1,6 +1,5 @@
 package com.saigonphantomlabs.chess;
 
-
 public class King extends Chessman {
 
     public enum KingRiskType {

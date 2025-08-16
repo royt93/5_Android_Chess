@@ -1,4 +1,4 @@
-package com.saigonphantomlabs.chess;
+package com.saigonphantomlabs;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.saigonphantomlabs.chess.Chessman;
+import com.saigonphantomlabs.chess.R;
+import com.saigonphantomlabs.chess.Storage;
+
 public class PawnPromotion extends AppCompatActivity {
 
     @Override
@@ -14,7 +18,9 @@ public class PawnPromotion extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pawn_promotion);
 
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
     }
 
     public void selectNewType(View view) {

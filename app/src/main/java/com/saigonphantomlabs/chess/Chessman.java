@@ -106,24 +106,24 @@ public abstract class Chessman {
 
     public boolean isPointSafe(Point point) {
         //                vertical/horizontal checks
-        if(!isPathSafe(point, PathConditions.Hold, PathConditions.Decrease))
-             return false;
-        if(!isPathSafe(point, PathConditions.Hold, PathConditions.Increase))
+        if (!isPathSafe(point, PathConditions.Hold, PathConditions.Decrease))
             return false;
-        if(!isPathSafe(point, PathConditions.Decrease, PathConditions.Hold))
+        if (!isPathSafe(point, PathConditions.Hold, PathConditions.Increase))
             return false;
-        if(!isPathSafe(point, PathConditions.Increase, PathConditions.Hold))
+        if (!isPathSafe(point, PathConditions.Decrease, PathConditions.Hold))
+            return false;
+        if (!isPathSafe(point, PathConditions.Increase, PathConditions.Hold))
             return false;
 
         //                oblique checks
 
-        if(!isPathSafe(point, PathConditions.Decrease, PathConditions.Decrease))
+        if (!isPathSafe(point, PathConditions.Decrease, PathConditions.Decrease))
             return false;
-        if(!isPathSafe(point, PathConditions.Increase, PathConditions.Increase))
+        if (!isPathSafe(point, PathConditions.Increase, PathConditions.Increase))
             return false;
-        if(!isPathSafe(point, PathConditions.Decrease, PathConditions.Increase))
+        if (!isPathSafe(point, PathConditions.Decrease, PathConditions.Increase))
             return false;
-        if(!isPathSafe(point, PathConditions.Increase, PathConditions.Decrease))
+        if (!isPathSafe(point, PathConditions.Increase, PathConditions.Decrease))
             return false;
 
 
@@ -219,10 +219,11 @@ public abstract class Chessman {
         }
         return true;
     }
+
     private int doCondition(int v, PathConditions c) {
-        if(c == PathConditions.Increase)
+        if (c == PathConditions.Increase)
             return v + 1;
-        if(c == PathConditions.Decrease)
+        if (c == PathConditions.Decrease)
             return v - 1;
         return v;
     }
@@ -519,7 +520,7 @@ public abstract class Chessman {
         lpoints[6] = new Point(point.x + 2, point.y - 1);
         lpoints[7] = new Point(point.x + 2, point.y + 1);
 
-        for(Point p:lpoints)
+        for (Point p : lpoints)
             if (p.isValid() && isPointMovable(p) && !moves.contains(p))
                 moves.add(p);
     }

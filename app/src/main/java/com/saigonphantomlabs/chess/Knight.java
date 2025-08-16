@@ -1,6 +1,5 @@
 package com.saigonphantomlabs.chess;
 
-
 public class Knight extends Chessman {
     public Knight(Point p, PlayerColor color, int minDimension, Chess parent) {
         this.parent = parent;

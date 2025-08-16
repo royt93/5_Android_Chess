@@ -1,10 +1,12 @@
-package com.saigonphantomlabs.chess;
+package com.saigonphantomlabs;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.saigonphantomlabs.chess.R;
 
 public class MainActivity extends AppCompatActivity {
 

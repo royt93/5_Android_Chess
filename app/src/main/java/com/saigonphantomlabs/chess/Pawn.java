@@ -1,6 +1,5 @@
 package com.saigonphantomlabs.chess;
 
-
 public class Pawn extends Chessman {
     public boolean firstMove = true;
     public boolean promoted = false;
@@ -28,7 +27,7 @@ public class Pawn extends Chessman {
         moves.clear();
         add1StepForwardMovePoints();
 
-        if (moves.size() == 0)
+        if (moves.isEmpty())
             return;
 
         Point frontPoint = moves.get(0);

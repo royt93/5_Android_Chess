@@ -8,6 +8,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.saigonphantomlabs.ChessBoard;
+
 import java.util.ArrayList;
 
 public class Chess {
@@ -217,7 +219,7 @@ public class Chess {
 
     public void promotionResault(Chessman.ChessmanType toType) {
 
-        Chessman newType = null;
+        Chessman newType;
         switch (toType) {
             case Queen:
                 newType = new Queen(manToPromote.getPoint(), manToPromote.color, minDimension, this);
@@ -254,7 +256,6 @@ public class Chess {
     public void createValidMoveButton(Point p) {
         ImageButton btn = new ImageButton(ctx);
         int width = minDimension / 8;
-        this.minDimension = minDimension;
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, width);
 
         lp.setMargins(width * p.x, width * p.y, minDimension - (width * p.x + width), minDimension - (width * p.y + width));

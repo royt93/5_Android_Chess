@@ -1,8 +1,4 @@
-package com.saigonphantomlabs.chess;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+package com.saigonphantomlabs;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
@@ -12,6 +8,16 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+
+import com.saigonphantomlabs.chess.Chess;
+import com.saigonphantomlabs.chess.Chessman;
+import com.saigonphantomlabs.chess.R;
+import com.saigonphantomlabs.chess.Storage;
 
 public class ChessBoard extends AppCompatActivity {
     public ConstraintLayout backgroundLayout;
@@ -32,15 +38,18 @@ public class ChessBoard extends AppCompatActivity {
         setContentView(R.layout.activity_chess_board);
 
         //hiding actionbar
-        this.getSupportActionBar().hide();
+        if (this.getSupportActionBar() != null) {
+            this.getSupportActionBar().hide();
+        }
 
         //change background
         backgroundLayout = findViewById(R.id.backgroundLayout);
 
         //initiate black and white colors
-        blackColor = getResources().getColor(R.color.white);
-        whiteColor = getResources().getColor(R.color.black);
-
+//        blackColor = getResources().getColor(R.color.white);
+//        whiteColor = getResources().getColor(R.color.black);
+        blackColor = ContextCompat.getColor(this, R.color.white);
+        whiteColor = ContextCompat.getColor(this, R.color.black);
 
         //set display params
         DisplayMetrics displayMetrics = new DisplayMetrics();

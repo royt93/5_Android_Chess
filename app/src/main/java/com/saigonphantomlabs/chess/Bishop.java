@@ -1,6 +1,5 @@
 package com.saigonphantomlabs.chess;
 
-
 public class Bishop extends Chessman {
     public Bishop(Point p, PlayerColor color, int minDimension, Chess parent) {
         this.parent = parent;

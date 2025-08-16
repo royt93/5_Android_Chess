@@ -1,6 +1,5 @@
 package com.saigonphantomlabs.chess;
 
-
 public class Rook extends Chessman {
     public Rook(Point p, PlayerColor color, int minDimension, Chess parent) {
         this.parent = parent;
