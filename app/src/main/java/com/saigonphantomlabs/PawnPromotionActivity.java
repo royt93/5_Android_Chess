@@ -16,7 +16,7 @@ public class PawnPromotionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pawn_promotion);
+        setContentView(R.layout.a_pawn_promotion);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();

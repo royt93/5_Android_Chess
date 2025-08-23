@@ -88,9 +88,9 @@ public abstract class Chessman {
     public void moveButton(int x, int y) {
 
         if (color == PlayerColor.White)
-            MediaPlayer.create(parent.ctx, R.raw.chess1).start();
+            MediaPlayer.create(parent.ctx, R.raw.chess_1).start();
         else
-            MediaPlayer.create(parent.ctx, R.raw.chess2).start();
+            MediaPlayer.create(parent.ctx, R.raw.chess_2).start();
 
         button.animate()
                 .x(width * getPoint().x)

@@ -35,7 +35,7 @@ public class ChessBoardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chess_board);
+        setContentView(R.layout.a_chess_board);
 
         //hiding actionbar
         if (this.getSupportActionBar() != null) {
