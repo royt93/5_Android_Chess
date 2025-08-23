@@ -22,6 +22,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupViews() {
+        //hiding actionbar
+        if (this.getSupportActionBar() != null) {
+            this.getSupportActionBar().hide();
+        }
+
         Button btnPlay = findViewById(R.id.btnPlay);
         ImageView ivBkg = findViewById(R.id.ivBkg);
         Glide.with(this)
