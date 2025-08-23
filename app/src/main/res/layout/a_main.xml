@@ -12,7 +12,17 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
-        tools:src="@drawable/ic_bkg" />
+        tools:src="@drawable/ic_bkg_1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="© SAIGON PHANTOM LAB"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnPlay"
