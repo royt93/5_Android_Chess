@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/backgroundLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/backgroundLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.saigonphantomlabs.ChessBoardActivity">
@@ -11,17 +11,18 @@
         android:id="@+id/boardLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/brown"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/brown">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/boardImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/ic_chessboard"></ImageView>
+            android:background="@drawable/ic_chessboard"
+            android:contentDescription="@string/app_name" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
