@@ -1,15 +1,16 @@
 package com.saigonphantomlabs;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.saigonphantomlabs.chess.BuildConfig;
 import com.saigonphantomlabs.chess.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnPlay = findViewById(R.id.btnPlay);
         ImageView ivBkg = findViewById(R.id.ivBkg);
+        TextView tvVersion = findViewById(R.id.tvVersion);
+        String versionName = BuildConfig.VERSION_NAME;
+        tvVersion.setText("Version " + versionName);
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.ic_bkg_1) // ảnh gif trong drawable/raw hoặc link URL
