@@ -6,7 +6,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
@@ -21,6 +24,12 @@ public class PawnPromotionActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+        ImageView ivBkg = findViewById(R.id.ivBkg);
+        Glide.with(this)
+                .asGif()
+                .load(R.drawable.ic_bkg_1) // ảnh gif trong drawable/raw hoặc link URL
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(ivBkg);
     }
 
     public void selectNewType(View view) {
