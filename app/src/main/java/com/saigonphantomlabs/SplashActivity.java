@@ -1,5 +1,6 @@
 package com.saigonphantomlabs;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.saigonphantomlabs.chess.R;
 //rename app
 //leak canary
 
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
     @Override
