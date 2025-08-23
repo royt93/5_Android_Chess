@@ -15,7 +15,7 @@
             android:screenOrientation="portrait" />
         <activity android:name="com.saigonphantomlabs.PawnPromotionActivity" />
         <activity
-            android:name="com.saigonphantomlabs.MainActivity"
+            android:name="com.saigonphantomlabs.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
