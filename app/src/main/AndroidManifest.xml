@@ -10,10 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Chess">
         <activity
-            android:name="com.saigonphantomlabs.ChessBoard"
+            android:name="com.saigonphantomlabs.ChessBoardActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
-        <activity android:name="com.saigonphantomlabs.PawnPromotion" />
+        <activity android:name="com.saigonphantomlabs.PawnPromotionActivity" />
         <activity
             android:name="com.saigonphantomlabs.MainActivity"
             android:exported="true">

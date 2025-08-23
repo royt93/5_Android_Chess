@@ -11,7 +11,7 @@ import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
 
-public class PawnPromotion extends AppCompatActivity {
+public class PawnPromotionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

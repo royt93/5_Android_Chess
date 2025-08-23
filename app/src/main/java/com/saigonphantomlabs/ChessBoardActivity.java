@@ -19,7 +19,7 @@ import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
 
-public class ChessBoard extends AppCompatActivity {
+public class ChessBoardActivity extends AppCompatActivity {
     public ConstraintLayout backgroundLayout;
     public FrameLayout boardLayout;
 
@@ -83,7 +83,7 @@ public class ChessBoard extends AppCompatActivity {
     }
 
     public void showPromotionActivity() {
-        startActivityForResult(new Intent(this, PawnPromotion.class), 1);
+        startActivityForResult(new Intent(this, PawnPromotionActivity.class), 1);
     }
 
     @Override

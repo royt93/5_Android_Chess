@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.saigonphantomlabs.ChessBoard;
+import com.saigonphantomlabs.ChessBoardActivity;
 
 import java.util.ArrayList;
 
@@ -209,12 +209,12 @@ public class Chess {
             whichPlayerTurn = Chessman.PlayerColor.Black;
         else
             whichPlayerTurn = Chessman.PlayerColor.White;
-        ((ChessBoard) ctx).animateTurnChange(whichPlayerTurn);
+        ((ChessBoardActivity) ctx).animateTurnChange(whichPlayerTurn);
     }
 
     public void promote(Chessman man) {
         manToPromote = man;
-        ((ChessBoard) ctx).showPromotionActivity();
+        ((ChessBoardActivity) ctx).showPromotionActivity();
     }
 
     public void promotionResault(Chessman.ChessmanType toType) {
