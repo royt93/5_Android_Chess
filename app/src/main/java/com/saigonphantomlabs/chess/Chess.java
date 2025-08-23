@@ -261,7 +261,7 @@ public class Chess {
         lp.setMargins(width * p.x, width * p.y, minDimension - (width * p.x + width), minDimension - (width * p.y + width));
 
         btn.setLayoutParams(lp);
-        btn.setBackground(ctx.getResources().getDrawable(R.drawable.point, ctx.getTheme()));
+        btn.setBackground(ctx.getResources().getDrawable(R.drawable.ic_point, ctx.getTheme()));
 
         btn.setOnClickListener(v -> {
             onBoardClick(p.x, p.y);

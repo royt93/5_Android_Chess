@@ -14,7 +14,7 @@ public class Pawn extends Chessman {
 
     @Override
     public void createButton() {
-        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.pawnb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.pawnw, parent.ctx.getTheme()), minDimension, parent.ctx);
+        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.ic_pawnb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.ic_pawnw, parent.ctx.getTheme()), minDimension, parent.ctx);
     }
 
     @Override

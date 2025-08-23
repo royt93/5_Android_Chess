@@ -11,7 +11,7 @@ public class Knight extends Chessman {
 
     @Override
     public void createButton() {
-        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.knightb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.knightw, parent.ctx.getTheme()), minDimension, parent.ctx);
+        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.ic_knightb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.ic_knightw, parent.ctx.getTheme()), minDimension, parent.ctx);
     }
 
     @Override

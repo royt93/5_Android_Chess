@@ -19,7 +19,7 @@ public class King extends Chessman {
     @Override
     public void createButton() {
         //todo : try to use ResourcesCombat.getDrawable()
-        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.kingb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.kingw, parent.ctx.getTheme()), minDimension, parent.ctx);
+        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.ic_kingb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.ic_kingw, parent.ctx.getTheme()), minDimension, parent.ctx);
     }
 
     @Override

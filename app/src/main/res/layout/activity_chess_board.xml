@@ -21,7 +21,7 @@
             android:id="@+id/boardImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/chessboard"></ImageView>
+            android:background="@drawable/ic_chessboard"></ImageView>
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,7 @@ public class Queen extends Chessman {
 
     @Override
     public void createButton() {
-        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.queenb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.queenw, parent.ctx.getTheme()), minDimension, parent.ctx);
+        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.ic_queenb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.ic_queenw, parent.ctx.getTheme()), minDimension, parent.ctx);
     }
 
     @Override
