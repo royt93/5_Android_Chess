@@ -16,7 +16,6 @@ import com.saigonphantomlabs.chess.R;
 
 //TODO roy93~ admob
 //TODO roy93~ ad applovin
-//TODO roy93~ sdk 35 edge to edge
 //TODO roy93~ review in app
 //TODO roy93~ font scale
 //TODO roy93~ 120hz
@@ -28,6 +27,7 @@ import com.saigonphantomlabs.chess.R;
 //rename app
 //leak canary
 //keystore
+//sdk 35 edge to edge
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
