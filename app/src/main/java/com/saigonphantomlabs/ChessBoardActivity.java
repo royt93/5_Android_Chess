@@ -105,7 +105,7 @@ public class ChessBoardActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(getResources().getString(R.string.no), (dialog, id) -> {
                     Storage.chess = null;
-                    finish();
+//                    finish();
                 })
                 .show();
     }
