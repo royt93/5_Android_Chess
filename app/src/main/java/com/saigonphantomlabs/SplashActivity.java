@@ -13,6 +13,21 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.saigonphantomlabs.chess.BuildConfig;
 import com.saigonphantomlabs.chess.R;
 
+//TODO roy93~ admob
+//TODO roy93~ ad applovin
+//sdk 35 edge to edge
+//review in app
+//font scale
+//120hz
+//rate, more app, share app
+//github
+//license
+//keystore
+
+//done
+//rename app
+//leak canary
+
 public class SplashActivity extends AppCompatActivity {
 
     @Override
