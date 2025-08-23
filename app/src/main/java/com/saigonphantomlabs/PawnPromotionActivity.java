@@ -51,4 +51,9 @@ public class PawnPromotionActivity extends AppCompatActivity {
         setResult(Activity.RESULT_CANCELED, returnIntent);
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        // Không làm gì cả => disable nút back
+    }
 }
