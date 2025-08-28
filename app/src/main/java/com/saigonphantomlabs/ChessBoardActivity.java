@@ -2,6 +2,7 @@ package com.saigonphantomlabs;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -9,11 +10,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.saigonphantomlabs.chess.Chess;
 import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
@@ -97,15 +98,32 @@ public class ChessBoardActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //todo : save game on the device storage
-        new AlertDialog.Builder(this)
-                .setMessage(getResources().getString(R.string.saveBoardPrompt))
-                .setCancelable(false)
-                .setPositiveButton(getResources().getString(R.string.yes), (dialog, id) -> {
-                    finish();
-                })
-                .setNegativeButton(getResources().getString(R.string.no), (dialog, id) -> {
-                    Storage.chess = null;
+//        new AlertDialog.Builder(this)
+//                .setMessage(getResources().getString(R.string.saveBoardPrompt))
+//                .setCancelable(false)
+//                .setPositiveButton(getResources().getString(R.string.yes), (dialog, id) -> {
 //                    finish();
+//                })
+//                .setNegativeButton(getResources().getString(R.string.no), (dialog, id) -> {
+//                    Storage.chess = null;
+//                })
+//                .show();
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(getResources().getString(R.string.warning))
+                .setMessage(getResources().getString(R.string.saveBoardPrompt))
+                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                        Storage.chess = null;
+                    }
                 })
                 .show();
     }
