@@ -19,6 +19,7 @@ import com.saigonphantomlabs.chess.Chess;
 import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
+import com.saigonphantomlabs.sdkadbmob.UIUtils;
 
 public class ChessBoardActivity extends AppCompatActivity {
     public ConstraintLayout backgroundLayout;
@@ -36,6 +37,7 @@ public class ChessBoardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_chess_board);
 
         //hiding actionbar
