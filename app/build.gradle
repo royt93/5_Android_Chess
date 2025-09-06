@@ -11,8 +11,8 @@ android {
         applicationId "com.saigonphantomlabs.chess"
         minSdkVersion 24
         targetSdkVersion 36
-        versionCode 20250828
-        versionName "2025.08.28"
+        versionCode 20250906
+        versionName "2025.09.06"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
