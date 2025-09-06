@@ -15,63 +15,71 @@
         tools:src="@drawable/ic_bkg_1" />
 
     <LinearLayout
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="16dp"
-        android:background="@drawable/bg_round_white"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_gravity="bottom">
 
-        <TextView
-            android:id="@+id/textView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/promotionQuestion"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="26dp"
-            android:textStyle="bold" />
+            android:layout_gravity="bottom"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_round_white"
+            android:orientation="vertical"
+            android:padding="16dp"
+            tools:ignore="UselessParent">
 
-        <Button
-            android:id="@+id/btnQueen"
-            style="@android:style/Widget.DeviceDefault.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:onClick="selectNewType"
-            android:text="@string/queen"
-            android:textColor="#000"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/promotionQuestion"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="26dp"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnRook"
-            style="@android:style/Widget.DeviceDefault.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="selectNewType"
-            android:text="@string/rook"
-            android:textColor="#000"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/btnQueen"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="selectNewType"
+                android:text="@string/queen"
+                android:textColor="#000"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnBishop"
-            style="@android:style/Widget.DeviceDefault.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="selectNewType"
-            android:text="@string/bishop"
-            android:textColor="#000"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/btnRook"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="selectNewType"
+                android:text="@string/rook"
+                android:textColor="#000"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnKnight"
-            style="@android:style/Widget.DeviceDefault.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="selectNewType"
-            android:text="@string/knight"
-            android:textColor="#000"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/btnBishop"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="selectNewType"
+                android:text="@string/bishop"
+                android:textColor="#000"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnKnight"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="selectNewType"
+                android:text="@string/knight"
+                android:textColor="#000"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

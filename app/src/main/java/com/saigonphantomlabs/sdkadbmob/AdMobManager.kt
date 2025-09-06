@@ -12,15 +12,19 @@ object UIUtils {
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
-    fun setupEdgeToEdge2(rootLayout: View) {
+    fun setupEdgeToEdge2(
+        rootView: View,
+        paddingTop: Boolean = true,
+        paddingBottom: Boolean = true,
+    ) {
         // Nếu cần inset padding cho layout chính
-        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(
                 /* left = */ systemBars.left,
-                /* top = */ systemBars.top,
+                /* top = */ if (paddingTop) systemBars.top else 0,
                 /* right = */ systemBars.right,
-                /* bottom = */ systemBars.bottom,
+                /* bottom = */ if (paddingBottom) systemBars.bottom else 0,
             )
             WindowInsetsCompat.CONSUMED
         }

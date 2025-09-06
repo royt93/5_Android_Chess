@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.saigonphantomlabs.chess.BuildConfig;
 import com.saigonphantomlabs.chess.R;
+import com.saigonphantomlabs.sdkadbmob.UIUtils;
 
 //TODO roy93~ admob
 //TODO roy93~ ad applovin
@@ -35,7 +36,11 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_splash);
+        UIUtils.INSTANCE.setupEdgeToEdge2(findViewById(R.id.rootLayout),
+                true,
+                true);
         setupViews();
     }
 

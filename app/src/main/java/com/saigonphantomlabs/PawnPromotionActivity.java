@@ -13,14 +13,18 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
+import com.saigonphantomlabs.sdkadbmob.UIUtils;
 
 public class PawnPromotionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_pawn_promotion);
-
+        UIUtils.INSTANCE.setupEdgeToEdge2(findViewById(R.id.rootLayout),
+                false,
+                true);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }

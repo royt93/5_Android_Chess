@@ -13,43 +13,51 @@
         android:scaleType="centerCrop"
         tools:src="@drawable/ic_bkg_1" />
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="© SAIGON PHANTOM LAB"
-        android:textColor="@color/white"
-        android:textSize="12dp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvVersion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:gravity="center"
-        android:padding="16dp"
-        android:textColor="@color/white"
-        android:textSize="12dp"
-        android:textStyle="bold"
-        tools:text="Version 1.0.0" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="4dp"
+            android:text="© SAIGON PHANTOM LAB"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:textStyle="bold" />
 
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="98dp"
-        android:contentDescription="@string/app_name"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_start" />
+        <TextView
+            android:id="@+id/tvVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="4dp"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            tools:text="Version 1.0.0" />
 
-    <Button
-        android:id="@+id/btnPlay"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text=""
-        android:textColor="#00000000"
-        android:textStyle="bold" />
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="98dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_start" />
+
+        <Button
+            android:id="@+id/btnPlay"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text=""
+            android:textColor="#00000000"
+            android:textStyle="bold" />
+    </FrameLayout>
 </FrameLayout>
