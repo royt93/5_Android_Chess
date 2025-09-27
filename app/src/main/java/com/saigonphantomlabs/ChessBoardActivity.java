@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AlertDialog;
@@ -42,6 +44,9 @@ public class ChessBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_chess_board);
+
+        // Initialize status bar for dynamic tint changes
+        initializeStatusBar();
 
         //hiding actionbar
         if (this.getSupportActionBar() != null) {
@@ -146,6 +151,9 @@ public class ChessBoardActivity extends AppCompatActivity {
         // Update turn indicators
         updateTurnIndicators(turn);
 
+        // Update status bar tint
+        updateStatusBarTint(turn);
+
         // Background color animation
         ValueAnimator colorAnimation;
         if (turn == Chessman.PlayerColor.White)
@@ -195,6 +203,41 @@ public class ChessBoardActivity extends AppCompatActivity {
                     }
                 })
                 .start();
+    }
+
+    private void initializeStatusBar() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+            // Make status bar transparent to work with our tinting
+            window.setStatusBarColor(android.graphics.Color.TRANSPARENT);
+
+            // Initialize with default state (will be updated when game starts)
+            View decorView = window.getDecorView();
+            decorView.setSystemUiVisibility(
+                decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            );
+        }
+    }
+
+    private void updateStatusBarTint(Chessman.PlayerColor turn) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            Window window = getWindow();
+            View decorView = window.getDecorView();
+
+            if (turn == Chessman.PlayerColor.White) {
+                // White turn: Dark status bar icons (for light background feel)
+                decorView.setSystemUiVisibility(
+                    decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                );
+            } else {
+                // Black turn: Light status bar icons (for dark background feel)
+                decorView.setSystemUiVisibility(
+                    decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                );
+            }
+        }
     }
 
 }
