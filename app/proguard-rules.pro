@@ -1,21 +1,71 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Aggressive APK size optimization rules
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Enable all optimizations
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
+-optimizationpasses 5
+-allowaccessmodification
+-dontpreverify
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Remove unused code more aggressively
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Remove debug code
+-assumenosideeffects class java.io.PrintStream {
+    public void println(%);
+    public void println(**);
+}
+
+# Keep only necessary chess game classes
+-keep public class com.saigonphantomlabs.** { public *; }
+-keep public class com.saigonphantomlabs.chess.** { public *; }
+
+# Glide optimization - minimal keeps for GIF support
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep class * extends com.bumptech.glide.module.AppGlideModule {
+    <init>(...);
+}
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+    **[] $VALUES;
+    public *;
+}
+-keep class com.bumptech.glide.load.data.ParcelFileDescriptorRewinder$InternalRewinder {
+    *** rewind();
+}
+
+# Keep GIF decoder specifically
+-keep class com.bumptech.glide.load.resource.gif.** { *; }
+-keep class com.bumptech.glide.gifdecoder.** { *; }
+
+# More aggressive resource removal
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+    public static *** w(...);
+    public static *** e(...);
+}
+
+# Remove reflection calls that increase size
+-assumenosideeffects class java.lang.Class {
+    public java.lang.reflect.Method[] getDeclaredMethods();
+    public java.lang.reflect.Field[] getDeclaredFields();
+}
+
+# Remove unused AndroidX features
+-dontwarn androidx.lifecycle.**
+-dontwarn androidx.savedstate.**
+
+# Optimize native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Remove unused enum values
+-optimizations !class/unboxing/enum

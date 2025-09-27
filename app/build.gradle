@@ -8,12 +8,6 @@ android {
     compileSdk 36
     buildToolsVersion "36.0.0"
 
-    // Load keystore properties from local.properties
-    def keystorePropertiesFile = rootProject.file("local.properties")
-    def keystoreProperties = new Properties()
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-    }
 
     defaultConfig {
         applicationId "com.saigonphantomlabs.chess"
@@ -29,13 +23,26 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildFeatures { buildConfig = true }
+    buildFeatures {
+        buildConfig = true
+        // Disable unused features to reduce APK size
+        aidl false
+        renderScript false
+        resValues false
+        shaders false
+    }
+
+    // Optimize image compression
+    aaptOptions {
+        cruncherEnabled = true
+        useNewCruncher = true
+    }
     signingConfigs {
         release {
-            storeFile file(keystoreProperties['KEYSTORE_FILE'] ?: "key/keystore.jks")
-            storePassword keystoreProperties['KEYSTORE_PASSWORD']
-            keyAlias keystoreProperties['KEY_ALIAS']
-            keyPassword keystoreProperties['KEY_PASSWORD']
+            storeFile file(project.findProperty("KEYSTORE_FILE") ?: "key/keystore.jks")
+            storePassword project.findProperty("KEYSTORE_PASSWORD")
+            keyAlias project.findProperty("KEY_ALIAS")
+            keyPassword project.findProperty("KEY_PASSWORD")
         }
     }
     buildTypes {
@@ -45,27 +52,79 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // APK size optimization
+            crunchPngs true
+            zipAlignEnabled true
+
+            // Additional R8 optimizations
+            multiDexEnabled false
+
+            // Aggressive resource optimization
+            packagingOptions {
+                exclude 'META-INF/DEPENDENCIES'
+                exclude 'META-INF/LICENSE'
+                exclude 'META-INF/LICENSE.txt'
+                exclude 'META-INF/NOTICE'
+                exclude 'META-INF/NOTICE.txt'
+                exclude 'META-INF/INDEX.LIST'
+                exclude 'META-INF/AL2.0'
+                exclude 'META-INF/LGPL2.1'
+                exclude 'DebugProbesKt.bin'
+            }
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
         }
     }
+
+    // APK Splits for smaller size (disabled for App Bundle)
+    splits {
+        abi {
+            enable false
+        }
+    }
+
+    // Bundle configuration for Play Store
+    bundle {
+        storeArchive {
+            enable = false
+        }
+    }
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    // Custom GIF optimization task (optional - requires external tools)
+    /*
+    android.applicationVariants.all { variant ->
+        if (variant.buildType.name == 'release') {
+            variant.mergeResourcesProvider.get().doLast {
+                // Add custom GIF compression here if needed
+                println "Optimizing resources for ${variant.name}"
+            }
+        }
+    }
+    */
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.github.bumptech.glide:glide:5.0.5'
+
+    // Use lighter Glide configuration for size optimization
+    implementation ('com.github.bumptech.glide:glide:5.0.5') {
+        exclude group: 'com.android.support'
+    }
+
+    // Only include necessary Kotlin extensions
     implementation 'androidx.core:core-ktx:1.17.0'
+
+    // Glide annotation processor
     annotationProcessor 'com.github.bumptech.glide:compiler:5.0.5'
 
+    // Debug tools only in debug builds
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
-//    testImplementation 'junit:junit:4.13.2'
-//    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
-//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 }

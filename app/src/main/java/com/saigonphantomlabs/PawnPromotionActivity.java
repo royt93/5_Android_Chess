@@ -31,7 +31,7 @@ public class PawnPromotionActivity extends AppCompatActivity {
         ImageView ivBkg = findViewById(R.id.ivBkg);
         Glide.with(this)
                 .asGif()
-                .load(R.drawable.ic_bkg_1) // ảnh gif trong drawable/raw hoặc link URL
+                .load(R.drawable.ic_bkg_1)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
 

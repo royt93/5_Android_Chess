@@ -57,7 +57,7 @@ public class SplashActivity extends AppCompatActivity {
         tvVersion.setText(getString(R.string.version_format, versionName));
         Glide.with(this)
                 .asGif()
-                .load(R.drawable.ic_bkg_1) // ảnh gif trong drawable/raw hoặc link URL
+                .load(R.drawable.ic_bkg_1)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
         btnPlay.setOnClickListener(view -> {
