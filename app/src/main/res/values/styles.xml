@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom Dialog Animation Style -->
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+    </style>
+
+    <!-- Custom Dialog Theme -->
+    <style name="CustomDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/CustomDialogTitle</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/CustomDialogBody</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+    </style>
+
+    <!-- Custom Dialog Title Style -->
+    <style name="CustomDialogTitle" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#D32F2F</item>
+    </style>
+
+    <!-- Custom Dialog Body Style -->
+    <style name="CustomDialogBody" parent="MaterialAlertDialog.Material3.Body.Text">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#424242</item>
+    </style>
+</resources>
