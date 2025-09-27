@@ -3,7 +3,10 @@ package com.saigonphantomlabs.chess;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -71,7 +74,7 @@ public abstract class Chessman {
         ImageButton btn = new ImageButton(ctx);
         width = minDimension / 8;
         this.minDimension = minDimension;
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, width);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, width);
 
         lp.setMargins(width * getPoint().x, width * getPoint().y, minDimension - (width * getPoint().x + width), minDimension - (width * getPoint().y + width));
 
@@ -79,10 +82,36 @@ public abstract class Chessman {
         btn.setBackground(icon);
 
         btn.setOnClickListener(v -> {
+            // Add selection feedback animation - quick pulse
+            v.animate()
+                    .scaleX(1.1f)
+                    .scaleY(1.1f)
+                    .setDuration(80)
+                    .withEndAction(() -> {
+                        v.animate()
+                                .scaleX(1.0f)
+                                .scaleY(1.0f)
+                                .setDuration(80)
+                                .withEndAction(() -> {
+                                    // Ensure properties are reset after selection animation
+                                    v.setScaleX(1.0f);
+                                    v.setScaleY(1.0f);
+                                    v.setClickable(true);
+                                    v.setEnabled(true);
+                                })
+                                .start();
+                    })
+                    .start();
+
             parent.onManClick(this);
         });
 
         this.button = btn;
+    }
+
+    // Method to reset all animation properties (including position)
+    public void resetButtonState() {
+        resetAnimationProperties();
     }
 
     public void moveButton(int x, int y) {
@@ -92,12 +121,90 @@ public abstract class Chessman {
         else
             MediaPlayer.create(parent.ctx, R.raw.chess_2).start();
 
+        // Get current position
+        FrameLayout.LayoutParams currentLp = (FrameLayout.LayoutParams) button.getLayoutParams();
+        final float startX = currentLp.leftMargin;
+        final float startY = currentLp.topMargin;
+
+        // Calculate destination using the passed parameters
+        final float destX = width * x;
+        final float destY = width * y;
+
+        // Phase 1: Lift up the piece with scale and elevation
         button.animate()
-                .x(width * getPoint().x)
-                .y(width * getPoint().y)
-                //todo : move this 300 to resources
-                .setDuration(300)
+                .scaleX(1.15f)
+                .scaleY(1.15f)
+                .translationZ(12f)
+                .setDuration(120)
+                .setInterpolator(new OvershootInterpolator(1.2f))
+                .withEndAction(() -> {
+                    // Phase 2: Move to destination using translationX/Y from current layout position
+                    button.animate()
+                            .translationX(destX - startX)
+                            .translationY(destY - startY)
+                            .scaleX(1.0f)
+                            .scaleY(1.0f)
+                            .translationZ(0f)
+                            .setDuration(280)
+                            .setInterpolator(new BounceInterpolator())
+                            .withEndAction(() -> {
+                                // Phase 3: Update layout position and reset translation to zero
+                                updateLayoutPositionAndResetTranslation(x, y);
+                            })
+                            .start();
+                })
                 .start();
+    }
+
+    // Update the actual layout margins to the new position
+    private void updateLayoutPosition(int x, int y) {
+        if (button != null && button.getLayoutParams() instanceof FrameLayout.LayoutParams) {
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) button.getLayoutParams();
+            lp.setMargins(width * x, width * y,
+                         parent.minDimension - (width * x + width),
+                         parent.minDimension - (width * y + width));
+            button.setLayoutParams(lp);
+        }
+    }
+
+    // Update layout position and reset translation atomically
+    private void updateLayoutPositionAndResetTranslation(int x, int y) {
+        if (button != null && button.getLayoutParams() instanceof FrameLayout.LayoutParams) {
+            // Update layout position
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) button.getLayoutParams();
+            lp.setMargins(width * x, width * y,
+                         parent.minDimension - (width * x + width),
+                         parent.minDimension - (width * y + width));
+            button.setLayoutParams(lp);
+
+            // Reset translation and other properties
+            button.setTranslationX(0f);
+            button.setTranslationY(0f);
+            button.setTranslationZ(0f);
+            button.setScaleX(1.0f);
+            button.setScaleY(1.0f);
+            button.setRotation(0f);
+            button.setAlpha(1.0f);
+            button.setClickable(true);
+            button.setEnabled(true);
+            button.clearAnimation();
+        }
+    }
+
+    // Reset animation properties only (not position)
+    private void resetAnimationProperties() {
+        if (button != null) {
+            button.setScaleX(1.0f);
+            button.setScaleY(1.0f);
+            button.setTranslationX(0f);
+            button.setTranslationY(0f);
+            button.setTranslationZ(0f);
+            button.setRotation(0f);
+            button.setAlpha(1.0f);
+            button.setClickable(true);
+            button.setEnabled(true);
+            button.clearAnimation();
+        }
     }
 
     public boolean isPointSafe() {

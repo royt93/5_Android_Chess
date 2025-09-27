@@ -3,6 +3,7 @@ package com.saigonphantomlabs.chess;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -201,7 +202,22 @@ public class Chess {
     public void kill(Chessman m) {
         deadMen.add(m);
         m.isDead = true;
-        ((ViewGroup) m.button.getParent()).removeView(m.button);
+
+        // Add death animation - spin and fade out
+        m.button.animate()
+                .scaleX(0.3f)
+                .scaleY(0.3f)
+                .alpha(0f)
+                .rotation(360f)
+                .setDuration(250)
+                .setInterpolator(new AccelerateInterpolator())
+                .withEndAction(() -> {
+                    // Remove button after animation completes
+                    if (m.button.getParent() != null) {
+                        ((ViewGroup) m.button.getParent()).removeView(m.button);
+                    }
+                })
+                .start();
     }
 
     public void changeTurn() {
