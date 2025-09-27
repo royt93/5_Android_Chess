@@ -1,9 +1,12 @@
 package com.saigonphantomlabs.chess;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -252,10 +255,91 @@ public class Chess {
             default:
                 return;
         }
+
+        // Create the new piece button
         newType.createButton();
-        ((ViewGroup) manToPromote.button.getParent()).removeView(manToPromote.button);
         chessmen[manToPromote.getPoint().x][manToPromote.getPoint().y] = newType;
-        boardLayout.addView(newType.button);
+
+        // Start promotion animation
+        animatePromotion(manToPromote, newType);
+    }
+
+    private void animatePromotion(Chessman oldPawn, Chessman newPiece) {
+        // Play special promotion sound effect
+        playPromotionSound();
+
+        // Phase 1: Pawn transformation animation (disappear with magical effect)
+        oldPawn.button.animate()
+                .scaleX(0.2f)
+                .scaleY(0.2f)
+                .rotation(720f) // Two full rotations
+                .alpha(0.3f)
+                .setDuration(400)
+                .setInterpolator(new AccelerateInterpolator())
+                .withEndAction(() -> {
+                    // Remove old pawn
+                    ((ViewGroup) oldPawn.button.getParent()).removeView(oldPawn.button);
+
+                    // Phase 2: New piece appears with dramatic entrance
+                    newPiece.button.setScaleX(0.1f);
+                    newPiece.button.setScaleY(0.1f);
+                    newPiece.button.setAlpha(0f);
+                    newPiece.button.setRotation(-180f);
+
+                    // Add new piece to board
+                    boardLayout.addView(newPiece.button);
+
+                    // Play transformation completion sound
+                    playTransformationSound();
+
+                    // Dramatic entrance animation
+                    newPiece.button.animate()
+                            .scaleX(1.3f)
+                            .scaleY(1.3f)
+                            .rotation(0f)
+                            .alpha(1.0f)
+                            .setDuration(500)
+                            .setInterpolator(new OvershootInterpolator(2.0f))
+                            .withEndAction(() -> {
+                                // Phase 3: Settle to normal size with bounce
+                                newPiece.button.animate()
+                                        .scaleX(1.0f)
+                                        .scaleY(1.0f)
+                                        .setDuration(300)
+                                        .setInterpolator(new BounceInterpolator())
+                                        .withEndAction(() -> {
+                                            // Ensure all properties are reset
+                                            newPiece.resetButtonState();
+                                        })
+                                        .start();
+                            })
+                            .start();
+                })
+                .start();
+    }
+
+    private void playPromotionSound() {
+        try {
+            MediaPlayer mp = MediaPlayer.create(ctx, R.raw.chess_1);
+            if (mp != null) {
+                mp.start();
+                mp.setOnCompletionListener(MediaPlayer::release);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void playTransformationSound() {
+        try {
+            MediaPlayer mp = MediaPlayer.create(ctx, R.raw.chess_2);
+            if (mp != null) {
+                mp.start();
+                mp.setOnCompletionListener(MediaPlayer::release);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void addMenToBoard(FrameLayout boardLayout) {
