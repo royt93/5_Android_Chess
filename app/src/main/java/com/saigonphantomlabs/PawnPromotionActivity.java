@@ -34,6 +34,14 @@ public class PawnPromotionActivity extends AppCompatActivity {
                 .load(R.drawable.ic_bkg_1) // ảnh gif trong drawable/raw hoặc link URL
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
+
+        // Disable back navigation - user must select a piece
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Do nothing - disable back button
+            }
+        });
     }
 
     public void selectNewType(View view) {
@@ -56,8 +64,4 @@ public class PawnPromotionActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
-        // Không làm gì cả => disable nút back
-    }
 }

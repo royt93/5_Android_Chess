@@ -8,6 +8,13 @@ android {
     compileSdk 36
     buildToolsVersion "36.0.0"
 
+    // Load keystore properties from local.properties
+    def keystorePropertiesFile = rootProject.file("local.properties")
+    def keystoreProperties = new Properties()
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
     defaultConfig {
         applicationId "com.saigonphantomlabs.chess"
         minSdkVersion 24
@@ -25,10 +32,10 @@ android {
     buildFeatures { buildConfig = true }
     signingConfigs {
         release {
-            storeFile file("key/keystore.jks")
-            storePassword "27072000"
-            keyAlias "mckimquyen"
-            keyPassword "27072000"
+            storeFile file(keystoreProperties['KEYSTORE_FILE'] ?: "key/keystore.jks")
+            storePassword keystoreProperties['KEYSTORE_PASSWORD']
+            keyAlias keystoreProperties['KEY_ALIAS']
+            keyPassword keystoreProperties['KEY_PASSWORD']
         }
     }
     buildTypes {
@@ -51,11 +58,11 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation 'com.github.bumptech.glide:glide:5.0.5'
     implementation 'androidx.core:core-ktx:1.17.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:5.0.5'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 //    testImplementation 'junit:junit:4.13.2'

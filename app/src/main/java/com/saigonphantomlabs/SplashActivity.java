@@ -54,7 +54,7 @@ public class SplashActivity extends AppCompatActivity {
         ImageView ivBkg = findViewById(R.id.ivBkg);
         TextView tvVersion = findViewById(R.id.tvVersion);
         String versionName = BuildConfig.VERSION_NAME;
-        tvVersion.setText("Version " + versionName);
+        tvVersion.setText(getString(R.string.version_format, versionName));
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.ic_bkg_1) // ảnh gif trong drawable/raw hoặc link URL

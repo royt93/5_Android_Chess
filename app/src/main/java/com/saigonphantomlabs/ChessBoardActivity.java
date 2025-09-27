@@ -74,6 +74,14 @@ public class ChessBoardActivity extends AppCompatActivity {
         }
 
         findViewById(R.id.boardImage).setOnTouchListener(this::onTouch);
+
+        // Setup modern back navigation
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                handleBackPress();
+            }
+        });
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -97,19 +105,7 @@ public class ChessBoardActivity extends AppCompatActivity {
         chess.promotionResault(Storage.result);
     }
 
-    @Override
-    public void onBackPressed() {
-        //todo : save game on the device storage
-//        new AlertDialog.Builder(this)
-//                .setMessage(getResources().getString(R.string.saveBoardPrompt))
-//                .setCancelable(false)
-//                .setPositiveButton(getResources().getString(R.string.yes), (dialog, id) -> {
-//                    finish();
-//                })
-//                .setNegativeButton(getResources().getString(R.string.no), (dialog, id) -> {
-//                    Storage.chess = null;
-//                })
-//                .show();
+    private void handleBackPress() {
         new MaterialAlertDialogBuilder(this)
                 .setTitle(getResources().getString(R.string.warning))
                 .setMessage(getResources().getString(R.string.saveBoardPrompt))
