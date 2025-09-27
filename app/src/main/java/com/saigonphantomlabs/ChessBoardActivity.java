@@ -151,8 +151,8 @@ public class ChessBoardActivity extends AppCompatActivity {
         // Update turn indicators
         updateTurnIndicators(turn);
 
-        // Update status bar tint
-        updateStatusBarTint(turn);
+        // Update status bar and navigation bar tint
+        updateSystemBarsTint(turn);
 
         // Background color animation
         ValueAnimator colorAnimation;
@@ -210,33 +210,53 @@ public class ChessBoardActivity extends AppCompatActivity {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-            // Make status bar transparent to work with our tinting
+            // Make status bar and navigation bar transparent to work with our tinting
             window.setStatusBarColor(android.graphics.Color.TRANSPARENT);
+
+            // Initialize navigation bar for API 26+ (Android 8.0)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                window.setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+            }
 
             // Initialize with default state (will be updated when game starts)
             View decorView = window.getDecorView();
-            decorView.setSystemUiVisibility(
-                decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            );
+            int flags = decorView.getSystemUiVisibility();
+            flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+
+            // Initialize navigation bar icons (API 26+)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            }
+
+            decorView.setSystemUiVisibility(flags);
         }
     }
 
-    private void updateStatusBarTint(Chessman.PlayerColor turn) {
+    private void updateSystemBarsTint(Chessman.PlayerColor turn) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             Window window = getWindow();
             View decorView = window.getDecorView();
+            int flags = decorView.getSystemUiVisibility();
 
             if (turn == Chessman.PlayerColor.White) {
-                // White turn: Dark status bar icons (for light background feel)
-                decorView.setSystemUiVisibility(
-                    decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                );
+                // White turn: Dark status bar and navigation bar icons (for light background feel)
+                flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+
+                // Add navigation bar light icons for API 26+ (Android 8.0)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                }
             } else {
-                // Black turn: Light status bar icons (for dark background feel)
-                decorView.setSystemUiVisibility(
-                    decorView.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                );
+                // Black turn: Light status bar and navigation bar icons (for dark background feel)
+                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+
+                // Remove navigation bar light icons for API 26+ (Android 8.0)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                }
             }
+
+            decorView.setSystemUiVisibility(flags);
         }
     }
 
