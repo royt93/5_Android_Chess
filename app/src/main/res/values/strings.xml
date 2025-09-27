@@ -11,4 +11,10 @@
     <string name="warning">Warning</string>
     <string name="copyright_text">© SAIGON PHANTOM LAB</string>
     <string name="version_format">Version %s</string>
+    <string name="rate_app">Rate App</string>
+    <string name="more_apps">More Apps</string>
+    <string name="share_app">Share App</string>
+    <string name="share_message">Check out this amazing chess game: Quick Chess!</string>
+    <string name="share_subject">Quick Chess - Play Chess Now!</string>
+    <string name="start_game">START GAME</string>
 </resources>

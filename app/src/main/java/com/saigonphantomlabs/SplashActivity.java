@@ -1,10 +1,14 @@
 package com.saigonphantomlabs;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,19 +54,100 @@ public class SplashActivity extends AppCompatActivity {
             this.getSupportActionBar().hide();
         }
 
-        Button btnPlay = findViewById(R.id.btnPlay);
+        LinearLayout btnStartGame = findViewById(R.id.btnStartGame);
+        LinearLayout btnRateApp = findViewById(R.id.btnRateApp);
+        LinearLayout btnMoreApps = findViewById(R.id.btnMoreApps);
+        LinearLayout btnShareApp = findViewById(R.id.btnShareApp);
         ImageView ivBkg = findViewById(R.id.ivBkg);
-        TextView tvVersion = findViewById(R.id.tvVersion);
+        TextView tvVersion = findViewById(R.id.tvVersionTop);
+
         String versionName = BuildConfig.VERSION_NAME;
         tvVersion.setText(getString(R.string.version_format, versionName));
+
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.ic_bkg_1)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
-        btnPlay.setOnClickListener(view -> {
-            Intent switchActivityIntent = new Intent(this, ChessBoardActivity.class);
-            startActivity(switchActivityIntent);
+
+        // Start Game button click with safe click and animation
+        btnStartGame.setOnClickListener(new SafeClickListener() {
+            @Override
+            public void onSafeClick(View view) {
+                Intent switchActivityIntent = new Intent(SplashActivity.this, ChessBoardActivity.class);
+                startActivity(switchActivityIntent);
+            }
         });
+
+        // Rate App button click with safe click and animation
+        btnRateApp.setOnClickListener(new SafeClickListener() {
+            @Override
+            public void onSafeClick(View view) {
+                rateApp();
+            }
+        });
+
+        // More Apps button click with safe click and animation
+        btnMoreApps.setOnClickListener(new SafeClickListener() {
+            @Override
+            public void onSafeClick(View view) {
+                openMoreApps();
+            }
+        });
+
+        // Share App button click with safe click and animation
+        btnShareApp.setOnClickListener(new SafeClickListener() {
+            @Override
+            public void onSafeClick(View view) {
+                shareApp();
+            }
+        });
+    }
+
+    private void rateApp() {
+        try {
+            // Try to open Play Store app
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("market://details?id=" + getPackageName()));
+            intent.setPackage("com.android.vending");
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            // If Play Store app is not available, open in browser
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
+            startActivity(intent);
+        }
+    }
+
+    private void openMoreApps() {
+        try {
+            // Try to open Play Store app with developer page
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("market://dev?id=6193840742938642798"));
+            intent.setPackage("com.android.vending");
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            // If Play Store app is not available, open in browser
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://play.google.com/store/apps/dev?id=6193840742938642798"));
+            startActivity(intent);
+        }
+    }
+
+    private void shareApp() {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
+
+            String appPackageName = getPackageName();
+            String shareBody = getString(R.string.share_message) + "\n" +
+                    "https://play.google.com/store/apps/details?id=" + appPackageName;
+
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_app)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

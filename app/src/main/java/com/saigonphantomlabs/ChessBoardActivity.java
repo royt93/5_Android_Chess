@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -106,7 +107,7 @@ public class ChessBoardActivity extends AppCompatActivity {
     }
 
     private void handleBackPress() {
-        new MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
                 .setTitle(getResources().getString(R.string.warning))
                 .setMessage(getResources().getString(R.string.saveBoardPrompt))
                 .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
@@ -123,7 +124,18 @@ public class ChessBoardActivity extends AppCompatActivity {
                         Storage.chess = null;
                     }
                 })
-                .show();
+                .setCancelable(false);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Add custom button colors and styling
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+        }
+        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark));
+        }
     }
 
     public void animateTurnChange(Chessman.PlayerColor turn) {
