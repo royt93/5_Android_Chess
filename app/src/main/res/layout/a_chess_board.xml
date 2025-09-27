@@ -7,6 +7,18 @@
     android:layout_height="match_parent"
     tools:context="com.saigonphantomlabs.ChessBoardActivity">
 
+    <!-- Turn Indicator Circle for Black (TOP) -->
+    <View
+        android:id="@+id/blackTurnIndicator"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/circle_red"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <FrameLayout
         android:id="@+id/boardLayout"
         android:layout_width="0dp"
@@ -24,5 +36,17 @@
             android:background="@drawable/ic_chessboard"
             android:contentDescription="@string/app_name" />
     </FrameLayout>
+
+    <!-- Turn Indicator Circle for White (BOTTOM) -->
+    <View
+        android:id="@+id/whiteTurnIndicator"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/circle_red"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

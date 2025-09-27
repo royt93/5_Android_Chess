@@ -25,6 +25,8 @@ import com.saigonphantomlabs.sdkadbmob.UIUtils;
 public class ChessBoardActivity extends AppCompatActivity {
     public ConstraintLayout backgroundLayout;
     public FrameLayout boardLayout;
+    public View blackTurnIndicator;
+    public View whiteTurnIndicator;
 
     public Chess chess = null;
 
@@ -63,6 +65,8 @@ public class ChessBoardActivity extends AppCompatActivity {
         displayMinDimensions = Math.min(displayWidth, displayHeight);
 
         boardLayout = findViewById(R.id.boardLayout);
+        blackTurnIndicator = findViewById(R.id.blackTurnIndicator);
+        whiteTurnIndicator = findViewById(R.id.whiteTurnIndicator);
 
         boardLayout.getLayoutParams().height = displayMinDimensions;
         boardLayout.getLayoutParams().width = displayMinDimensions;
@@ -139,16 +143,58 @@ public class ChessBoardActivity extends AppCompatActivity {
     }
 
     public void animateTurnChange(Chessman.PlayerColor turn) {
+        // Update turn indicators
+        updateTurnIndicators(turn);
+
+        // Background color animation
         ValueAnimator colorAnimation;
         if (turn == Chessman.PlayerColor.White)
             colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), whiteColor, blackColor);
         else
             colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), blackColor, whiteColor);
 
-        //todo : move this 100 to resources
-        colorAnimation.setDuration(100); // milliseconds
+        colorAnimation.setDuration(300); // milliseconds
         colorAnimation.addUpdateListener(animator -> backgroundLayout.setBackgroundColor((int) animator.getAnimatedValue()));
         colorAnimation.start();
+    }
+
+    private void updateTurnIndicators(Chessman.PlayerColor turn) {
+        if (turn == Chessman.PlayerColor.Black) {
+            // Show and animate black turn indicator (TOP)
+            blackTurnIndicator.setVisibility(View.VISIBLE);
+            whiteTurnIndicator.setVisibility(View.GONE);
+            startBlinkingAnimation(blackTurnIndicator);
+        } else {
+            // Show and animate white turn indicator (BOTTOM)
+            whiteTurnIndicator.setVisibility(View.VISIBLE);
+            blackTurnIndicator.setVisibility(View.GONE);
+            startBlinkingAnimation(whiteTurnIndicator);
+        }
+    }
+
+    private void startBlinkingAnimation(View indicator) {
+        // Stop any existing animation
+        indicator.clearAnimation();
+
+        // Create blinking effect
+        indicator.animate()
+                .alpha(0.3f)
+                .setDuration(400)
+                .withEndAction(() -> {
+                    if (indicator.getVisibility() == View.VISIBLE) {
+                        indicator.animate()
+                                .alpha(1.0f)
+                                .setDuration(400)
+                                .withEndAction(() -> {
+                                    if (indicator.getVisibility() == View.VISIBLE) {
+                                        // Continue blinking in a loop
+                                        startBlinkingAnimation(indicator);
+                                    }
+                                })
+                                .start();
+                    }
+                })
+                .start();
     }
 
 }
