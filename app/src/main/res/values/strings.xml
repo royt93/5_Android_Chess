@@ -27,4 +27,14 @@
     <string name="illegal_move">Illegal movement!</string>
     <string name="no_undo_available">No moves to undo</string>
     <string name="restart_confirm">Start a new game?</string>
+    <string name="stalemate">Stalemate!</string>
+    <string name="stalemate_message">No legal moves available.\nThe game ends in a draw.</string>
+    <string name="white_loses">Black Loses!</string>
+    <string name="black_loses">White Loses!</string>
+    <string name="exit">Exit</string>
+    <string name="stats_title">📊 Game Statistics</string>
+    <string name="stats_duration">Duration</string>
+    <string name="stats_moves">Total Moves</string>
+    <string name="stats_white_captured">White Captured</string>
+    <string name="stats_black_captured">Black Captured</string>
 </resources>

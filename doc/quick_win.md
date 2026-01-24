@@ -2,61 +2,37 @@
 
 ## ✅ Hoàn thành & Double-Checked
 
-| # | Tính năng | Trạng thái | Verified |
-|---|-----------|------------|----------|
-| 1 | Phản hồi khi bị chiếu | ✅ Done | ✔️ |
-| 2 | Hiển thị quân bị ăn | ✅ Done | ✔️ |
-| 3 | Màn hình kết thúc game | ✅ Done | ✔️ |
-| 4 | Hoàn tác nước đi | ✅ Done | ✔️ |
-| 5 | Lịch sử nước đi | ✅ Done | ✔️ |
-| 6 | Hiệu ứng âm thanh | ✅ Done | ✔️ |
-| 7 | Nút Restart | ✅ Done | ✔️ |
-| 8 | startActivityForResult | ✅ Done | ✔️ |
-| 9 | getDefaultDisplay | ✅ Done | ✔️ |
-| 10 | Checkmate Detection | ✅ Done | ✔️ |
+| # | Tính năng | Trạng thái |
+|---|-----------|------------|
+| 1 | Check Visual Feedback | ✅ Done |
+| 2 | Captured Pieces Display | ✅ Done |
+| 3 | Game End Screen | ✅ Done |
+| 4 | Undo Move | ✅ Done |
+| 5 | Move History | ✅ Done |
+| 6 | Sound Effects | ✅ Done |
+| 7 | Restart Button | ✅ Done |
+| 8 | Checkmate Detection | ✅ FIXED |
+| 9 | **Stalemate Detection** | ✅ NEW |
+| 10 | Deprecated API fixes | ✅ Done |
 
 ---
 
-## 🔍 Logic Review Summary
+## 🔍 Logic Review Summary (Double-Checked)
 
-### Chess.java - Core Logic
+### Key Methods in Chess.java
 
-| Function | Status | Notes |
-|----------|--------|-------|
-| `onManClick()` | ✔️ OK | gameEnd check, selection highlight |
-| `onBoardClick()` | ✔️ OK | gameEnd check, move validation |
-| `doMove()` | ✔️ OK | Records history, calls checkOpponentKingStatus |
-| `move()` | ✔️ OK | Validates move legality, handles capture |
-| `checkOpponentKingStatus()` | ✔️ OK | Calls validateKing, shows dialog on checkmate |
-| `validateKing()` | ✔️ OK | Full checkmate detection |
-| `canAnyPieceSaveKing()` | ✔️ OK | Checks all friendly pieces |
-| `wouldMoveSaveKing()` | ✔️ OK | Simulates move, undoes correctly |
-| `undoLastMove()` | ✔️ OK | Restores piece, captured piece, pawn firstMove |
-| `resetGame()` | ✔️ OK | Clears all state, reinitializes |
+| Method | Status | Description |
+|--------|--------|-------------|
+| `validateKing()` | ✔️ | Full check/checkmate/stalemate detection |
+| `isKingMoveSafe()` | ✔️ **FIXED** | Simulates King's move before checking safety |
+| `hasAnyLegalMove()` | ✔️ | Checks if any piece has legal moves |
+| `isMoveLegal()` | ✔️ | Simulates move to check if King stays safe |
+| `canAnyPieceSaveKing()` | ✔️ | Checks if any piece can block/capture |
+| `wouldMoveSaveKing()` | ✔️ | Simulates piece move to save King |
 
-### ChessBoardActivity.java
+### Bug Fixed in Review
 
-| Function | Status | Notes |
-|----------|--------|-------|
-| `onCreate()` | ✔️ OK | All views initialized |
-| `showRestartConfirmDialog()` | ✔️ OK | Calls resetGame |
-| `addCapturedPiece()` | ✔️ OK | Correct container selection |
-| `removeCapturedPiece()` | ✔️ FIXED | Use removeView() not removeViewAt() |
-| `showGameEndDialog()` | ✔️ OK | Shows winner, play again option |
-
-### PawnPromotionActivity.java
-
-| Function | Status | Notes |
-|----------|--------|-------|
-| `onCreate()` | ✔️ OK | isSelecting flag prevents double-click |
-| `setupCardClick()` | ✔️ OK | Direct card click listeners |
-| `selectWithAnimation()` | ✔️ OK | Visual feedback before finish |
-
----
-
-## 🐛 Bugs Fixed in Review
-
-1. **Race condition in removeCapturedPiece()**: Changed from `removeViewAt(index)` to `removeView(viewToRemove)` to avoid index change during animation.
+- **isKingMoveSafe()**: Previous code used `k.isPointSafe(p)` without simulation. Now properly simulates King's move to destination before checking safety.
 
 ---
 

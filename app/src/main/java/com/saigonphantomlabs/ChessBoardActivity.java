@@ -380,17 +380,21 @@ public class ChessBoardActivity extends AppCompatActivity {
      * Show game end dialog
      */
     public void showGameEndDialog(boolean whiteWins) {
-        String title = getString(R.string.game_over);
-        String message = whiteWins ? getString(R.string.white_wins) : getString(R.string.black_wins);
+        String title = getString(R.string.checkmate);
+        String winner = whiteWins ? getString(R.string.white_wins) : getString(R.string.black_wins);
+        String loser = whiteWins ? getString(R.string.black_loses) : getString(R.string.white_loses);
+
+        // Build game statistics
+        String stats = buildGameStats();
 
         new MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
                 .setTitle(title)
-                .setMessage(message + "\n\n" + getString(R.string.checkmate))
+                .setMessage(winner + "\n" + loser + "\n\n" + stats)
                 .setPositiveButton(getString(R.string.play_again), (dialog, which) -> {
                     dialog.dismiss();
                     chess.resetGame();
                 })
-                .setNegativeButton(getString(R.string.no), (dialog, which) -> {
+                .setNegativeButton(getString(R.string.exit), (dialog, which) -> {
                     dialog.dismiss();
                     Storage.chess = null;
                     finish();
@@ -398,6 +402,47 @@ public class ChessBoardActivity extends AppCompatActivity {
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    /**
+     * Show stalemate dialog (draw)
+     */
+    public void showStalemateDialog() {
+        // Build game statistics
+        String stats = buildGameStats();
+
+        new MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
+                .setTitle(getString(R.string.stalemate))
+                .setMessage(getString(R.string.stalemate_message) + "\n\n" + stats)
+                .setPositiveButton(getString(R.string.play_again), (dialog, which) -> {
+                    dialog.dismiss();
+                    chess.resetGame();
+                })
+                .setNegativeButton(getString(R.string.exit), (dialog, which) -> {
+                    dialog.dismiss();
+                    Storage.chess = null;
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    /**
+     * Build game statistics string
+     */
+    private String buildGameStats() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("━━━━━━━━━━━━━━━━━━━━\n");
+        sb.append(getString(R.string.stats_title)).append("\n\n");
+        sb.append("⏱ ").append(getString(R.string.stats_duration)).append(": ").append(chess.getFormattedDuration())
+                .append("\n");
+        sb.append("🎯 ").append(getString(R.string.stats_moves)).append(": ").append(chess.getMoveCount()).append("\n");
+        sb.append("⚪ ").append(getString(R.string.stats_white_captured)).append(": ")
+                .append(chess.getCapturedWhiteCount()).append("\n");
+        sb.append("⚫ ").append(getString(R.string.stats_black_captured)).append(": ")
+                .append(chess.getCapturedBlackCount());
+        return sb.toString();
     }
 
     private void initializeStatusBar() {

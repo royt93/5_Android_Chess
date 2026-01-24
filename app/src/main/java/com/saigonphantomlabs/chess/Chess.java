@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.saigonphantomlabs.ChessBoardActivity;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -41,6 +43,7 @@ public class Chess {
 
     // Game state
     private boolean gameEnd = false;
+    private long gameStartTime = System.currentTimeMillis();
 
     public King whiteKing = null;
     public King blackKing = null;
@@ -173,12 +176,14 @@ public class Chess {
     }
 
     public void doMove(Point from, Point to) {
+        Log.d("roy93~", "doMove: confirmed from (" + from.x + "," + from.y + ") to (" + to.x + "," + to.y + ")");
         // Store move info before making the move
         Chessman movedPiece = chessmen[from.x][from.y];
         Chessman capturedPiece = chessmen[to.x][to.y];
         boolean wasFirstMove = (movedPiece.type == Chessman.ChessmanType.Pawn) && ((Pawn) movedPiece).firstMove;
 
         if (move(from.x, from.y, to.x, to.y)) {
+            Log.d("roy93~", "doMove: move executed successfully on data model");
             // Record the move for history/undo
             MoveRecord record = new MoveRecord(from.x, from.y, to.x, to.y,
                     movedPiece, capturedPiece, null, wasFirstMove);
@@ -195,10 +200,13 @@ public class Chess {
                 promote(chessmen[to.x][to.y]);
 
             // Check opponent's king status after move
+            Log.d("roy93~", "doMove: checking opponent king status...");
             checkOpponentKingStatus();
 
             changeTurn();
             lastManPoint = null;
+        } else {
+            Log.e("roy93~", "doMove: move failed!");
         }
     }
 
@@ -241,23 +249,35 @@ public class Chess {
      */
     private void checkOpponentKingStatus() {
         King opponentKing = (whichPlayerTurn == Chessman.PlayerColor.White) ? blackKing : whiteKing;
+        Log.d("roy93~", "checkOpponentKingStatus: checking " + opponentKing.color + " king");
+
         King.KingRiskType status = validateKing(opponentKing);
+        Log.d("roy93~", "checkOpponentKingStatus: status = " + status);
 
         // Clear any previous check animation
         clearCheckAnimation();
 
         if (status == King.KingRiskType.CheckMate) {
+            Log.d("roy93~", "checkOpponentKingStatus: CHECKMATE detected!");
             gameEnd = true;
             playCheckSound();
             showCheckAnimation(opponentKing);
-            // Show game end dialog
+            // Show game end dialog - current player wins
             ((ChessBoardActivity) ctx).showGameEndDialog(
                     whichPlayerTurn == Chessman.PlayerColor.White);
+        } else if (status == King.KingRiskType.Stalemate) {
+            Log.d("roy93~", "checkOpponentKingStatus: STALEMATE detected!");
+            gameEnd = true;
+            // Show stalemate dialog - draw
+            ((ChessBoardActivity) ctx).showStalemateDialog();
         } else if (status == King.KingRiskType.Check) {
+            Log.d("roy93~", "checkOpponentKingStatus: CHECK detected!");
             kingInCheck = opponentKing;
             playCheckSound();
             showCheckAnimation(opponentKing);
             Toast.makeText(ctx, R.string.check, Toast.LENGTH_SHORT).show();
+        } else {
+            Log.d("roy93~", "checkOpponentKingStatus: SAFE - game continues");
         }
     }
 
@@ -321,33 +341,136 @@ public class Chess {
     }
 
     private King.KingRiskType validateKing(King k) {
+        Log.d("roy93~",
+                "validateKing: checking " + k.color + " king at (" + k.getPoint().x + "," + k.getPoint().y + ")");
         k.generateMoves();
+        Log.d("roy93~", "validateKing: king has " + k.moves.size() + " potential moves");
 
-        boolean check = !k.isPointSafe();
+        boolean inCheck = !k.isPointSafe();
+        Log.d("roy93~", "validateKing: inCheck = " + inCheck);
 
-        if (!check) {
-            return King.KingRiskType.Safe;
-        }
-
-        // King is in check - need to determine if it's checkmate
-        // Checkmate occurs when:
-        // 1. King cannot move to a safe square, AND
-        // 2. No other piece can block/capture to remove the check
-
-        // Check if king can escape
+        // Check if king can move to any safe square (with simulation)
+        boolean kingCanMove = false;
         for (Point p : k.moves) {
-            if (k.isPointSafe(p)) {
-                return King.KingRiskType.Check; // King can escape
+            boolean moveSafe = isKingMoveSafe(k, p);
+            Log.d("roy93~", "validateKing: king move to (" + p.x + "," + p.y + ") safe = " + moveSafe);
+            if (moveSafe) {
+                kingCanMove = true;
+                break;
             }
         }
+        Log.d("roy93~", "validateKing: kingCanMove = " + kingCanMove);
 
-        // King cannot move - check if any other piece can save the king
-        if (canAnyPieceSaveKing(k)) {
-            return King.KingRiskType.Check; // Another piece can save
+        // Check if any other piece has legal moves
+        boolean otherPiecesCanMove = hasAnyLegalMove(k.color);
+        Log.d("roy93~", "validateKing: otherPiecesCanMove = " + otherPiecesCanMove);
+
+        if (inCheck) {
+            // King is in check
+            Log.d("roy93~", "validateKing: King IS in check");
+            if (kingCanMove) {
+                Log.d("roy93~", "validateKing: returning CHECK (king can escape)");
+                return King.KingRiskType.Check; // King can escape
+            }
+            boolean canSave = canAnyPieceSaveKing(k);
+            Log.d("roy93~", "validateKing: canAnyPieceSaveKing = " + canSave);
+            if (canSave) {
+                Log.d("roy93~", "validateKing: returning CHECK (piece can save)");
+                return King.KingRiskType.Check; // Another piece can save
+            }
+            Log.d("roy93~", "validateKing: returning CHECKMATE");
+            return King.KingRiskType.CheckMate;
+        } else {
+            // King is NOT in check
+            Log.d("roy93~", "validateKing: King is NOT in check");
+            if (!kingCanMove && !otherPiecesCanMove) {
+                Log.d("roy93~", "validateKing: returning STALEMATE");
+                return King.KingRiskType.Stalemate;
+            }
+            Log.d("roy93~", "validateKing: returning SAFE");
+            return King.KingRiskType.Safe;
         }
+    }
 
-        // No escape possible - it's checkmate
-        return King.KingRiskType.CheckMate;
+    /**
+     * Check if King moving to target point would be safe (simulates the move)
+     */
+    private boolean isKingMoveSafe(King k, Point target) {
+        Point originalPos = k.getPoint();
+        Chessman capturedPiece = chessmen[target.x][target.y];
+
+        // Simulate King's move
+        chessmen[target.x][target.y] = k;
+        chessmen[originalPos.x][originalPos.y] = null;
+        k.setPoint(target);
+
+        // Check if King is safe at new position
+        boolean isSafe = k.isPointSafe();
+        Log.d("roy93~",
+                "isKingMoveSafe: " + k.color + " King moving to (" + target.x + "," + target.y + ") safe=" + isSafe);
+
+        // Undo simulation
+        chessmen[originalPos.x][originalPos.y] = k;
+        chessmen[target.x][target.y] = capturedPiece;
+        k.setPoint(originalPos);
+
+        return isSafe;
+    }
+
+    /**
+     * Check if any piece of the given color has any legal moves
+     */
+    private boolean hasAnyLegalMove(Chessman.PlayerColor color) {
+        King k = (color == Chessman.PlayerColor.White) ? whiteKing : blackKing;
+        Log.d("roy93~", "hasAnyLegalMove: checking for " + color);
+
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Chessman piece = chessmen[x][y];
+                if (piece != null && !piece.isDead && piece.color == color
+                        && piece.type != Chessman.ChessmanType.King) {
+                    piece.generateMoves();
+                    // Log.d("roy93~", "hasAnyLegalMove: piece " + piece.type + " at (" + x + "," +
+                    // y + ") has " + piece.moves.size() + " moves");
+
+                    // Check if any move is legal (doesn't put own king in check)
+                    for (Point target : piece.moves) {
+                        if (isMoveLegal(piece, target, k)) {
+                            Log.d("roy93~", "hasAnyLegalMove: FOUND legal move! Piece " + piece.type + " at (" + x + ","
+                                    + y + ") to (" + target.x + "," + target.y + ")");
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        Log.d("roy93~", "hasAnyLegalMove: NO legal moves found for any piece!");
+        return false;
+    }
+
+    /**
+     * Check if a move is legal (doesn't put own king in check)
+     */
+    private boolean isMoveLegal(Chessman piece, Point target, King k) {
+        Point originalPos = piece.getPoint();
+        Chessman capturedPiece = chessmen[target.x][target.y];
+
+        // Simulate the move
+        chessmen[target.x][target.y] = piece;
+        chessmen[originalPos.x][originalPos.y] = null;
+        piece.setPoint(target);
+
+        // Check if our king is in check after this move
+        boolean kingInCheck = !k.isPointSafe();
+        // Log.d("roy93~", "isMoveLegal: checking " + piece.type + " to (" + target.x +
+        // "," + target.y + ") -> kingInCheck=" + kingInCheck);
+
+        // Undo the simulation
+        chessmen[originalPos.x][originalPos.y] = piece;
+        chessmen[target.x][target.y] = capturedPiece;
+        piece.setPoint(originalPos);
+
+        return !kingInCheck;
     }
 
     /**
@@ -355,6 +478,7 @@ public class Chess {
      */
     private boolean canAnyPieceSaveKing(King k) {
         Chessman.PlayerColor kingColor = k.color;
+        Log.d("roy93~", "canAnyPieceSaveKing: checking for " + kingColor);
 
         // Try all pieces of the same color
         for (int x = 0; x < 8; x++) {
@@ -679,6 +803,54 @@ public class Chess {
     }
 
     /**
+     * Get total move count
+     */
+    public int getMoveCount() {
+        return moveHistory.size();
+    }
+
+    /**
+     * Get game duration in milliseconds
+     */
+    public long getGameDurationMs() {
+        return System.currentTimeMillis() - gameStartTime;
+    }
+
+    /**
+     * Get formatted game duration string (MM:SS)
+     */
+    public String getFormattedDuration() {
+        long durationMs = getGameDurationMs();
+        long seconds = (durationMs / 1000) % 60;
+        long minutes = (durationMs / 1000) / 60;
+        return String.format(java.util.Locale.getDefault(), "%02d:%02d", minutes, seconds);
+    }
+
+    /**
+     * Get count of captured white pieces
+     */
+    public int getCapturedWhiteCount() {
+        int count = 0;
+        for (Chessman man : deadMen) {
+            if (man.color == Chessman.PlayerColor.White)
+                count++;
+        }
+        return count;
+    }
+
+    /**
+     * Get count of captured black pieces
+     */
+    public int getCapturedBlackCount() {
+        int count = 0;
+        for (Chessman man : deadMen) {
+            if (man.color == Chessman.PlayerColor.Black)
+                count++;
+        }
+        return count;
+    }
+
+    /**
      * Undo the last move
      */
     public void undoLastMove() {
@@ -760,6 +932,7 @@ public class Chess {
         moveHistory.clear();
         deadMen.clear();
         gameEnd = false;
+        gameStartTime = System.currentTimeMillis();
 
         // Clear animations
         clearSelectionHighlight();
