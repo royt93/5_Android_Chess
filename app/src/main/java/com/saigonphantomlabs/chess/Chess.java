@@ -1,12 +1,20 @@
 package com.saigonphantomlabs.chess;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -18,7 +26,7 @@ import java.util.ArrayList;
 
 public class Chess {
     public ArrayList<Chessman> deadMen = new ArrayList<>();
-    public Chessman[/*column - x*/][/*row - y*/] chessmen = new Chessman[8][8];
+    public Chessman[/* column - x */][/* row - y */] chessmen = new Chessman[8][8];
     public Chessman.PlayerColor whichPlayerTurn = Chessman.PlayerColor.Black;
     public Point lastManPoint = null;
     public Context ctx;
@@ -28,29 +36,33 @@ public class Chess {
 
     public ArrayList<View> validMoveButtons = new ArrayList<>();
 
-    //todo : try to remove this property if not needed
+    // todo : try to remove this property if not needed
     private final boolean gameEnd = false;
 
     public King whiteKing = null;
     public King blackKing = null;
 
+    // Selection highlight animation
+    private Chessman selectedPiece = null;
+    private ObjectAnimator selectionPulseAnimator = null;
 
     public Chess(Context ctx, int minDimension, FrameLayout boardLayout) {
         setLayoutParams(ctx, minDimension, boardLayout);
 
-        /*          BOARD
-         *    <  X  >
-         *    RkbQKBkR    WBWBWBWB
-         *  < PPPPPPPP    BWBWBWBW
-         *    ..BLACK.    WBWBWBWB
-         *  y ........    BWBWBWBW
-         *    ........    WBWBWBWB
-         *  > .WHITE..    BWBWBWBW
-         *    PPPPPPPP    WBWBWBWB
-         *    RkBQKBkR    BWBWBWBW
-         * */
+        /*
+         * BOARD
+         * < X >
+         * RkbQKBkR WBWBWBWB
+         * < PPPPPPPP BWBWBWBW
+         * ..BLACK. WBWBWBWB
+         * y ........ BWBWBWBW
+         * ........ WBWBWBWB
+         * > .WHITE.. BWBWBWBW
+         * PPPPPPPP WBWBWBWB
+         * RkBQKBkR BWBWBWBW
+         */
 
-        //first row
+        // first row
         chessmen[0][0] = new Rook(new Point(0, 0), Chessman.PlayerColor.Black, minDimension, this);
         chessmen[1][0] = new Knight(new Point(1, 0), Chessman.PlayerColor.Black, minDimension, this);
         chessmen[2][0] = new Bishop(new Point(2, 0), Chessman.PlayerColor.Black, minDimension, this);
@@ -60,7 +72,7 @@ public class Chess {
         chessmen[6][0] = new Knight(new Point(6, 0), Chessman.PlayerColor.Black, minDimension, this);
         chessmen[7][0] = new Rook(new Point(7, 0), Chessman.PlayerColor.Black, minDimension, this);
 
-        //second row
+        // second row
         chessmen[0][1] = new Pawn(new Point(0, 1), Chessman.PlayerColor.Black, minDimension, this);
         chessmen[1][1] = new Pawn(new Point(1, 1), Chessman.PlayerColor.Black, minDimension, this);
         chessmen[2][1] = new Pawn(new Point(2, 1), Chessman.PlayerColor.Black, minDimension, this);
@@ -70,7 +82,7 @@ public class Chess {
         chessmen[6][1] = new Pawn(new Point(6, 1), Chessman.PlayerColor.Black, minDimension, this);
         chessmen[7][1] = new Pawn(new Point(7, 1), Chessman.PlayerColor.Black, minDimension, this);
 
-        //seventh row
+        // seventh row
         chessmen[0][6] = new Pawn(new Point(0, 6), Chessman.PlayerColor.White, minDimension, this);
         chessmen[1][6] = new Pawn(new Point(1, 6), Chessman.PlayerColor.White, minDimension, this);
         chessmen[2][6] = new Pawn(new Point(2, 6), Chessman.PlayerColor.White, minDimension, this);
@@ -80,7 +92,7 @@ public class Chess {
         chessmen[6][6] = new Pawn(new Point(6, 6), Chessman.PlayerColor.White, minDimension, this);
         chessmen[7][6] = new Pawn(new Point(7, 6), Chessman.PlayerColor.White, minDimension, this);
 
-        //eighth row
+        // eighth row
         chessmen[0][7] = new Rook(new Point(0, 7), Chessman.PlayerColor.White, minDimension, this);
         chessmen[1][7] = new Knight(new Point(1, 7), Chessman.PlayerColor.White, minDimension, this);
         chessmen[2][7] = new Bishop(new Point(2, 7), Chessman.PlayerColor.White, minDimension, this);
@@ -120,9 +132,18 @@ public class Chess {
         if (gameEnd)
             return;
         if (man.color == whichPlayerTurn) {
+            // First, reset valid move buttons (this also clears old selection)
+            resetValidMoveButtons();
+
             lastManPoint = man.getPoint();
 
-            resetValidMoveButtons();
+            // Add haptic feedback on selection
+            performHapticFeedback(man.button, HapticFeedbackConstants.VIRTUAL_KEY);
+
+            // Set new selection and start highlight animation AFTER reset
+            selectedPiece = man;
+            startSelectionPulse(man);
+
             chessmen[lastManPoint.x][lastManPoint.y].generateMoves();
             addValidMoveButtons(chessmen[lastManPoint.x][lastManPoint.y].moves);
         } else if (lastManPoint != null && chessmen[lastManPoint.x][lastManPoint.y].moves.contains(man.getPoint())) {
@@ -145,8 +166,11 @@ public class Chess {
         if (move(from.x, from.y, to.x, to.y)) {
             resetValidMoveButtons();
             if (chessmen[to.x][to.y].type == Chessman.ChessmanType.Pawn &&
-                    (chessmen[to.x][to.y].color == Chessman.PlayerColor.White && chessmen[to.x][to.y].getPoint().y == 0 //white reaches end
-                            || chessmen[to.x][to.y].color == Chessman.PlayerColor.Black && chessmen[to.x][to.y].getPoint().y == 7)) //black reaches end
+                    (chessmen[to.x][to.y].color == Chessman.PlayerColor.White && chessmen[to.x][to.y].getPoint().y == 0 // white
+                                                                                                                        // reaches
+                                                                                                                        // end
+                            || chessmen[to.x][to.y].color == Chessman.PlayerColor.Black
+                                    && chessmen[to.x][to.y].getPoint().y == 7)) // black reaches end
                 promote(chessmen[to.x][to.y]);
             changeTurn();
             lastManPoint = null;
@@ -205,6 +229,9 @@ public class Chess {
     public void kill(Chessman m) {
         deadMen.add(m);
         m.isDead = true;
+
+        // Haptic feedback for capture
+        performCaptureHaptic();
 
         // Add death animation - spin and fade out
         m.button.animate()
@@ -352,13 +379,13 @@ public class Chess {
             }
     }
 
-
-    public void createValidMoveButton(Point p) {
+    public void createValidMoveButton(Point p, int index) {
         ImageButton btn = new ImageButton(ctx);
         int width = minDimension / 8;
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, width);
 
-        lp.setMargins(width * p.x, width * p.y, minDimension - (width * p.x + width), minDimension - (width * p.y + width));
+        lp.setMargins(width * p.x, width * p.y, minDimension - (width * p.x + width),
+                minDimension - (width * p.y + width));
 
         btn.setLayoutParams(lp);
         btn.setBackground(ctx.getResources().getDrawable(R.drawable.ic_point, ctx.getTheme()));
@@ -367,20 +394,99 @@ public class Chess {
             onBoardClick(p.x, p.y);
         });
 
+        // Start with invisible and scaled down
+        btn.setAlpha(0f);
+        btn.setScaleX(0f);
+        btn.setScaleY(0f);
+
         validMoveButtons.add(btn);
         boardLayout.addView(btn);
+
+        // Animate pop-in with stagger effect
+        btn.animate()
+                .alpha(0.85f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setStartDelay(index * 30L)
+                .setDuration(200)
+                .setInterpolator(new OvershootInterpolator(2f))
+                .start();
     }
 
     public void addValidMoveButtons(ArrayList<Point> validMoves) {
+        int index = 0;
         for (Point p : validMoves) {
-            createValidMoveButton(p);
+            createValidMoveButton(p, index);
+            index++;
         }
     }
 
     public void resetValidMoveButtons() {
+        // Clear selection when moves are reset
+        clearSelectionHighlight();
+
         for (View v : validMoveButtons)
             ((ViewGroup) v.getParent()).removeView(v);
 
         validMoveButtons.clear();
+    }
+
+    /**
+     * Start a pulsing animation on the selected piece
+     */
+    private void startSelectionPulse(Chessman man) {
+        if (man == null || man.button == null)
+            return;
+
+        // Create pulse animation using PropertyValuesHolder
+        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.1f, 1.0f);
+        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.1f, 1.0f);
+
+        selectionPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(man.button, scaleX, scaleY);
+        selectionPulseAnimator.setDuration(800);
+        selectionPulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        selectionPulseAnimator.start();
+    }
+
+    /**
+     * Clear selection highlight from previously selected piece
+     */
+    private void clearSelectionHighlight() {
+        if (selectionPulseAnimator != null) {
+            selectionPulseAnimator.cancel();
+            selectionPulseAnimator = null;
+        }
+        if (selectedPiece != null && selectedPiece.button != null) {
+            // Reset to normal state
+            selectedPiece.button.setScaleX(1.0f);
+            selectedPiece.button.setScaleY(1.0f);
+        }
+        selectedPiece = null;
+    }
+
+    /**
+     * Perform haptic feedback for tactile response
+     */
+    private void performHapticFeedback(View view, int feedbackType) {
+        if (view != null) {
+            view.performHapticFeedback(feedbackType,
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        }
+    }
+
+    /**
+     * Perform stronger haptic feedback for capture actions
+     */
+    public void performCaptureHaptic() {
+        if (ctx != null) {
+            Vibrator vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    vibrator.vibrate(50);
+                }
+            }
+        }
     }
 }

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +39,12 @@ import com.saigonphantomlabs.sdkadbmob.UIUtils;
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
+    private LinearLayout btnStartGame;
+    private LinearLayout btnRateApp;
+    private LinearLayout btnMoreApps;
+    private LinearLayout btnShareApp;
+    private TextView tvVersion;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,20 +54,21 @@ public class SplashActivity extends AppCompatActivity {
                 true,
                 true);
         setupViews();
+        animateEntryViews();
     }
 
     private void setupViews() {
-        //hiding actionbar
+        // hiding actionbar
         if (this.getSupportActionBar() != null) {
             this.getSupportActionBar().hide();
         }
 
-        LinearLayout btnStartGame = findViewById(R.id.btnStartGame);
-        LinearLayout btnRateApp = findViewById(R.id.btnRateApp);
-        LinearLayout btnMoreApps = findViewById(R.id.btnMoreApps);
-        LinearLayout btnShareApp = findViewById(R.id.btnShareApp);
+        btnStartGame = findViewById(R.id.btnStartGame);
+        btnRateApp = findViewById(R.id.btnRateApp);
+        btnMoreApps = findViewById(R.id.btnMoreApps);
+        btnShareApp = findViewById(R.id.btnShareApp);
         ImageView ivBkg = findViewById(R.id.ivBkg);
-        TextView tvVersion = findViewById(R.id.tvVersionTop);
+        tvVersion = findViewById(R.id.tvVersionTop);
 
         String versionName = BuildConfig.VERSION_NAME;
         tvVersion.setText(getString(R.string.version_format, versionName));
@@ -76,6 +85,8 @@ public class SplashActivity extends AppCompatActivity {
             public void onSafeClick(View view) {
                 Intent switchActivityIntent = new Intent(SplashActivity.this, ChessBoardActivity.class);
                 startActivity(switchActivityIntent);
+                // Activity transition animation
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
@@ -148,6 +159,68 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share_app)));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Animate entry of all interactive views with cascading effect
+     */
+    private void animateEntryViews() {
+        // Array of views to animate with their delays
+        View[] topViews = { tvVersion };
+        View[] mainViews = { btnStartGame };
+        View[] bottomViews = { btnRateApp, btnMoreApps, btnShareApp };
+
+        // Initially hide all views
+        for (View v : topViews) {
+            v.setAlpha(0f);
+            v.setTranslationY(-50f);
+        }
+        for (View v : mainViews) {
+            v.setAlpha(0f);
+            v.setScaleX(0.3f);
+            v.setScaleY(0.3f);
+        }
+        for (View v : bottomViews) {
+            v.setAlpha(0f);
+            v.setTranslationY(100f);
+        }
+
+        // Animate top views - fade in from top
+        for (int i = 0; i < topViews.length; i++) {
+            View v = topViews[i];
+            v.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setStartDelay(200 + i * 100L)
+                    .setDuration(400)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .start();
+        }
+
+        // Animate main button - scale up with overshoot
+        for (int i = 0; i < mainViews.length; i++) {
+            View v = mainViews[i];
+            v.animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setStartDelay(400 + i * 100L)
+                    .setDuration(500)
+                    .setInterpolator(new OvershootInterpolator(1.5f))
+                    .start();
+        }
+
+        // Animate bottom buttons - cascading slide up
+        for (int i = 0; i < bottomViews.length; i++) {
+            View v = bottomViews[i];
+            v.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setStartDelay(600 + i * 80L)
+                    .setDuration(400)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .start();
         }
     }
 }

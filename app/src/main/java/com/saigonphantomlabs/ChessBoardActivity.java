@@ -1,6 +1,7 @@
 package com.saigonphantomlabs;
 
 import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +40,9 @@ public class ChessBoardActivity extends AppCompatActivity {
     public int blackColor;
     public int whiteColor;
 
+    // Animation references for cleanup
+    private ObjectAnimator currentBlinkAnimator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,21 +52,21 @@ public class ChessBoardActivity extends AppCompatActivity {
         // Initialize status bar for dynamic tint changes
         initializeStatusBar();
 
-        //hiding actionbar
+        // hiding actionbar
         if (this.getSupportActionBar() != null) {
             this.getSupportActionBar().hide();
         }
 
-        //change background
+        // change background
         backgroundLayout = findViewById(R.id.backgroundLayout);
 
-        //initiate black and white colors
-//        blackColor = getResources().getColor(R.color.white);
-//        whiteColor = getResources().getColor(R.color.black);
+        // initiate black and white colors
+        // blackColor = getResources().getColor(R.color.white);
+        // whiteColor = getResources().getColor(R.color.black);
         blackColor = ContextCompat.getColor(this, R.color.white);
         whiteColor = ContextCompat.getColor(this, R.color.black);
 
-        //set display params
+        // set display params
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         displayHeight = displayMetrics.heightPixels;
@@ -98,20 +102,23 @@ public class ChessBoardActivity extends AppCompatActivity {
         if (event.getAction() != MotionEvent.ACTION_DOWN)
             return false;
         int t = displayMinDimensions / 8;
-        //chess.onBoardClick((int)event.getX() % (displayMinDimensions/8), (int)event.getY()%(displayMinDimensions/8));
+        // chess.onBoardClick((int)event.getX() % (displayMinDimensions/8),
+        // (int)event.getY()%(displayMinDimensions/8));
         chess.onBoardClick(((int) event.getX()) / t, ((int) event.getY()) / t);
         return true;
     }
 
     public void showPromotionActivity() {
         startActivityForResult(new Intent(this, PawnPromotionActivity.class), 1);
+        // Slide up animation for promotion dialog style
+        overridePendingTransition(R.anim.slide_up, R.anim.slide_out_left);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //Toast.makeText(this, Storage.result.toString(), Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, Storage.result.toString(), Toast.LENGTH_SHORT).show();
         chess.promotionResault(Storage.result);
     }
 
@@ -124,6 +131,7 @@ public class ChessBoardActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         finish();
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                     }
                 })
                 .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -140,10 +148,12 @@ public class ChessBoardActivity extends AppCompatActivity {
 
         // Add custom button colors and styling
         if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
         }
         if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    .setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark));
         }
     }
 
@@ -162,7 +172,8 @@ public class ChessBoardActivity extends AppCompatActivity {
             colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), blackColor, whiteColor);
 
         colorAnimation.setDuration(300); // milliseconds
-        colorAnimation.addUpdateListener(animator -> backgroundLayout.setBackgroundColor((int) animator.getAnimatedValue()));
+        colorAnimation
+                .addUpdateListener(animator -> backgroundLayout.setBackgroundColor((int) animator.getAnimatedValue()));
         colorAnimation.start();
     }
 
@@ -182,27 +193,17 @@ public class ChessBoardActivity extends AppCompatActivity {
 
     private void startBlinkingAnimation(View indicator) {
         // Stop any existing animation
+        if (currentBlinkAnimator != null) {
+            currentBlinkAnimator.cancel();
+        }
         indicator.clearAnimation();
 
-        // Create blinking effect
-        indicator.animate()
-                .alpha(0.3f)
-                .setDuration(400)
-                .withEndAction(() -> {
-                    if (indicator.getVisibility() == View.VISIBLE) {
-                        indicator.animate()
-                                .alpha(1.0f)
-                                .setDuration(400)
-                                .withEndAction(() -> {
-                                    if (indicator.getVisibility() == View.VISIBLE) {
-                                        // Continue blinking in a loop
-                                        startBlinkingAnimation(indicator);
-                                    }
-                                })
-                                .start();
-                    }
-                })
-                .start();
+        // Create blinking effect using ObjectAnimator for better sync
+        currentBlinkAnimator = ObjectAnimator.ofFloat(indicator, "alpha", 1f, 0.3f);
+        currentBlinkAnimator.setDuration(400);
+        currentBlinkAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        currentBlinkAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        currentBlinkAnimator.start();
     }
 
     private void initializeStatusBar() {
@@ -239,7 +240,8 @@ public class ChessBoardActivity extends AppCompatActivity {
             int flags = decorView.getSystemUiVisibility();
 
             if (turn == Chessman.PlayerColor.White) {
-                // White turn: Dark status bar and navigation bar icons (for light background feel)
+                // White turn: Dark status bar and navigation bar icons (for light background
+                // feel)
                 flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 
                 // Add navigation bar light icons for API 26+ (Android 8.0)
@@ -247,7 +249,8 @@ public class ChessBoardActivity extends AppCompatActivity {
                     flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
                 }
             } else {
-                // Black turn: Light status bar and navigation bar icons (for dark background feel)
+                // Black turn: Light status bar and navigation bar icons (for dark background
+                // feel)
                 flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 
                 // Remove navigation bar light icons for API 26+ (Android 8.0)

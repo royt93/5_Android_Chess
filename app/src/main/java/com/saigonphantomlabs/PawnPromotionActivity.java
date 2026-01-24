@@ -62,6 +62,8 @@ public class PawnPromotionActivity extends AppCompatActivity {
         Intent returnIntent = new Intent();
         setResult(Activity.RESULT_CANCELED, returnIntent);
         finish();
+        // Slide down animation when dismissing
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_down);
     }
 
 }
