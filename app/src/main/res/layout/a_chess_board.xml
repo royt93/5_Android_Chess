@@ -7,27 +7,53 @@
     android:layout_height="match_parent"
     tools:context="com.saigonphantomlabs.ChessBoardActivity">
 
-    <!-- Turn Indicator Circle for Black (TOP) -->
+    <!-- Captured pieces for Black (shows WHITE pieces captured by black) -->
+    <HorizontalScrollView
+        android:id="@+id/capturedBlackPieces"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/bg_captured_white"
+        android:scrollbars="none"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/capturedBlackPiecesContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <!-- Turn Indicator for Black -->
     <View
         android:id="@+id/blackTurnIndicator"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="56dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/circle_red"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/capturedBlackPieces"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Chess Board - FIXED POSITION using vertical bias -->
     <FrameLayout
         android:id="@+id/boardLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/brown"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.5">
 
         <ImageView
             android:id="@+id/boardImage"
@@ -37,16 +63,80 @@
             android:contentDescription="@string/app_name" />
     </FrameLayout>
 
-    <!-- Turn Indicator Circle for White (BOTTOM) -->
+    <!-- Turn Indicator for White -->
     <View
         android:id="@+id/whiteTurnIndicator"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginBottom="56dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/circle_red"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/capturedWhitePieces"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Captured pieces for White (shows BLACK pieces captured by white) -->
+    <HorizontalScrollView
+        android:id="@+id/capturedWhitePieces"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_captured_black"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/buttonContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/capturedWhitePiecesContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <!-- Button Container -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Restart Button - Always visible -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRestart"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/play_again"
+            android:textColor="#FFFFFF"
+            app:icon="@drawable/ic_restart"
+            app:iconTint="#FFFFFF"
+            app:backgroundTint="#4CAF50"
+            app:cornerRadius="24dp" />
+
+        <!-- Undo Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUndo"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/undo"
+            android:textColor="#FFFFFF"
+            android:visibility="gone"
+            app:icon="@drawable/ic_undo"
+            app:iconTint="#FFFFFF"
+            app:backgroundTint="#FF5722"
+            app:cornerRadius="24dp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

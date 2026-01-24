@@ -17,4 +17,14 @@
     <string name="share_message">Check out this amazing chess game: Quick Chess!</string>
     <string name="share_subject">Quick Chess - Play Chess Now!</string>
     <string name="start_game">START GAME</string>
+    <string name="undo">Undo</string>
+    <string name="check">Check!</string>
+    <string name="checkmate">Checkmate!</string>
+    <string name="white_wins">White Wins!</string>
+    <string name="black_wins">Black Wins!</string>
+    <string name="game_over">Game Over</string>
+    <string name="play_again">Play Again</string>
+    <string name="illegal_move">Illegal movement!</string>
+    <string name="no_undo_available">No moves to undo</string>
+    <string name="restart_confirm">Start a new game?</string>
 </resources>

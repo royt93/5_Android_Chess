@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.VibrationEffect;
@@ -17,12 +18,14 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.saigonphantomlabs.ChessBoardActivity;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Chess {
     public ArrayList<Chessman> deadMen = new ArrayList<>();
@@ -36,8 +39,8 @@ public class Chess {
 
     public ArrayList<View> validMoveButtons = new ArrayList<>();
 
-    // todo : try to remove this property if not needed
-    private final boolean gameEnd = false;
+    // Game state
+    private boolean gameEnd = false;
 
     public King whiteKing = null;
     public King blackKing = null;
@@ -45,6 +48,13 @@ public class Chess {
     // Selection highlight animation
     private Chessman selectedPiece = null;
     private ObjectAnimator selectionPulseAnimator = null;
+
+    // Move history for undo and display
+    private Stack<MoveRecord> moveHistory = new Stack<>();
+
+    // Check state tracking
+    private ObjectAnimator checkFlashAnimator = null;
+    private King kingInCheck = null;
 
     public Chess(Context ctx, int minDimension, FrameLayout boardLayout) {
         setLayoutParams(ctx, minDimension, boardLayout);
@@ -163,15 +173,30 @@ public class Chess {
     }
 
     public void doMove(Point from, Point to) {
+        // Store move info before making the move
+        Chessman movedPiece = chessmen[from.x][from.y];
+        Chessman capturedPiece = chessmen[to.x][to.y];
+        boolean wasFirstMove = (movedPiece.type == Chessman.ChessmanType.Pawn) && ((Pawn) movedPiece).firstMove;
+
         if (move(from.x, from.y, to.x, to.y)) {
+            // Record the move for history/undo
+            MoveRecord record = new MoveRecord(from.x, from.y, to.x, to.y,
+                    movedPiece, capturedPiece, null, wasFirstMove);
+            moveHistory.push(record);
+
+            // Update undo button visibility
+            ((ChessBoardActivity) ctx).updateUndoButton(true);
+
             resetValidMoveButtons();
             if (chessmen[to.x][to.y].type == Chessman.ChessmanType.Pawn &&
-                    (chessmen[to.x][to.y].color == Chessman.PlayerColor.White && chessmen[to.x][to.y].getPoint().y == 0 // white
-                                                                                                                        // reaches
-                                                                                                                        // end
+                    (chessmen[to.x][to.y].color == Chessman.PlayerColor.White && chessmen[to.x][to.y].getPoint().y == 0
                             || chessmen[to.x][to.y].color == Chessman.PlayerColor.Black
-                                    && chessmen[to.x][to.y].getPoint().y == 7)) // black reaches end
+                                    && chessmen[to.x][to.y].getPoint().y == 7))
                 promote(chessmen[to.x][to.y]);
+
+            // Check opponent's king status after move
+            checkOpponentKingStatus();
+
             changeTurn();
             lastManPoint = null;
         }
@@ -190,8 +215,11 @@ public class Chess {
             relatedKingStatus = validateKing(blackKing);
 
         if (relatedKingStatus == King.KingRiskType.Safe) {
-            if (tempMan != null)
+            if (tempMan != null) {
                 kill(tempMan);
+                // Add captured piece to display
+                ((ChessBoardActivity) ctx).addCapturedPiece(tempMan);
+            }
             chessmen[xt][yt].setPoint(new Point(xt, yt));
             chessmen[xt][yt].moveButton(xt, yt);
             if (chessmen[xt][yt].type == Chessman.ChessmanType.Pawn)
@@ -202,28 +230,174 @@ public class Chess {
         chessmen[xt][yt].setPoint(new Point(xf, yf));
         chessmen[xf][yf] = chessmen[xt][yt];
         chessmen[xt][yt] = tempMan;
-        Toast.makeText(ctx, "Illegal movement !", Toast.LENGTH_SHORT).show();
+        // Play illegal move sound
+        playIllegalMoveSound();
+        Toast.makeText(ctx, R.string.illegal_move, Toast.LENGTH_SHORT).show();
         return false;
+    }
+
+    /**
+     * Check opponent's king status after a move
+     */
+    private void checkOpponentKingStatus() {
+        King opponentKing = (whichPlayerTurn == Chessman.PlayerColor.White) ? blackKing : whiteKing;
+        King.KingRiskType status = validateKing(opponentKing);
+
+        // Clear any previous check animation
+        clearCheckAnimation();
+
+        if (status == King.KingRiskType.CheckMate) {
+            gameEnd = true;
+            playCheckSound();
+            showCheckAnimation(opponentKing);
+            // Show game end dialog
+            ((ChessBoardActivity) ctx).showGameEndDialog(
+                    whichPlayerTurn == Chessman.PlayerColor.White);
+        } else if (status == King.KingRiskType.Check) {
+            kingInCheck = opponentKing;
+            playCheckSound();
+            showCheckAnimation(opponentKing);
+            Toast.makeText(ctx, R.string.check, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Show flashing animation on king when in check
+     */
+    private void showCheckAnimation(King king) {
+        if (king == null || king.button == null)
+            return;
+
+        // Flash animation using color overlay
+        checkFlashAnimator = ObjectAnimator.ofFloat(king.button, "alpha", 1f, 0.3f);
+        checkFlashAnimator.setDuration(200);
+        checkFlashAnimator.setRepeatCount(5);
+        checkFlashAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        checkFlashAnimator.start();
+    }
+
+    /**
+     * Clear check animation
+     */
+    private void clearCheckAnimation() {
+        if (checkFlashAnimator != null) {
+            checkFlashAnimator.cancel();
+            checkFlashAnimator = null;
+        }
+        if (kingInCheck != null && kingInCheck.button != null) {
+            kingInCheck.button.setAlpha(1f);
+        }
+        kingInCheck = null;
+    }
+
+    /**
+     * Play check warning sound
+     */
+    private void playCheckSound() {
+        try {
+            MediaPlayer mp = MediaPlayer.create(ctx, R.raw.chess_1);
+            if (mp != null) {
+                mp.setOnCompletionListener(MediaPlayer::release);
+                mp.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Play illegal move sound
+     */
+    private void playIllegalMoveSound() {
+        try {
+            MediaPlayer mp = MediaPlayer.create(ctx, R.raw.chess_2);
+            if (mp != null) {
+                mp.setOnCompletionListener(MediaPlayer::release);
+                mp.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private King.KingRiskType validateKing(King k) {
         k.generateMoves();
 
         boolean check = !k.isPointSafe();
-        boolean mate = true;
 
+        if (!check) {
+            return King.KingRiskType.Safe;
+        }
+
+        // King is in check - need to determine if it's checkmate
+        // Checkmate occurs when:
+        // 1. King cannot move to a safe square, AND
+        // 2. No other piece can block/capture to remove the check
+
+        // Check if king can escape
         for (Point p : k.moves) {
             if (k.isPointSafe(p)) {
-                mate = false;
-                break;
+                return King.KingRiskType.Check; // King can escape
             }
         }
 
-        if (check && mate)
-            return King.KingRiskType.CheckMate;
-        if (check)
-            return King.KingRiskType.Check;
-        return King.KingRiskType.Safe;
+        // King cannot move - check if any other piece can save the king
+        if (canAnyPieceSaveKing(k)) {
+            return King.KingRiskType.Check; // Another piece can save
+        }
+
+        // No escape possible - it's checkmate
+        return King.KingRiskType.CheckMate;
+    }
+
+    /**
+     * Check if any piece of the same color can make a move that removes the check
+     */
+    private boolean canAnyPieceSaveKing(King k) {
+        Chessman.PlayerColor kingColor = k.color;
+
+        // Try all pieces of the same color
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Chessman piece = chessmen[x][y];
+                if (piece != null && !piece.isDead && piece.color == kingColor
+                        && piece.type != Chessman.ChessmanType.King) {
+                    // Generate moves for this piece
+                    piece.generateMoves();
+
+                    // Try each move and see if it removes the check
+                    for (Point targetMove : piece.moves) {
+                        if (wouldMoveSaveKing(piece, targetMove, k)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Simulate a move and check if it would save the king from check
+     */
+    private boolean wouldMoveSaveKing(Chessman piece, Point target, King k) {
+        Point originalPos = piece.getPoint();
+        Chessman capturedPiece = chessmen[target.x][target.y];
+
+        // Simulate the move
+        chessmen[target.x][target.y] = piece;
+        chessmen[originalPos.x][originalPos.y] = null;
+        piece.setPoint(target);
+
+        // Check if king is still in check
+        boolean stillInCheck = !k.isPointSafe();
+
+        // Undo the simulation
+        chessmen[originalPos.x][originalPos.y] = piece;
+        chessmen[target.x][target.y] = capturedPiece;
+        piece.setPoint(originalPos);
+
+        return !stillInCheck;
     }
 
     public void kill(Chessman m) {
@@ -486,6 +660,173 @@ public class Chess {
                 } else {
                     vibrator.vibrate(50);
                 }
+            }
+        }
+    }
+
+    /**
+     * Get move history for display
+     */
+    public ArrayList<MoveRecord> getMoveHistory() {
+        return new ArrayList<>(moveHistory);
+    }
+
+    /**
+     * Check if undo is available
+     */
+    public boolean canUndo() {
+        return !moveHistory.isEmpty();
+    }
+
+    /**
+     * Undo the last move
+     */
+    public void undoLastMove() {
+        if (moveHistory.isEmpty()) {
+            Toast.makeText(ctx, R.string.no_undo_available, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        MoveRecord lastMove = moveHistory.pop();
+
+        // Clear any selection
+        resetValidMoveButtons();
+        clearCheckAnimation();
+
+        // Move piece back to original position
+        Chessman movedPiece = chessmen[lastMove.toX][lastMove.toY];
+        chessmen[lastMove.fromX][lastMove.fromY] = movedPiece;
+        chessmen[lastMove.toX][lastMove.toY] = null;
+        movedPiece.setPoint(new Point(lastMove.fromX, lastMove.fromY));
+
+        // Animate piece back
+        movedPiece.moveButton(lastMove.fromX, lastMove.fromY);
+
+        // Restore first move status for pawns
+        if (lastMove.wasFirstMove && movedPiece.type == Chessman.ChessmanType.Pawn) {
+            ((Pawn) movedPiece).firstMove = true;
+        }
+
+        // Restore captured piece if any
+        if (lastMove.capturedPiece != null) {
+            Chessman restored = lastMove.capturedPiece;
+            chessmen[lastMove.toX][lastMove.toY] = restored;
+            restored.setPoint(new Point(lastMove.toX, lastMove.toY));
+            restored.isDead = false;
+            deadMen.remove(restored);
+
+            // Recreate button and animate back in
+            restored.createButton();
+            restored.button.setScaleX(0f);
+            restored.button.setScaleY(0f);
+            restored.button.setAlpha(0f);
+            boardLayout.addView(restored.button);
+
+            restored.button.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setInterpolator(new OvershootInterpolator())
+                    .start();
+
+            // Remove from captured pieces display
+            ((ChessBoardActivity) ctx).removeCapturedPiece(restored);
+        }
+
+        // Switch turn back
+        if (whichPlayerTurn == Chessman.PlayerColor.White)
+            whichPlayerTurn = Chessman.PlayerColor.Black;
+        else
+            whichPlayerTurn = Chessman.PlayerColor.White;
+
+        ((ChessBoardActivity) ctx).animateTurnChange(whichPlayerTurn);
+
+        // Reset game end state if was checkmate
+        gameEnd = false;
+
+        // Update undo button visibility
+        ((ChessBoardActivity) ctx).updateUndoButton(!moveHistory.isEmpty());
+
+        // Play undo sound
+        playIllegalMoveSound();
+    }
+
+    /**
+     * Reset game to initial state
+     */
+    public void resetGame() {
+        // Clear history
+        moveHistory.clear();
+        deadMen.clear();
+        gameEnd = false;
+
+        // Clear animations
+        clearSelectionHighlight();
+        clearCheckAnimation();
+        resetValidMoveButtons();
+
+        // Remove all pieces from board
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (chessmen[i][j] != null && chessmen[i][j].button != null) {
+                    if (chessmen[i][j].button.getParent() != null) {
+                        ((ViewGroup) chessmen[i][j].button.getParent()).removeView(chessmen[i][j].button);
+                    }
+                }
+                chessmen[i][j] = null;
+            }
+        }
+
+        // Reinitialize pieces
+        initializePieces();
+        addMenToBoard(boardLayout);
+        whichPlayerTurn = Chessman.PlayerColor.Black;
+        changeTurn();
+
+        // Update UI
+        ((ChessBoardActivity) ctx).updateUndoButton(false);
+        ((ChessBoardActivity) ctx).clearCapturedPieces();
+    }
+
+    /**
+     * Initialize pieces to starting positions
+     */
+    private void initializePieces() {
+        // first row
+        chessmen[0][0] = new Rook(new Point(0, 0), Chessman.PlayerColor.Black, minDimension, this);
+        chessmen[1][0] = new Knight(new Point(1, 0), Chessman.PlayerColor.Black, minDimension, this);
+        chessmen[2][0] = new Bishop(new Point(2, 0), Chessman.PlayerColor.Black, minDimension, this);
+        chessmen[3][0] = new Queen(new Point(3, 0), Chessman.PlayerColor.Black, minDimension, this);
+        chessmen[4][0] = blackKing = new King(new Point(4, 0), Chessman.PlayerColor.Black, minDimension, this);
+        chessmen[5][0] = new Bishop(new Point(5, 0), Chessman.PlayerColor.Black, minDimension, this);
+        chessmen[6][0] = new Knight(new Point(6, 0), Chessman.PlayerColor.Black, minDimension, this);
+        chessmen[7][0] = new Rook(new Point(7, 0), Chessman.PlayerColor.Black, minDimension, this);
+
+        // second row
+        for (int i = 0; i < 8; i++) {
+            chessmen[i][1] = new Pawn(new Point(i, 1), Chessman.PlayerColor.Black, minDimension, this);
+        }
+
+        // seventh row
+        for (int i = 0; i < 8; i++) {
+            chessmen[i][6] = new Pawn(new Point(i, 6), Chessman.PlayerColor.White, minDimension, this);
+        }
+
+        // eighth row
+        chessmen[0][7] = new Rook(new Point(0, 7), Chessman.PlayerColor.White, minDimension, this);
+        chessmen[1][7] = new Knight(new Point(1, 7), Chessman.PlayerColor.White, minDimension, this);
+        chessmen[2][7] = new Bishop(new Point(2, 7), Chessman.PlayerColor.White, minDimension, this);
+        chessmen[3][7] = new Queen(new Point(3, 7), Chessman.PlayerColor.White, minDimension, this);
+        chessmen[4][7] = whiteKing = new King(new Point(4, 7), Chessman.PlayerColor.White, minDimension, this);
+        chessmen[5][7] = new Bishop(new Point(5, 7), Chessman.PlayerColor.White, minDimension, this);
+        chessmen[6][7] = new Knight(new Point(6, 7), Chessman.PlayerColor.White, minDimension, this);
+        chessmen[7][7] = new Rook(new Point(7, 7), Chessman.PlayerColor.White, minDimension, this);
+
+        // Empty middle
+        for (int i = 0; i < 8; i++) {
+            for (int j = 2; j < 6; j++) {
+                chessmen[i][j] = null;
             }
         }
     }
