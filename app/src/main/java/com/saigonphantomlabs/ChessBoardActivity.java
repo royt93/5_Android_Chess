@@ -241,10 +241,20 @@ public class ChessBoardActivity extends AppCompatActivity {
     /**
      * Update undo button visibility
      */
+    /**
+     * Update undo button visibility (Delegates to generic method)
+     */
     public void updateUndoButton(boolean visible) {
+        updateGameButtons(visible, visible);
+    }
+
+    /**
+     * Update game buttons visibility independently
+     */
+    public void updateGameButtons(boolean showUndo, boolean showRestart) {
         // Update Undo Button
         if (btnUndo != null) {
-            if (visible && btnUndo.getVisibility() != View.VISIBLE) {
+            if (showUndo && btnUndo.getVisibility() != View.VISIBLE) {
                 btnUndo.setVisibility(View.VISIBLE);
                 btnUndo.setAlpha(0f);
                 btnUndo.setScaleX(0.5f);
@@ -256,7 +266,7 @@ public class ChessBoardActivity extends AppCompatActivity {
                         .setDuration(300)
                         .setInterpolator(new OvershootInterpolator())
                         .start();
-            } else if (!visible && btnUndo.getVisibility() == View.VISIBLE) {
+            } else if (!showUndo && btnUndo.getVisibility() == View.VISIBLE) {
                 btnUndo.animate()
                         .alpha(0f)
                         .scaleX(0.5f)
@@ -267,9 +277,9 @@ public class ChessBoardActivity extends AppCompatActivity {
             }
         }
 
-        // Update Restart Button (Follows same logic)
+        // Update Restart Button
         if (btnRestart != null) {
-            if (visible && btnRestart.getVisibility() != View.VISIBLE) {
+            if (showRestart && btnRestart.getVisibility() != View.VISIBLE) {
                 btnRestart.setVisibility(View.VISIBLE);
                 btnRestart.setAlpha(0f);
                 btnRestart.setScaleX(0.5f);
@@ -281,7 +291,7 @@ public class ChessBoardActivity extends AppCompatActivity {
                         .setDuration(300)
                         .setInterpolator(new OvershootInterpolator())
                         .start();
-            } else if (!visible && btnRestart.getVisibility() == View.VISIBLE) {
+            } else if (!showRestart && btnRestart.getVisibility() == View.VISIBLE) {
                 btnRestart.animate()
                         .alpha(0f)
                         .scaleX(0.5f)
@@ -464,8 +474,8 @@ public class ChessBoardActivity extends AppCompatActivity {
         // Setup actions
         btnReview.setOnClickListener(v -> {
             dialog.dismiss();
-            // Hide undo button when reviewing board
-            updateUndoButton(false);
+            // Hide undo button when reviewing board, but keep Play Again visible
+            updateGameButtons(false, true);
         });
 
         btnPlayAgain.setOnClickListener(v -> {

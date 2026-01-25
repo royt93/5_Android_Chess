@@ -116,7 +116,7 @@ public class DialogUtils {
                 context.getString(R.string.restart_confirm),
                 context.getString(R.string.yes),
                 context.getString(R.string.no),
-                R.drawable.ic_restart,
+                R.drawable.ic_restart_green,
                 onRestart,
                 null);
     }
