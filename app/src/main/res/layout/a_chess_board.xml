@@ -16,17 +16,17 @@
         android:layout_marginTop="40dp"
         android:background="@drawable/bg_captured_white"
         android:scrollbars="none"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/capturedBlackPiecesContainer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:paddingHorizontal="8dp"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp" />
     </HorizontalScrollView>
 
     <!-- Turn Indicator for Black -->
@@ -37,9 +37,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/circle_red"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/capturedBlackPieces"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/capturedBlackPieces" />
 
     <!-- Chess Board - FIXED POSITION using vertical bias -->
     <FrameLayout
@@ -47,13 +47,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/brown"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintWidth_percent="1"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintWidth_percent="1">
 
         <ImageView
             android:id="@+id/boardImage"
@@ -72,8 +72,8 @@
         android:background="@drawable/circle_red"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/capturedWhitePieces"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Captured pieces for White (shows BLACK pieces captured by white) -->
     <HorizontalScrollView
@@ -85,16 +85,16 @@
         android:background="@drawable/bg_captured_black"
         android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@id/buttonContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:id="@+id/capturedWhitePiecesContainer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:paddingHorizontal="8dp"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp" />
     </HorizontalScrollView>
 
     <!-- Button Container -->
@@ -102,12 +102,12 @@
         android:id="@+id/buttonContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="1dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintBottom_toTopOf="@id/ad_layout_include"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <!-- Restart Button - Always visible -->
         <com.google.android.material.button.MaterialButton
@@ -119,10 +119,10 @@
             android:text="@string/play_again"
             android:textColor="#FFFFFF"
             android:visibility="gone"
-            app:icon="@drawable/ic_restart"
-            app:iconTint="#FFFFFF"
             app:backgroundTint="#4CAF50"
-            app:cornerRadius="24dp" />
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_restart"
+            app:iconTint="#FFFFFF" />
 
         <!-- Undo Button -->
         <com.google.android.material.button.MaterialButton
@@ -133,14 +133,15 @@
             android:text="@string/undo"
             android:textColor="#FFFFFF"
             android:visibility="gone"
-            app:icon="@drawable/ic_undo"
-            app:iconTint="#FFFFFF"
             app:backgroundTint="#FF5722"
-            app:cornerRadius="24dp" />
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_undo"
+            app:iconTint="#FFFFFF" />
 
     </LinearLayout>
 
     <include
+        android:id="@+id/ad_layout_include"
         layout="@layout/layout_ad_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

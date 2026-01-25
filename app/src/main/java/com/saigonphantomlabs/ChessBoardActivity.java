@@ -94,6 +94,7 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
 
         // change background
         backgroundLayout = findViewById(R.id.backgroundLayout);
+        UIUtils.INSTANCE.setupEdgeToEdge2(backgroundLayout, true, true);
 
         // initiate black and white colors
         blackColor = ContextCompat.getColor(this, R.color.white);
@@ -202,8 +203,11 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     private void handleBackPress() {
         DialogUtils.showQuitDialog(this, () -> {
             Storage.chess = null;
-            finish();
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            AdMobManager.INSTANCE.showInterstitial(ChessBoardActivity.this, result -> {
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                return Unit.INSTANCE;
+            });
         });
     }
 
