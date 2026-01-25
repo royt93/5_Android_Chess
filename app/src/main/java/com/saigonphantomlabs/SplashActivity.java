@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.sdkadbmob.AdMobManager;
 import com.saigonphantomlabs.sdkadbmob.UIUtils;
@@ -19,8 +21,6 @@ import kotlin.jvm.functions.Function0;
 public class SplashActivity extends AppCompatActivity {
 
     private static final long MIN_SPLASH_DURATION = 1000L;
-    private ProgressBar progressBar;
-    private View rootLayout;
     private long splashStartTime;
     private boolean isNavigating = false;
 
@@ -30,11 +30,19 @@ public class SplashActivity extends AppCompatActivity {
         splashStartTime = System.currentTimeMillis();
         UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_splash);
-        rootLayout = findViewById(R.id.rootLayout);
-        progressBar = findViewById(R.id.progressBar);
+        View rootLayout = findViewById(R.id.rootLayout);
+        ImageView ivBkg = findViewById(R.id.ivBkg);
+
         UIUtils.INSTANCE.setupEdgeToEdge2(rootLayout,
                 true,
                 true);
+
+        Glide.with(this)
+                .asGif()
+                .load(R.drawable.ic_bkg_1)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(ivBkg);
+
         AdMobManager.INSTANCE.setCurrentActivity(this);
 
         // AdMob init
