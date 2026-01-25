@@ -36,7 +36,7 @@
         android:layout_height="16dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/circle_red"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/capturedBlackPieces" />
@@ -69,7 +69,7 @@
         android:layout_height="16dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/circle_red"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/capturedWhitePieces"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -100,7 +100,7 @@
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginBottom="1dp"
         android:gravity="center"
         android:orientation="horizontal"

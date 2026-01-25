@@ -260,11 +260,11 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     private void updateTurnIndicators(Chessman.PlayerColor turn) {
         if (turn == Chessman.PlayerColor.Black) {
             blackTurnIndicator.setVisibility(View.VISIBLE);
-            whiteTurnIndicator.setVisibility(View.GONE);
+            whiteTurnIndicator.setVisibility(View.INVISIBLE);
             startBlinkingAnimation(blackTurnIndicator);
         } else {
             whiteTurnIndicator.setVisibility(View.VISIBLE);
-            blackTurnIndicator.setVisibility(View.GONE);
+            blackTurnIndicator.setVisibility(View.INVISIBLE);
             startBlinkingAnimation(whiteTurnIndicator);
         }
     }
@@ -316,7 +316,7 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
                         .scaleX(0.5f)
                         .scaleY(0.5f)
                         .setDuration(150)
-                        .withEndAction(() -> btnUndo.setVisibility(View.GONE))
+                        .withEndAction(() -> btnUndo.setVisibility(View.INVISIBLE))
                         .start();
             }
         }
@@ -341,7 +341,7 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
                         .scaleX(0.5f)
                         .scaleY(0.5f)
                         .setDuration(150)
-                        .withEndAction(() -> btnRestart.setVisibility(View.GONE))
+                        .withEndAction(() -> btnRestart.setVisibility(View.INVISIBLE))
                         .start();
             }
         }
