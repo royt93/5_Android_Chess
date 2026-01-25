@@ -140,29 +140,6 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
         // Board size is now handled by ConstraintLayout with ratio
         // No need to set fixed dimensions
 
-        if (Storage.chess == null) {
-            Storage.chess = chess = new Chess(this, displayMinDimensions, boardLayout);
-
-            // Configure AI Mode from Intent
-            boolean isVsAi = getIntent().getBooleanExtra("IS_VS_AI", false);
-            chess.isVsComputer = isVsAi;
-            if (isVsAi) {
-                String difficultyStr = getIntent().getStringExtra("AI_DIFFICULTY");
-                if (difficultyStr != null) {
-                    try {
-                        chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.valueOf(difficultyStr);
-                    } catch (IllegalArgumentException e) {
-                        chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.EASY;
-                    }
-                }
-            }
-        } else {
-            chess = Storage.chess;
-            chess.changeLayout(this, displayMinDimensions, boardLayout);
-        }
-
-        findViewById(R.id.boardImage).setOnTouchListener(this::onTouch);
-
         // Setup modern back navigation
         getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
             @Override
@@ -183,12 +160,53 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
 
         // AdMob Interstitial Load
         AdMobManager.INSTANCE.loadInterstitial(this, BuildConfig.ADMOB_INTERSTITIAL_ID);
+
+        // Wait for board to be laid out to get exact dimensions
+        boardLayout.getViewTreeObserver()
+                .addOnGlobalLayoutListener(new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        boardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        if (isFinishing())
+                            return;
+
+                        int boardSize = boardLayout.getWidth();
+                        if (boardSize <= 0)
+                            return;
+
+                        if (Storage.chess == null) {
+                            Storage.chess = chess = new Chess(ChessBoardActivity.this, boardSize, boardLayout);
+
+                            // Configure AI Mode from Intent
+                            boolean isVsAi = getIntent().getBooleanExtra("IS_VS_AI", false);
+                            chess.isVsComputer = isVsAi;
+                            if (isVsAi) {
+                                String difficultyStr = getIntent().getStringExtra("AI_DIFFICULTY");
+                                if (difficultyStr != null) {
+                                    try {
+                                        chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty
+                                                .valueOf(difficultyStr);
+                                    } catch (IllegalArgumentException e) {
+                                        chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.EASY;
+                                    }
+                                }
+                            }
+                        } else {
+                            chess = Storage.chess;
+                            chess.changeLayout(ChessBoardActivity.this, boardSize, boardLayout);
+                        }
+
+                        findViewById(R.id.boardImage).setOnTouchListener(ChessBoardActivity.this::onTouch);
+                    }
+                });
     }
 
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() != MotionEvent.ACTION_DOWN)
             return false;
-        int t = displayMinDimensions / 8;
+        int t = v.getWidth() / 8;
+        if (t <= 0)
+            return false;
         chess.onBoardClick(((int) event.getX()) / t, ((int) event.getY()) / t);
         return true;
     }

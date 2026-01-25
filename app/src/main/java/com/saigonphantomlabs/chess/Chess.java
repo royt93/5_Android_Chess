@@ -150,6 +150,15 @@ public class Chess {
         this.ctx = ctx;
         this.minDimension = minDimension;
         this.boardLayout = boardLayout;
+
+        // Propagate current dimension to all chessmen
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (chessmen[i][j] != null) {
+                    chessmen[i][j].minDimension = minDimension;
+                }
+            }
+        }
     }
 
     public void onManClick(Chessman man) {
