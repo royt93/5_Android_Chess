@@ -3,20 +3,23 @@ package com.saigonphantomlabs;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -26,18 +29,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.saigonphantomlabs.chess.Chess;
 import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
 import com.saigonphantomlabs.sdkadbmob.UIUtils;
-
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.TextView;
-import android.view.animation.DecelerateInterpolator;
-import android.graphics.drawable.ColorDrawable;
 
 public class ChessBoardActivity extends AppCompatActivity {
     public ConstraintLayout backgroundLayout;
@@ -182,47 +178,19 @@ public class ChessBoardActivity extends AppCompatActivity {
     }
 
     private void handleBackPress() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
-                .setTitle(getResources().getString(R.string.warning))
-                .setMessage(getResources().getString(R.string.saveBoardPrompt))
-                .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
-                    dialog.dismiss();
-                    finish();
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                })
-                .setNegativeButton(getResources().getString(R.string.no), (dialog, i) -> {
-                    dialog.dismiss();
-                    Storage.chess = null;
-                })
-                .setCancelable(false);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-        // Add custom button colors and styling
-        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                    .setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
-        }
-        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                    .setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark));
-        }
+        DialogUtils.showQuitDialog(this, () -> {
+            Storage.chess = null;
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
     }
 
     private void showRestartConfirmDialog() {
-        new MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
-                .setTitle(getString(R.string.play_again))
-                .setMessage(getString(R.string.restart_confirm))
-                .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
-                    dialog.dismiss();
-                    if (chess != null) {
-                        chess.resetGame();
-                    }
-                })
-                .setNegativeButton(getString(R.string.no), (dialog, i) -> dialog.dismiss())
-                .setCancelable(true)
-                .show();
+        DialogUtils.showRestartDialog(this, () -> {
+            if (chess != null) {
+                chess.resetGame();
+            }
+        });
     }
 
     public void animateTurnChange(Chessman.PlayerColor turn) {
@@ -446,6 +414,7 @@ public class ChessBoardActivity extends AppCompatActivity {
 
         View statsContainer = dialogView.findViewById(R.id.stats_container);
         View btnExit = dialogView.findViewById(R.id.btn_exit);
+        View btnReview = dialogView.findViewById(R.id.btn_review);
         View btnPlayAgain = dialogView.findViewById(R.id.btn_play_again);
 
         // Set data
@@ -493,6 +462,12 @@ public class ChessBoardActivity extends AppCompatActivity {
                 .start();
 
         // Setup actions
+        btnReview.setOnClickListener(v -> {
+            dialog.dismiss();
+            // Hide undo button when reviewing board
+            updateUndoButton(false);
+        });
+
         btnPlayAgain.setOnClickListener(v -> {
             dialog.dismiss();
             chess.resetGame();

@@ -140,6 +140,26 @@
         android:gravity="center">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_review"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REVIEW BOARD"
+            android:textColor="#1976D2"
+            app:strokeColor="#1976D2"
+            app:strokeWidth="1dp"
+            app:cornerRadius="20dp"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_exit"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="0dp"

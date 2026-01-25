@@ -173,27 +173,16 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showDifficultySelectionDialog() {
-        String[] difficulties = { "Easy", "Medium", "Hard", "Unbeatable" };
-
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
-                .setTitle(getString(R.string.select_difficulty))
-                .setItems(difficulties, (dialog, which) -> {
-                    String selectedDifficulty = difficulties[which].toUpperCase();
-                    startGame(true, selectedDifficulty);
-                })
-                .show();
+        DialogUtils.showDifficultyDialog(this, difficulty -> {
+            startGame(true, difficulty);
+        });
     }
 
     private void showStatsDialog() {
         com.saigonphantomlabs.chess.GameStatsManager statsManager = new com.saigonphantomlabs.chess.GameStatsManager(
                 this);
         String stats = statsManager.getStatsSummary();
-
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
-                .setTitle("🏆 Game Statistics")
-                .setMessage(stats)
-                .setPositiveButton("Close", (dialog, which) -> dialog.dismiss())
-                .show();
+        DialogUtils.showStatsDialog(this, stats);
     }
 
     private void shareApp() {
