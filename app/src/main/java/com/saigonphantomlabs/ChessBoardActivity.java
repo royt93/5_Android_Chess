@@ -498,18 +498,22 @@ public class ChessBoardActivity extends AppCompatActivity {
      */
     private String buildGameStats() {
         StringBuilder sb = new StringBuilder();
-        sb.append("━━━━━━━━━━━━━━━━━━━━\n");
+        sb.append(getString(R.string.stats_divider));
         sb.append(getString(R.string.stats_title)).append("\n\n");
-        sb.append("⏱ ").append(getString(R.string.stats_duration)).append(": ").append(chess.getFormattedDuration())
+        sb.append(getString(R.string.stats_duration_icon))
+                .append(getString(R.string.stats_duration)).append(": ").append(chess.getFormattedDuration())
                 .append("\n");
-        sb.append("🎯 ").append(getString(R.string.stats_moves)).append(": ").append(chess.getMoveCount()).append("\n");
-        sb.append("⚪ ").append(getString(R.string.stats_white_captured)).append(": ")
+        sb.append(getString(R.string.stats_moves_icon))
+                .append(getString(R.string.stats_moves)).append(": ").append(chess.getMoveCount()).append("\n");
+        sb.append(getString(R.string.stats_white_icon))
+                .append(getString(R.string.stats_white_captured)).append(": ")
                 .append(chess.getCapturedWhiteCount()).append("\n");
-        sb.append("⚫ ").append(getString(R.string.stats_black_captured)).append(": ")
+        sb.append(getString(R.string.stats_black_icon))
+                .append(getString(R.string.stats_black_captured)).append(": ")
                 .append(chess.getCapturedBlackCount());
 
         if (chess.isVsComputer) {
-            sb.append("\n\n━━━━━━━━━━━━━━━━━━━━\n");
+            sb.append("\n\n").append(getString(R.string.stats_divider));
             sb.append(getString(R.string.ai_performance_format, chess.difficultyLevel.toString()));
             // Fetch stats from manager
             com.saigonphantomlabs.chess.GameStatsManager sm = new com.saigonphantomlabs.chess.GameStatsManager(this);

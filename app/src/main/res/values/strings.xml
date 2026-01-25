@@ -76,6 +76,30 @@ Checkmate the opponent\'s King.<br/><br/>
     <string name="stats_total_games">Total Games Played: %d\n</string>
     <string name="stats_total_time">Total Play Time: %s\n\n</string>
     <string name="stats_performance_ai">Performance vs AI:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
     <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
     <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
 </resources>

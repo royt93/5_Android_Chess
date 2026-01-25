@@ -1,5 +1,7 @@
 package com.saigonphantomlabs.chess;
 
+import android.content.Context;
+
 /**
  * Represents a single move in the game for undo/redo and move history
  */
@@ -29,27 +31,30 @@ public class MoveRecord {
     /**
      * Get algebraic notation for the move (e.g., "e2-e4", "Nf3xg5")
      */
-    public String getNotation() {
-        String pieceSymbol = getPieceSymbol(movedPiece.type);
+    public String getNotation(Context context) {
+        String pieceSymbol = getPieceSymbol(context, movedPiece.type);
         String from = getSquareName(fromX, fromY);
         String to = getSquareName(toX, toY);
-        String capture = capturedPiece != null ? "x" : "-";
-        String promotion = promotedTo != null ? "=" + getPieceSymbol(promotedTo) : "";
+        String capture = capturedPiece != null ? context.getString(R.string.notation_capture)
+                : context.getString(R.string.notation_move);
+        String promotion = promotedTo != null
+                ? context.getString(R.string.notation_promotion) + getPieceSymbol(context, promotedTo)
+                : "";
         return pieceSymbol + from + capture + to + promotion;
     }
 
-    private String getPieceSymbol(Chessman.ChessmanType type) {
+    private String getPieceSymbol(Context context, Chessman.ChessmanType type) {
         switch (type) {
             case King:
-                return "K";
+                return context.getString(R.string.symbol_king);
             case Queen:
-                return "Q";
+                return context.getString(R.string.symbol_queen);
             case Rook:
-                return "R";
+                return context.getString(R.string.symbol_rook);
             case Bishop:
-                return "B";
+                return context.getString(R.string.symbol_bishop);
             case Knight:
-                return "N";
+                return context.getString(R.string.symbol_knight);
             case Pawn:
                 return "";
             default:

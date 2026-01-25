@@ -148,13 +148,13 @@ public class SplashActivity extends AppCompatActivity {
         try {
             // Try to open Play Store app
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=" + getPackageName()));
+            intent.setData(Uri.parse(getString(R.string.market_details_url, getPackageName())));
             intent.setPackage("com.android.vending");
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             // If Play Store app is not available, open in browser
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName()));
+            intent.setData(Uri.parse(getString(R.string.play_store_details_url, getPackageName())));
             startActivity(intent);
         }
     }
@@ -163,13 +163,13 @@ public class SplashActivity extends AppCompatActivity {
         try {
             // Try to open Play Store app with developer page
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://dev?id=6193840742938642798"));
+            intent.setData(Uri.parse(getString(R.string.market_dev_url)));
             intent.setPackage("com.android.vending");
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             // If Play Store app is not available, open in browser
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://play.google.com/store/apps/dev?id=6193840742938642798"));
+            intent.setData(Uri.parse(getString(R.string.play_store_dev_url)));
             startActivity(intent);
         }
     }
@@ -205,7 +205,7 @@ public class SplashActivity extends AppCompatActivity {
 
             String appPackageName = getPackageName();
             String shareBody = getString(R.string.share_message) + "\n" +
-                    "https://play.google.com/store/apps/details?id=" + appPackageName;
+                    getString(R.string.play_store_details_url, appPackageName);
 
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share_app)));

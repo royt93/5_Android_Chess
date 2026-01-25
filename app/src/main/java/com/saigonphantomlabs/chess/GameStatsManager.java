@@ -67,7 +67,7 @@ public class GameStatsManager {
             int draws = prefs.getInt(PREFIX_DRAWS + diffKey, 0);
 
             if (wins + losses + draws > 0) {
-                sb.append(String.format(Locale.getDefault(), "- %s: %dW - %dL - %dD\n",
+                sb.append(context.getString(R.string.stats_performance_row,
                         diff.name(), wins, losses, draws));
             }
         }
