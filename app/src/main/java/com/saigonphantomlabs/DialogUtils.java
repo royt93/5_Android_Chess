@@ -28,7 +28,7 @@ public class DialogUtils {
      */
     public static void showBasicDialog(Context context,
             String title,
-            String message,
+            CharSequence message,
             String positiveText,
             String negativeText,
             int iconResId,
@@ -51,7 +51,6 @@ public class DialogUtils {
         TextView messageView = dialogView.findViewById(R.id.dialog_message);
         ImageView iconView = dialogView.findViewById(R.id.dialog_icon);
         Button btnPositive = dialogView.findViewById(R.id.btn_positive);
-        Button btnNegative = dialogView.findViewById(R.id.btn_negative);
 
         titleView.setText(title);
         messageView.setText(message);
@@ -70,16 +69,15 @@ public class DialogUtils {
         });
 
         if (negativeText != null) {
-            btnNegative.setText(negativeText);
-            btnNegative.setOnClickListener(v -> {
+            Button btnMsgNegative = dialogView.findViewById(R.id.btn_negative);
+            btnMsgNegative.setText(negativeText);
+            btnMsgNegative.setOnClickListener(v -> {
                 dialog.dismiss();
                 if (onNegative != null)
                     onNegative.run();
             });
         } else {
-            btnNegative.setVisibility(View.GONE);
-            // If no negative button, make positive button centered or full width?
-            // Current layout uses weight 1 for both. If one gone, the other expands.
+            dialogView.findViewById(R.id.btn_negative).setVisibility(View.GONE);
         }
 
         // Animation
@@ -87,6 +85,28 @@ public class DialogUtils {
         dialogView.startAnimation(enterAnim);
 
         dialog.show();
+    }
+
+    /**
+     * Show Rules Dialog
+     */
+    public static void showRulesDialog(Context context) {
+        CharSequence rules;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            rules = android.text.Html.fromHtml(context.getString(R.string.game_rules),
+                    android.text.Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            rules = android.text.Html.fromHtml(context.getString(R.string.game_rules));
+        }
+
+        showBasicDialog(context,
+                context.getString(R.string.game_rules_title),
+                rules,
+                "Got it",
+                null,
+                R.drawable.ic_rules_blue,
+                null,
+                null);
     }
 
     /**

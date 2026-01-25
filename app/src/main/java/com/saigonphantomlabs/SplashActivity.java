@@ -44,7 +44,9 @@ public class SplashActivity extends AppCompatActivity {
     private LinearLayout btnStats;
     private LinearLayout btnRateApp;
     private LinearLayout btnMoreApps;
+
     private LinearLayout btnShareApp;
+    private LinearLayout btnRules;
     private TextView tvVersion;
 
     @Override
@@ -70,7 +72,9 @@ public class SplashActivity extends AppCompatActivity {
         btnStats = findViewById(R.id.btnStats);
         btnRateApp = findViewById(R.id.btnRateApp);
         btnMoreApps = findViewById(R.id.btnMoreApps);
+
         btnShareApp = findViewById(R.id.btnShareApp);
+        btnRules = findViewById(R.id.btnRules);
         ImageView ivBkg = findViewById(R.id.ivBkg);
         tvVersion = findViewById(R.id.tvVersionTop);
 
@@ -128,6 +132,14 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onSafeClick(View view) {
                 shareApp();
+            }
+        });
+
+        // Rules button click
+        btnRules.setOnClickListener(new SafeClickListener() {
+            @Override
+            public void onSafeClick(View view) {
+                DialogUtils.showRulesDialog(SplashActivity.this);
             }
         });
     }
@@ -208,7 +220,8 @@ public class SplashActivity extends AppCompatActivity {
     private void animateEntryViews() {
         // Array of views to animate with their delays
         View[] topViews = { tvVersion };
-        View[] mainViews = { btnPlayPvP, btnPlayPvE, btnStats };
+
+        View[] mainViews = { btnPlayPvP, btnPlayPvE, btnStats, btnRules };
         View[] bottomViews = { btnRateApp, btnMoreApps, btnShareApp };
 
         // Initially hide all views

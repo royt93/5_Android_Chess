@@ -40,4 +40,24 @@
     <string name="play_pvp">PLAY 1 VS 1</string>
     <string name="play_ai">PLAY VS AI</string>
     <string name="select_difficulty">Select Difficulty</string>
+    
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 Chess Rules</string>
+    <string name="game_rules">
+<![CDATA[
+<font color="#1976D2"><b>OBJECTIVE</b></font><br/>
+Checkmate the opponent\'s King.<br/><br/>
+
+<font color="#1976D2"><b>PIECE MOVEMENTS</b></font><br/>
+&#8226; <b>King:</b> One square in any direction.<br/>
+&#8226; <b>Queen:</b> Any squares diagonally, horizontally, or vertically.<br/>
+&#8226; <b>Rook:</b> Any squares horizontally or vertically.<br/>
+&#8226; <b>Bishop:</b> Any squares diagonally.<br/>
+&#8226; <b>Knight:</b> \'L\' shape jump.<br/>
+&#8226; <b>Pawn:</b> Forward one square. Captures diagonally.<br/><br/>
+
+<font color="#1976D2"><b>SPECIAL MOVES</b></font><br/>
+&#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end.
+]]>
+    </string>
 </resources>
