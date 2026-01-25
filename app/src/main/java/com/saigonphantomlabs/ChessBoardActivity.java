@@ -255,6 +255,7 @@ public class ChessBoardActivity extends AppCompatActivity {
      * Update undo button visibility
      */
     public void updateUndoButton(boolean visible) {
+        // Update Undo Button
         if (btnUndo != null) {
             if (visible && btnUndo.getVisibility() != View.VISIBLE) {
                 btnUndo.setVisibility(View.VISIBLE);
@@ -268,13 +269,38 @@ public class ChessBoardActivity extends AppCompatActivity {
                         .setDuration(300)
                         .setInterpolator(new OvershootInterpolator())
                         .start();
-            } else if (!visible) {
+            } else if (!visible && btnUndo.getVisibility() == View.VISIBLE) {
                 btnUndo.animate()
                         .alpha(0f)
                         .scaleX(0.5f)
                         .scaleY(0.5f)
                         .setDuration(150)
                         .withEndAction(() -> btnUndo.setVisibility(View.GONE))
+                        .start();
+            }
+        }
+
+        // Update Restart Button (Follows same logic)
+        if (btnRestart != null) {
+            if (visible && btnRestart.getVisibility() != View.VISIBLE) {
+                btnRestart.setVisibility(View.VISIBLE);
+                btnRestart.setAlpha(0f);
+                btnRestart.setScaleX(0.5f);
+                btnRestart.setScaleY(0.5f);
+                btnRestart.animate()
+                        .alpha(1f)
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(300)
+                        .setInterpolator(new OvershootInterpolator())
+                        .start();
+            } else if (!visible && btnRestart.getVisibility() == View.VISIBLE) {
+                btnRestart.animate()
+                        .alpha(0f)
+                        .scaleX(0.5f)
+                        .scaleY(0.5f)
+                        .setDuration(150)
+                        .withEndAction(() -> btnRestart.setVisibility(View.GONE))
                         .start();
             }
         }

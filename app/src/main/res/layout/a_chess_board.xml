@@ -118,6 +118,7 @@
             android:layout_marginEnd="8dp"
             android:text="@string/play_again"
             android:textColor="#FFFFFF"
+            android:visibility="gone"
             app:icon="@drawable/ic_restart"
             app:iconTint="#FFFFFF"
             app:backgroundTint="#4CAF50"
