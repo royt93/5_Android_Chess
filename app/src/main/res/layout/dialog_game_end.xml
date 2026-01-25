@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:padding="24dp"
+    android:gravity="center_horizontal">
+
+    <ImageView
+        android:id="@+id/dialog_icon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_trophy"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="White Wins!"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/dialog_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Black Loses!"
+        android:textSize="14sp"
+        android:textColor="#757575"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Stats Container -->
+    <LinearLayout
+        android:id="@+id/stats_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#F5F5F5"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_title"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stats_duration"
+                android:textColor="#616161"/>
+            <TextView
+                android:id="@+id/stats_duration_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="05:23"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stats_moves"
+                android:textColor="#616161"/>
+            <TextView
+                android:id="@+id/stats_moves_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="42"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stats_white_captured"
+                android:textColor="#616161"/>
+            <TextView
+                android:id="@+id/stats_white_captured_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stats_black_captured"
+                android:textColor="#616161"/>
+            <TextView
+                android:id="@+id/stats_black_captured_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_exit"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/exit"
+            android:textColor="#757575"
+            app:strokeColor="#BDBDBD"
+            app:strokeWidth="1dp"
+            app:cornerRadius="20dp"
+            android:layout_marginEnd="8dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_play_again"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/play_again"
+            app:backgroundTint="#4CAF50"
+            app:cornerRadius="20dp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+</LinearLayout>

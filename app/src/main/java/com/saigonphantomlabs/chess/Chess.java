@@ -216,13 +216,14 @@ public class Chess {
         chessmen[xt][yt].setPoint(new Point(xt, yt));
         chessmen[xf][yf] = null;
 
-        King.KingRiskType relatedKingStatus;
-        if (chessmen[xt][yt].color == Chessman.PlayerColor.White)
-            relatedKingStatus = validateKing(whiteKing);
-        else
-            relatedKingStatus = validateKing(blackKing);
+        King myKing = (chessmen[xt][yt].color == Chessman.PlayerColor.White) ? whiteKing : blackKing;
 
-        if (relatedKingStatus == King.KingRiskType.Safe) {
+        // Only check if our king is safe (not in check)
+        // We don't care about Stalemate here because the turn will pass to the opponent
+        boolean isKingSafe = myKing.isPointSafe();
+        Log.d("roy93~", "move: " + myKing.color + " king safe=" + isKingSafe);
+
+        if (isKingSafe) {
             if (tempMan != null) {
                 kill(tempMan);
                 // Add captured piece to display
@@ -263,13 +264,13 @@ public class Chess {
             playCheckSound();
             showCheckAnimation(opponentKing);
             // Show game end dialog - current player wins
-            ((ChessBoardActivity) ctx).showGameEndDialog(
-                    whichPlayerTurn == Chessman.PlayerColor.White);
+            ((ChessBoardActivity) ctx).showCustomGameEndDialog(
+                    whichPlayerTurn == Chessman.PlayerColor.White, false);
         } else if (status == King.KingRiskType.Stalemate) {
             Log.d("roy93~", "checkOpponentKingStatus: STALEMATE detected!");
             gameEnd = true;
-            // Show stalemate dialog - draw
-            ((ChessBoardActivity) ctx).showStalemateDialog();
+            // Show stalemate dialog - draw (isStalemate = true)
+            ((ChessBoardActivity) ctx).showCustomGameEndDialog(false, true);
         } else if (status == King.KingRiskType.Check) {
             Log.d("roy93~", "checkOpponentKingStatus: CHECK detected!");
             kingInCheck = opponentKing;

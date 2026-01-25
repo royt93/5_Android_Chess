@@ -14,7 +14,11 @@ public class Pawn extends Chessman {
 
     @Override
     public void createButton() {
-        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.ic_pawnb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.ic_pawnw, parent.ctx.getTheme()), minDimension, parent.ctx);
+        createButton(
+                color == PlayerColor.Black
+                        ? parent.ctx.getResources().getDrawable(R.drawable.ic_pawnb, parent.ctx.getTheme())
+                        : parent.ctx.getResources().getDrawable(R.drawable.ic_pawnw, parent.ctx.getTheme()),
+                minDimension, parent.ctx);
     }
 
     @Override
@@ -25,36 +29,42 @@ public class Pawn extends Chessman {
     @Override
     public void generateMoves() {
         moves.clear();
-        add1StepForwardMovePoints();
 
-        if (moves.isEmpty())
-            return;
+        // Direction: Black moves down (y+1), White moves up (y-1)
+        int step = (color == PlayerColor.Black) ? 1 : -1;
+        Point current = getPoint();
 
-        Point frontPoint = moves.get(0);
+        // 1. Move Forward 1 step
+        Point front = new Point(current.x, current.y + step);
+        if (front.isValid() && parent.chessmen[front.x][front.y] == null) {
+            moves.add(front);
 
-        Point left = new Point(frontPoint.x - 1, frontPoint.y);
-        Point right = new Point(frontPoint.x + 1, frontPoint.y);
-
-        if (left.isValid() && parent.chessmen[left.x][left.y] != null && parent.chessmen[left.x][left.y].color != color)
-            moves.add(left);
-        if (right.isValid() && parent.chessmen[right.x][right.y] != null && parent.chessmen[right.x][right.y].color != color)
-            moves.add(right);
-
-        //cant move forward if there is anyone there
-        if (parent.chessmen[frontPoint.x][frontPoint.y] != null) {
-            moves.remove(frontPoint);
-
-            //if there is a man in front of the pawn it can't jump over it
-            //so there is no need to check (and add) second front cell
-            return;
+            // 2. Move Forward 2 steps (only if first move and front is clear)
+            if (firstMove) {
+                Point front2 = new Point(current.x, current.y + step * 2);
+                if (front2.isValid() && parent.chessmen[front2.x][front2.y] == null) {
+                    moves.add(front2);
+                }
+            }
         }
 
-        if (firstMove) {
-            add2StepForwardMovePoints();
-            Point twoFront = moves.get(moves.size() - 1);
-            //cant move 2xforward if there is anyone there
-            if (parent.chessmen[twoFront.x][twoFront.y] != null)
-                moves.remove(twoFront);
+        // 3. Capture Diagonally (Left)
+        Point left = new Point(current.x - 1, current.y + step);
+        if (left.isValid()) {
+            Chessman target = parent.chessmen[left.x][left.y];
+            if (target != null && target.color != color && !target.isDead) { // Added isDead check
+                moves.add(left);
+            }
         }
+
+        // 4. Capture Diagonally (Right)
+        Point right = new Point(current.x + 1, current.y + step);
+        if (right.isValid()) {
+            Chessman target = parent.chessmen[right.x][right.y];
+            if (target != null && target.color != color && !target.isDead) { // Added isDead check
+                moves.add(right);
+            }
+        }
+
     }
 }

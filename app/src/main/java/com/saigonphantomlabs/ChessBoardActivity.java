@@ -33,6 +33,12 @@ import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
 import com.saigonphantomlabs.sdkadbmob.UIUtils;
 
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
+import android.view.animation.DecelerateInterpolator;
+import android.graphics.drawable.ColorDrawable;
+
 public class ChessBoardActivity extends AppCompatActivity {
     public ConstraintLayout backgroundLayout;
     public FrameLayout boardLayout;
@@ -377,55 +383,84 @@ public class ChessBoardActivity extends AppCompatActivity {
     }
 
     /**
-     * Show game end dialog
+     * Show custom game end dialog with premium UI and animations
      */
-    public void showGameEndDialog(boolean whiteWins) {
-        String title = getString(R.string.checkmate);
-        String winner = whiteWins ? getString(R.string.white_wins) : getString(R.string.black_wins);
-        String loser = whiteWins ? getString(R.string.black_loses) : getString(R.string.white_loses);
+    public void showCustomGameEndDialog(boolean whiteWins, boolean isStalemate) {
+        // Inflate custom layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_game_end, null);
 
-        // Build game statistics
-        String stats = buildGameStats();
+        // Find views
+        ImageView iconView = dialogView.findViewById(R.id.dialog_icon);
+        TextView titleView = dialogView.findViewById(R.id.dialog_title);
+        TextView messageView = dialogView.findViewById(R.id.dialog_message);
 
-        new MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
-                .setTitle(title)
-                .setMessage(winner + "\n" + loser + "\n\n" + stats)
-                .setPositiveButton(getString(R.string.play_again), (dialog, which) -> {
-                    dialog.dismiss();
-                    chess.resetGame();
-                })
-                .setNegativeButton(getString(R.string.exit), (dialog, which) -> {
-                    dialog.dismiss();
-                    Storage.chess = null;
-                    finish();
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                })
-                .setCancelable(false)
-                .show();
-    }
+        TextView durationValue = dialogView.findViewById(R.id.stats_duration_value);
+        TextView movesValue = dialogView.findViewById(R.id.stats_moves_value);
+        TextView whiteCapturedValue = dialogView.findViewById(R.id.stats_white_captured_value);
+        TextView blackCapturedValue = dialogView.findViewById(R.id.stats_black_captured_value);
 
-    /**
-     * Show stalemate dialog (draw)
-     */
-    public void showStalemateDialog() {
-        // Build game statistics
-        String stats = buildGameStats();
+        View statsContainer = dialogView.findViewById(R.id.stats_container);
+        View btnExit = dialogView.findViewById(R.id.btn_exit);
+        View btnPlayAgain = dialogView.findViewById(R.id.btn_play_again);
 
-        new MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
-                .setTitle(getString(R.string.stalemate))
-                .setMessage(getString(R.string.stalemate_message) + "\n\n" + stats)
-                .setPositiveButton(getString(R.string.play_again), (dialog, which) -> {
-                    dialog.dismiss();
-                    chess.resetGame();
-                })
-                .setNegativeButton(getString(R.string.exit), (dialog, which) -> {
-                    dialog.dismiss();
-                    Storage.chess = null;
-                    finish();
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                })
-                .setCancelable(false)
-                .show();
+        // Set data
+        if (isStalemate) {
+            titleView.setText(R.string.stalemate);
+            messageView.setText(R.string.stalemate_message);
+            // Dynamic drawable loading (API 21+)
+            iconView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_draw));
+        } else {
+            titleView.setText(whiteWins ? R.string.white_wins : R.string.black_wins);
+            messageView.setText(whiteWins ? R.string.black_loses : R.string.white_loses);
+            iconView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_trophy));
+        }
+
+        // Set stats
+        durationValue.setText(chess.getFormattedDuration());
+        movesValue.setText(String.valueOf(chess.getMoveCount()));
+        whiteCapturedValue.setText(String.valueOf(chess.getCapturedWhiteCount()));
+        blackCapturedValue.setText(String.valueOf(chess.getCapturedBlackCount()));
+
+        // Create Dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        AlertDialog dialog = builder.create();
+
+        // Set transparent background to let custom shape show
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        // Play enter animation on content
+        Animation enterAnim = AnimationUtils.loadAnimation(this, R.anim.dialog_enter_anim);
+        dialogView.startAnimation(enterAnim);
+
+        // Add stagger animation for stats
+        statsContainer.setTranslationY(100f);
+        statsContainer.setAlpha(0f);
+        statsContainer.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setStartDelay(200)
+                .setDuration(500)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
+
+        // Setup actions
+        btnPlayAgain.setOnClickListener(v -> {
+            dialog.dismiss();
+            chess.resetGame();
+        });
+
+        btnExit.setOnClickListener(v -> {
+            dialog.dismiss();
+            Storage.chess = null;
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
+
+        dialog.show();
     }
 
     /**
