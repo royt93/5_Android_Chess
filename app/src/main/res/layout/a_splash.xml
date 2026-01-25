@@ -1,0 +1,29 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.saigonphantomlabs.MainActivity">
+
+    <ImageView
+        android:id="@+id/ivBkg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/ic_bkg_1" />
+
+    <LinearLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+</FrameLayout>

@@ -253,6 +253,7 @@ object AdMobManager {
             adListener = object : AdListener() {
                 override fun onAdLoaded() {
                     Log.d(TAG, "✅ Banner Ad Loaded")
+                    tvLabelAd.isVisible = true
                     // Track impression with demo
                     AdRevenueDemo.trackImpression(AdType.BANNER)
                     AdFrequencyDemo.recordAdShown(AdType.BANNER)
@@ -261,6 +262,8 @@ object AdMobManager {
 
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     Log.d(TAG, "❌ Banner Ad Failed to load: ${error.message}")
+                    container.isVisible = false
+                    tvLabelAd.isVisible = false
                 }
 
                 override fun onAdOpened() {
