@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical"
+    android:padding="@dimen/banner_ad_margin"
+    android:gravity="center">
+
+    <!-- Ad Label with improved styling -->
+    <TextView
+        android:id="@+id/tvLabelAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_tiny"
+        android:background="@drawable/ad_label_background"
+        android:contentDescription="@string/advertisement_label"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/banner_label_padding"
+        android:paddingVertical="@dimen/spacing_tiny"
+        android:text="@string/ad_label"
+        android:textColor="@color/ad_label_text"
+        android:textSize="@dimen/text_size_tiny"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <!-- Banner Container with accessibility support -->
+    <FrameLayout
+        android:id="@+id/banner_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/advertisement_label"
+        android:importantForAccessibility="yes" />
+
+</LinearLayout>

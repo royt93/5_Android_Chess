@@ -102,4 +102,8 @@ Checkmate the opponent\'s King.<br/><br/>
     <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
     <string name="market_dev_url">market://dev?id=6193840742938642798</string>
     <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Ad</string>
+    <string name="advertisement_label">Advertisement</string>
 </resources>

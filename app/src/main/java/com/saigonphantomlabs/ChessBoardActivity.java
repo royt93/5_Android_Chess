@@ -17,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
+import com.google.android.gms.ads.AdView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,13 +30,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
+import com.saigonphantomlabs.chess.BuildConfig;
 import com.saigonphantomlabs.chess.Chess;
 import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
+import com.saigonphantomlabs.sdkadbmob.AdMobManager;
 import com.saigonphantomlabs.sdkadbmob.UIUtils;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.AdError;
 
-public class ChessBoardActivity extends AppCompatActivity {
+import kotlin.Unit;
+
+public class ChessBoardActivity extends AppCompatActivity implements AdMobManager.InterstitialAdListener {
     public ConstraintLayout backgroundLayout;
     public FrameLayout boardLayout;
     public View blackTurnIndicator;
@@ -60,6 +67,8 @@ public class ChessBoardActivity extends AppCompatActivity {
 
     // Animation references for cleanup
     private ObjectAnimator currentBlinkAnimator;
+
+    private AdView adView;
 
     // Modern Activity Result API for pawn promotion
     private final ActivityResultLauncher<Intent> promotionLauncher = registerForActivityResult(
@@ -160,6 +169,19 @@ public class ChessBoardActivity extends AppCompatActivity {
                 handleBackPress();
             }
         });
+
+        AdMobManager.INSTANCE.setCurrentActivity(this);
+        AdMobManager.INSTANCE.setInterstitialListener(this);
+
+        // AdMob Banner
+        adView = AdMobManager.INSTANCE.loadBanner(this,
+                BuildConfig.ADMOB_BANNER_ID,
+                findViewById(R.id.banner_container),
+                findViewById(R.id.tvLabelAd),
+                com.google.android.gms.ads.AdSize.BANNER);
+
+        // AdMob Interstitial Load
+        AdMobManager.INSTANCE.loadInterstitial(this, BuildConfig.ADMOB_INTERSTITIAL_ID);
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -486,8 +508,11 @@ public class ChessBoardActivity extends AppCompatActivity {
         btnExit.setOnClickListener(v -> {
             dialog.dismiss();
             Storage.chess = null;
-            finish();
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            AdMobManager.INSTANCE.showInterstitial(ChessBoardActivity.this, result -> {
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                return Unit.INSTANCE;
+            });
         });
 
         dialog.show();
@@ -565,5 +590,60 @@ public class ChessBoardActivity extends AppCompatActivity {
 
             decorView.setSystemUiVisibility(flags);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    // AdMob InterstitialAdListener Implementation
+    @Override
+    public void onAdLoaded() {
+    }
+
+    @Override
+    public void onAdFailedToLoad(LoadAdError error) {
+    }
+
+    @Override
+    public void onAdShowed() {
+    }
+
+    @Override
+    public void onAdDismissed() {
+        // Reload for next time
+        AdMobManager.INSTANCE.loadInterstitial(this, BuildConfig.ADMOB_INTERSTITIAL_ID);
+    }
+
+    @Override
+    public void onAdClicked() {
+    }
+
+    @Override
+    public void onAdFailedToShow(AdError error) {
+    }
+
+    @Override
+    public void onAdNotAvailable() {
     }
 }

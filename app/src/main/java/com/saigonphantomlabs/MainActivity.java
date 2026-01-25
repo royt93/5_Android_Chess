@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,7 +36,7 @@ import com.saigonphantomlabs.sdkadbmob.UIUtils;
 //sdk 35 edge to edge
 
 @SuppressLint("CustomSplashScreen")
-public class SplashActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private LinearLayout btnPlayPvP;
     private LinearLayout btnPlayPvE;
@@ -53,7 +52,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
-        setContentView(R.layout.a_splash);
+        setContentView(R.layout.a_main);
         UIUtils.INSTANCE.setupEdgeToEdge2(findViewById(R.id.rootLayout),
                 true,
                 true);
@@ -139,7 +138,7 @@ public class SplashActivity extends AppCompatActivity {
         btnRules.setOnClickListener(new SafeClickListener() {
             @Override
             public void onSafeClick(View view) {
-                DialogUtils.showRulesDialog(SplashActivity.this);
+                DialogUtils.showRulesDialog(MainActivity.this);
             }
         });
     }
@@ -175,7 +174,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startGame(boolean isVsAi, String difficulty) {
-        Intent intent = new Intent(SplashActivity.this, ChessBoardActivity.class);
+        Intent intent = new Intent(MainActivity.this, ChessBoardActivity.class);
         intent.putExtra("IS_VS_AI", isVsAi);
         if (difficulty != null) {
             intent.putExtra("AI_DIFFICULTY", difficulty);

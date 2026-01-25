@@ -25,6 +25,7 @@ android {
     }
     buildFeatures {
         buildConfig = true
+        viewBinding = true
         // Disable unused features to reduce APK size
         aidl false
         renderScript false
@@ -47,6 +48,10 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "String", "ADMOB_BANNER_ID", "\"ca-app-pub-3612191981543807/7501711641\""
+            buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3612191981543807/7792699142\""
+            buildConfigField "String", "ADMOB_APP_OPEN_ID", "\"ca-app-pub-3612191981543807/6188629973\""
+
             signingConfig signingConfigs.release
             debuggable false
             minifyEnabled true
@@ -74,8 +79,12 @@ android {
             }
         }
         debug {
+            buildConfigField "String", "ADMOB_BANNER_ID", "\"ca-app-pub-3612191981543807/7501711641\""
+            buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3612191981543807/7792699142\""
+            buildConfigField "String", "ADMOB_APP_OPEN_ID", "\"ca-app-pub-3612191981543807/6188629973\""
+
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules-debug.pro'
         }
     }
 
@@ -124,6 +133,16 @@ dependencies {
 
     // Glide annotation processor
     annotationProcessor 'com.github.bumptech.glide:compiler:5.0.5'
+
+    // AdMob Ads
+    implementation 'com.google.android.gms:play-services-ads:24.5.0'
+    implementation 'com.google.ads.mediation:applovin:13.3.1.1'
+    implementation 'com.google.code.gson:gson:2.13.2'
+
+    // Kotlin Coroutines & Lifecycle
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+    implementation 'androidx.activity:activity-ktx:1.9.3'
 
     // Debug tools only in debug builds
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'

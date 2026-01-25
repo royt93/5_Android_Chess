@@ -3,4 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="brown">#D13300</color>
+
+    <!-- Ad Banner Colors -->
+    <color name="ad_label_background">#2196F3</color>
+    <color name="ad_label_text">#FFFFFF</color>
 </resources>
