@@ -510,7 +510,7 @@ public class ChessBoardActivity extends AppCompatActivity {
 
         if (chess.isVsComputer) {
             sb.append("\n\n━━━━━━━━━━━━━━━━━━━━\n");
-            sb.append("🤖 AI Performance (" + chess.difficultyLevel + "):\n");
+            sb.append(getString(R.string.ai_performance_format, chess.difficultyLevel.toString()));
             // Fetch stats from manager
             com.saigonphantomlabs.chess.GameStatsManager sm = new com.saigonphantomlabs.chess.GameStatsManager(this);
             sb.append(sm.getStatsSummary());

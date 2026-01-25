@@ -18,9 +18,11 @@ public class GameStatsManager {
     private static final String PREFIX_LOSSES = "losses_";
     private static final String PREFIX_DRAWS = "draws_";
 
+    private final Context context;
     private final SharedPreferences prefs;
 
     public GameStatsManager(Context context) {
+        this.context = context;
         this.prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
@@ -54,10 +56,10 @@ public class GameStatsManager {
         long totalTime = prefs.getLong(KEY_TOTAL_TIME, 0);
         int totalGames = prefs.getInt(KEY_TOTAL_GAMES, 0);
 
-        sb.append(String.format(Locale.getDefault(), "Total Games Played: %d\n", totalGames));
-        sb.append(String.format(Locale.getDefault(), "Total Play Time: %s\n\n", formatDuration(totalTime)));
+        sb.append(context.getString(R.string.stats_total_games, totalGames));
+        sb.append(context.getString(R.string.stats_total_time, formatDuration(totalTime)));
 
-        sb.append("Performance vs AI:\n");
+        sb.append(context.getString(R.string.stats_performance_ai));
         for (AIEngine.Difficulty diff : AIEngine.Difficulty.values()) {
             String diffKey = diff.name().toLowerCase();
             int wins = prefs.getInt(PREFIX_WINS + diffKey, 0);
@@ -79,9 +81,9 @@ public class GameStatsManager {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60;
 
         if (hours > 0) {
-            return String.format(Locale.getDefault(), "%dh %dm %ds", hours, minutes, seconds);
+            return context.getString(R.string.duration_h_m_s, hours, minutes, seconds);
         } else {
-            return String.format(Locale.getDefault(), "%dm %ds", minutes, seconds);
+            return context.getString(R.string.duration_m_s, minutes, seconds);
         }
     }
 }

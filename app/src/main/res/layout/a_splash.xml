@@ -140,14 +140,14 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginEnd="12dp"
-                    android:contentDescription="Stats"
+                    android:contentDescription="@string/stats"
                     android:src="@drawable/ic_trophy"
                     app:tint="@color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="STATS"
+                    android:text="@string/stats"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -170,14 +170,14 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginEnd="12dp"
-                    android:contentDescription="Rules"
+                    android:contentDescription="@string/rules"
                     android:src="@drawable/ic_rules"
                     app:tint="@color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="RULES"
+                    android:text="@string/rules"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"

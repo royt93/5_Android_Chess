@@ -102,7 +102,7 @@ public class DialogUtils {
         showBasicDialog(context,
                 context.getString(R.string.game_rules_title),
                 rules,
-                "Got it",
+                context.getString(R.string.got_it),
                 null,
                 R.drawable.ic_rules_blue,
                 null,
@@ -161,7 +161,7 @@ public class DialogUtils {
         dialogView.findViewById(R.id.dialog_icon).setVisibility(View.GONE);
         dialogView.findViewById(R.id.btn_positive).setVisibility(View.GONE); // Hide OK/Cancel
         Button btnMsgNegative = dialogView.findViewById(R.id.btn_negative);
-        btnMsgNegative.setText("Cancel");
+        btnMsgNegative.setText(R.string.cancel);
         btnMsgNegative.setOnClickListener(v -> dialog.dismiss());
 
         FrameLayout container = dialogView.findViewById(R.id.dialog_content_container);
@@ -171,7 +171,8 @@ public class DialogUtils {
         LinearLayout buttonsLayout = new LinearLayout(context);
         buttonsLayout.setOrientation(LinearLayout.VERTICAL);
 
-        String[] difficulties = { "EASY", "MEDIUM", "HARD", "UNBEATABLE" };
+        int[] difficulties = { R.string.difficulty_easy, R.string.difficulty_medium, R.string.difficulty_hard,
+                R.string.difficulty_unbeatable };
         int[] colors = {
                 0xFF4CAF50, // Green
                 0xFFFF9800, // Orange
@@ -180,9 +181,10 @@ public class DialogUtils {
         };
 
         for (int i = 0; i < difficulties.length; i++) {
-            final String diff = difficulties[i];
+            final int diffResId = difficulties[i];
+            final String diffName = (new String[] { "EASY", "MEDIUM", "HARD", "UNBEATABLE" })[i];
             Button btn = new com.google.android.material.button.MaterialButton(context);
-            btn.setText(diff);
+            btn.setText(diffResId);
             btn.setBackgroundColor(colors[i]);
             btn.setTextColor(Color.WHITE);
             // btn.setCornerRadius(20) - MaterialButton specific
@@ -199,7 +201,7 @@ public class DialogUtils {
             btn.setOnClickListener(v -> {
                 dialog.dismiss();
                 if (callback != null)
-                    callback.onSelected(diff);
+                    callback.onSelected(diffName);
             });
             buttonsLayout.addView(btn);
         }
@@ -221,9 +223,9 @@ public class DialogUtils {
      */
     public static void showStatsDialog(Context context, String stats) {
         showBasicDialog(context,
-                "🏆 Game Statistics",
+                context.getString(R.string.stats_game_title),
                 stats,
-                "Close",
+                context.getString(R.string.close),
                 null,
                 R.drawable.ic_trophy,
                 null,

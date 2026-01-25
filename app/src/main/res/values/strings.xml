@@ -8,6 +8,7 @@
     <string name="saveBoardPrompt">Quit game?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="ok">OK</string>
     <string name="warning">Warning</string>
     <string name="copyright_text">© SAIGON PHANTOM LAB</string>
     <string name="version_format">Version %s</string>
@@ -39,8 +40,20 @@
     <string name="stats_black_captured">Black Captured</string>
     <string name="play_pvp">PLAY 1 VS 1</string>
     <string name="play_ai">PLAY VS AI</string>
+    <string name="stats">STATS</string>
+    <string name="rules">RULES</string>
     <string name="select_difficulty">Select Difficulty</string>
-    
+    <string name="review_board">REVIEW BOARD</string>
+    <string name="got_it">Got it</string>
+    <string name="cancel">Cancel</string>
+    <string name="difficulty_easy">EASY</string>
+    <string name="difficulty_medium">MEDIUM</string>
+    <string name="difficulty_hard">HARD</string>
+    <string name="difficulty_unbeatable">UNBEATABLE</string>
+    <string name="stats_game_title">🏆 Game Statistics</string>
+    <string name="close">Close</string>
+    <string name="ai_performance_format">🤖 AI Performance (%s):\n</string>
+
     <!-- Game Rules -->
     <string name="game_rules_title">📜 Chess Rules</string>
     <string name="game_rules">
@@ -60,4 +73,9 @@ Checkmate the opponent\'s King.<br/><br/>
 &#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end.
 ]]>
     </string>
+    <string name="stats_total_games">Total Games Played: %d\n</string>
+    <string name="stats_total_time">Total Play Time: %s\n\n</string>
+    <string name="stats_performance_ai">Performance vs AI:\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
 </resources>
