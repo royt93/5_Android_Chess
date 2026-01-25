@@ -45,11 +45,21 @@ public class Chess {
     private boolean gameEnd = false;
     private long gameStartTime = System.currentTimeMillis();
 
+    // AI Mode
+    public boolean isVsComputer = false;
+    public AIEngine.Difficulty difficultyLevel = AIEngine.Difficulty.EASY;
+    private AIEngine aiEngine;
+    public boolean isAiThinking = false;
+    private android.os.Handler aiHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+
     public King whiteKing = null;
     public King blackKing = null;
 
     // Selection highlight animation
     private Chessman selectedPiece = null;
+
+    // Stats
+    private GameStatsManager statsManager;
     private ObjectAnimator selectionPulseAnimator = null;
 
     // Move history for undo and display
@@ -61,7 +71,8 @@ public class Chess {
 
     public Chess(Context ctx, int minDimension, FrameLayout boardLayout) {
         setLayoutParams(ctx, minDimension, boardLayout);
-
+        this.aiEngine = new AIEngine();
+        this.statsManager = new GameStatsManager(ctx);
         /*
          * BOARD
          * < X >
@@ -142,8 +153,11 @@ public class Chess {
     }
 
     public void onManClick(Chessman man) {
-        if (gameEnd)
+        if (gameEnd || isAiThinking)
             return;
+        if (isVsComputer && man.color != Chessman.PlayerColor.White)
+            return; // Block user from clicking Black pieces in PvE (Assuming Player is White)
+
         if (man.color == whichPlayerTurn) {
             // First, reset valid move buttons (this also clears old selection)
             resetValidMoveButtons();
@@ -196,8 +210,15 @@ public class Chess {
             if (chessmen[to.x][to.y].type == Chessman.ChessmanType.Pawn &&
                     (chessmen[to.x][to.y].color == Chessman.PlayerColor.White && chessmen[to.x][to.y].getPoint().y == 0
                             || chessmen[to.x][to.y].color == Chessman.PlayerColor.Black
-                                    && chessmen[to.x][to.y].getPoint().y == 7))
-                promote(chessmen[to.x][to.y]);
+                                    && chessmen[to.x][to.y].getPoint().y == 7)) {
+                if (isVsComputer && chessmen[to.x][to.y].color == Chessman.PlayerColor.Black) {
+                    // Auto-promote for AI (to Queen)
+                    manToPromote = chessmen[to.x][to.y];
+                    promotionResault(Chessman.ChessmanType.Queen);
+                } else {
+                    promote(chessmen[to.x][to.y]);
+                }
+            }
 
             // Check opponent's king status after move
             Log.d("roy93~", "doMove: checking opponent king status...");
@@ -264,13 +285,27 @@ public class Chess {
             playCheckSound();
             showCheckAnimation(opponentKing);
             // Show game end dialog - current player wins
+            boolean whiteWins = whichPlayerTurn == Chessman.PlayerColor.White;
             ((ChessBoardActivity) ctx).showCustomGameEndDialog(
-                    whichPlayerTurn == Chessman.PlayerColor.White, false);
+                    whiteWins, false);
+
+            if (isVsComputer) {
+                // If White wins (Player), result = 1. If Black wins (AI), result = -1
+                int result = whiteWins ? 1 : -1;
+                long duration = System.currentTimeMillis() - gameStartTime;
+                statsManager.saveGameResult(difficultyLevel, result, duration);
+            }
         } else if (status == King.KingRiskType.Stalemate) {
             Log.d("roy93~", "checkOpponentKingStatus: STALEMATE detected!");
             gameEnd = true;
             // Show stalemate dialog - draw (isStalemate = true)
+            // Show stalemate dialog - draw (isStalemate = true)
             ((ChessBoardActivity) ctx).showCustomGameEndDialog(false, true);
+
+            if (isVsComputer) {
+                long duration = System.currentTimeMillis() - gameStartTime;
+                statsManager.saveGameResult(difficultyLevel, 0, duration);
+            }
         } else if (status == King.KingRiskType.Check) {
             Log.d("roy93~", "checkOpponentKingStatus: CHECK detected!");
             kingInCheck = opponentKing;
@@ -555,6 +590,56 @@ public class Chess {
         else
             whichPlayerTurn = Chessman.PlayerColor.White;
         ((ChessBoardActivity) ctx).animateTurnChange(whichPlayerTurn);
+
+        if (isVsComputer && whichPlayerTurn == Chessman.PlayerColor.Black && !gameEnd) {
+            triggerAITurn();
+        }
+    }
+
+    private void triggerAITurn() {
+        isAiThinking = true;
+        // Optional: Show loading state in UI
+
+        new Thread(() -> {
+            try {
+                // Determine AI think time based on difficulty to feel "natural"
+                // Easy: fast, Hard: slow computation usually does it, but we can add delay
+                long delay = aiEngine.getThinkDelay(difficultyLevel);
+                Thread.sleep(delay);
+
+                MoveRecord bestMove = aiEngine.getBestMove(this, difficultyLevel, Chessman.PlayerColor.Black);
+
+                aiHandler.post(() -> {
+                    // Safety checks: if game ended or activity destroyed (ctx handling not perfect
+                    // here but gameEnd flag helps)
+                    if (gameEnd || !isAiThinking) {
+                        isAiThinking = false;
+                        return;
+                    }
+
+                    if (bestMove != null) {
+                        // We need to find the specific Chessman instance on the current board
+                        // because the one in MoveRecord came from state prior to calculation or
+                        // simulation?
+                        // Actually, MoveRecord stores the reference to the piece.
+                        // IMPORTANT: Simulation in AIEngine DOES modify and revert the board.
+                        // So the piece instances are valid.
+
+                        Point from = new Point(bestMove.fromX, bestMove.fromY);
+                        Point to = new Point(bestMove.toX, bestMove.toY);
+                        doMove(from, to);
+                    } else {
+                        // AI cannot move? Should have been detected as game over already.
+                        // Re-check game status
+                        checkOpponentKingStatus();
+                    }
+                    isAiThinking = false;
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                isAiThinking = false;
+            }
+        }).start();
     }
 
     public void promote(Chessman man) {

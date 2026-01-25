@@ -39,7 +39,9 @@ import com.saigonphantomlabs.sdkadbmob.UIUtils;
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
-    private LinearLayout btnStartGame;
+    private LinearLayout btnPlayPvP;
+    private LinearLayout btnPlayPvE;
+    private LinearLayout btnStats;
     private LinearLayout btnRateApp;
     private LinearLayout btnMoreApps;
     private LinearLayout btnShareApp;
@@ -63,7 +65,9 @@ public class SplashActivity extends AppCompatActivity {
             this.getSupportActionBar().hide();
         }
 
-        btnStartGame = findViewById(R.id.btnStartGame);
+        btnPlayPvP = findViewById(R.id.btnPlayPvP);
+        btnPlayPvE = findViewById(R.id.btnPlayPvE);
+        btnStats = findViewById(R.id.btnStats);
         btnRateApp = findViewById(R.id.btnRateApp);
         btnMoreApps = findViewById(R.id.btnMoreApps);
         btnShareApp = findViewById(R.id.btnShareApp);
@@ -79,14 +83,27 @@ public class SplashActivity extends AppCompatActivity {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
 
-        // Start Game button click with safe click and animation
-        btnStartGame.setOnClickListener(new SafeClickListener() {
+        // Play PvP button click
+        btnPlayPvP.setOnClickListener(new SafeClickListener() {
             @Override
             public void onSafeClick(View view) {
-                Intent switchActivityIntent = new Intent(SplashActivity.this, ChessBoardActivity.class);
-                startActivity(switchActivityIntent);
-                // Activity transition animation
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                startGame(false, null);
+            }
+        });
+
+        // Play PvE button click
+        btnPlayPvE.setOnClickListener(new SafeClickListener() {
+            @Override
+            public void onSafeClick(View view) {
+                showDifficultySelectionDialog();
+            }
+        });
+
+        // Stats button click
+        btnStats.setOnClickListener(new SafeClickListener() {
+            @Override
+            public void onSafeClick(View view) {
+                showStatsDialog();
             }
         });
 
@@ -145,6 +162,40 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+    private void startGame(boolean isVsAi, String difficulty) {
+        Intent intent = new Intent(SplashActivity.this, ChessBoardActivity.class);
+        intent.putExtra("IS_VS_AI", isVsAi);
+        if (difficulty != null) {
+            intent.putExtra("AI_DIFFICULTY", difficulty);
+        }
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    private void showDifficultySelectionDialog() {
+        String[] difficulties = { "Easy", "Medium", "Hard", "Unbeatable" };
+
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
+                .setTitle(getString(R.string.select_difficulty))
+                .setItems(difficulties, (dialog, which) -> {
+                    String selectedDifficulty = difficulties[which].toUpperCase();
+                    startGame(true, selectedDifficulty);
+                })
+                .show();
+    }
+
+    private void showStatsDialog() {
+        com.saigonphantomlabs.chess.GameStatsManager statsManager = new com.saigonphantomlabs.chess.GameStatsManager(
+                this);
+        String stats = statsManager.getStatsSummary();
+
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
+                .setTitle("🏆 Game Statistics")
+                .setMessage(stats)
+                .setPositiveButton("Close", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
     private void shareApp() {
         try {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -168,7 +219,7 @@ public class SplashActivity extends AppCompatActivity {
     private void animateEntryViews() {
         // Array of views to animate with their delays
         View[] topViews = { tvVersion };
-        View[] mainViews = { btnStartGame };
+        View[] mainViews = { btnPlayPvP, btnPlayPvE, btnStats };
         View[] bottomViews = { btnRateApp, btnMoreApps, btnShareApp };
 
         // Initially hide all views

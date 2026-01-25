@@ -37,4 +37,7 @@
     <string name="stats_moves">Total Moves</string>
     <string name="stats_white_captured">White Captured</string>
     <string name="stats_black_captured">Black Captured</string>
+    <string name="play_pvp">PLAY 1 VS 1</string>
+    <string name="play_ai">PLAY VS AI</string>
+    <string name="select_difficulty">Select Difficulty</string>
 </resources>

@@ -118,19 +118,38 @@ public class ChessBoardActivity extends AppCompatActivity {
 
         // Setup undo button
         btnUndo.setOnClickListener(v -> {
-            if (chess != null && chess.canUndo()) {
+            if (chess != null && chess.canUndo() && !chess.isAiThinking) {
                 chess.undoLastMove();
             }
         });
 
         // Setup restart button
-        btnRestart.setOnClickListener(v -> showRestartConfirmDialog());
+        // Setup restart button
+        btnRestart.setOnClickListener(v -> {
+            if (chess != null && !chess.isAiThinking) {
+                showRestartConfirmDialog();
+            }
+        });
 
         // Board size is now handled by ConstraintLayout with ratio
         // No need to set fixed dimensions
 
         if (Storage.chess == null) {
             Storage.chess = chess = new Chess(this, displayMinDimensions, boardLayout);
+
+            // Configure AI Mode from Intent
+            boolean isVsAi = getIntent().getBooleanExtra("IS_VS_AI", false);
+            chess.isVsComputer = isVsAi;
+            if (isVsAi) {
+                String difficultyStr = getIntent().getStringExtra("AI_DIFFICULTY");
+                if (difficultyStr != null) {
+                    try {
+                        chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.valueOf(difficultyStr);
+                    } catch (IllegalArgumentException e) {
+                        chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.EASY;
+                    }
+                }
+            }
         } else {
             chess = Storage.chess;
             chess.changeLayout(this, displayMinDimensions, boardLayout);
@@ -503,6 +522,15 @@ public class ChessBoardActivity extends AppCompatActivity {
                 .append(chess.getCapturedWhiteCount()).append("\n");
         sb.append("⚫ ").append(getString(R.string.stats_black_captured)).append(": ")
                 .append(chess.getCapturedBlackCount());
+
+        if (chess.isVsComputer) {
+            sb.append("\n\n━━━━━━━━━━━━━━━━━━━━\n");
+            sb.append("🤖 AI Performance (" + chess.difficultyLevel + "):\n");
+            // Fetch stats from manager
+            com.saigonphantomlabs.chess.GameStatsManager sm = new com.saigonphantomlabs.chess.GameStatsManager(this);
+            sb.append(sm.getStatsSummary());
+        }
+
         return sb.toString();
     }
 
