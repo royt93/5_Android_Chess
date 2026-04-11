@@ -35,11 +35,12 @@ import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.saigonphantomlabs.chess.BuildConfig
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.Collections
@@ -124,6 +125,9 @@ object AdMobManager {
     private var lastAppOpenErrorTime: Long = 0
     private val ERROR_COOLDOWN = 15 * 60 * 1000L // 15 phút dưới dạng milliseconds
 
+    // [ML-03] Store splash screen Job so it can be cancelled properly
+    private var splashJob: Job? = null
+
     fun init(
         app: Application?,
         onComplete: (Boolean, String) -> Unit,
@@ -199,9 +203,10 @@ object AdMobManager {
             try {
                 val info = AdvertisingIdClient.getAdvertisingIdInfo(context)
                 val id = info.id ?: ""
-                callback(id)
+                // [WARN-05] Post callback to Main Thread to avoid data race
+                Handler(Looper.getMainLooper()).post { callback(id) }
             } catch (e: Exception) {
-                callback("")
+                Handler(Looper.getMainLooper()).post { callback("") }
                 Log.d("AdMobManager", "getGAID error $e")
             }
         }.start()
@@ -209,6 +214,11 @@ object AdMobManager {
 
     fun setCurrentActivity(activity: Activity) {
         this.currentActivity = WeakReference(activity)
+    }
+
+    // [BUG-03] Clear stale Activity reference when the Activity is destroyed
+    fun clearCurrentActivity() {
+        this.currentActivity = null
     }
 
     //search logcat: "to get test ads on this device"
@@ -596,10 +606,12 @@ object AdMobManager {
         if (countInitSplashScreen > 1) {
             onAdLoaded.invoke()
         } else {
-            CoroutineScope(Dispatchers.Default).launch {
+            // [ML-03] Cancel any previous job and use take(1) to avoid infinite collectLatest
+            splashJob?.cancel()
+            splashJob = CoroutineScope(Dispatchers.Default).launch {
                 Log.d(TAG, "~~~initSplashScreen launch")
-                EventBus.eventFlow.collectLatest { value ->
-                    Log.d(TAG, "initSplashScreen collectLatest: $value")
+                EventBus.eventFlow.take(1).collect { value ->
+                    Log.d(TAG, "initSplashScreen collect: $value")
                     CoroutineScope(Dispatchers.Main).launch {
                         loadAppOpenAd(
                             context = activity,

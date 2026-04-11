@@ -44,6 +44,7 @@ public class Chess {
     // Game state
     private boolean gameEnd = false;
     private long gameStartTime = System.currentTimeMillis();
+    private boolean isDestroyed = false; // [ML-04] Lifecycle guard for AI thread
 
     // AI Mode
     public boolean isVsComputer = false;
@@ -607,39 +608,32 @@ public class Chess {
 
     private void triggerAITurn() {
         isAiThinking = true;
-        // Optional: Show loading state in UI
 
         new Thread(() -> {
             try {
-                // Determine AI think time based on difficulty to feel "natural"
-                // Easy: fast, Hard: slow computation usually does it, but we can add delay
                 long delay = aiEngine.getThinkDelay(difficultyLevel);
                 Thread.sleep(delay);
+
+                // [BUG-01] Check lifecycle before heavy computation
+                if (isDestroyed) {
+                    isAiThinking = false;
+                    return;
+                }
 
                 MoveRecord bestMove = aiEngine.getBestMove(this, difficultyLevel, Chessman.PlayerColor.Black);
 
                 aiHandler.post(() -> {
-                    // Safety checks: if game ended or activity destroyed (ctx handling not perfect
-                    // here but gameEnd flag helps)
-                    if (gameEnd || !isAiThinking) {
+                    // [BUG-01] Lifecycle guard: refuse to touch UI if destroyed
+                    if (isDestroyed || gameEnd || !isAiThinking) {
                         isAiThinking = false;
                         return;
                     }
 
                     if (bestMove != null) {
-                        // We need to find the specific Chessman instance on the current board
-                        // because the one in MoveRecord came from state prior to calculation or
-                        // simulation?
-                        // Actually, MoveRecord stores the reference to the piece.
-                        // IMPORTANT: Simulation in AIEngine DOES modify and revert the board.
-                        // So the piece instances are valid.
-
                         Point from = new Point(bestMove.fromX, bestMove.fromY);
                         Point to = new Point(bestMove.toX, bestMove.toY);
                         doMove(from, to);
                     } else {
-                        // AI cannot move? Should have been detected as game over already.
-                        // Re-check game status
                         checkOpponentKingStatus();
                     }
                     isAiThinking = false;
@@ -649,6 +643,16 @@ public class Chess {
                 isAiThinking = false;
             }
         }).start();
+    }
+
+    /**
+     * [ML-04] Cancel pending AI handler callbacks and mark as destroyed.
+     * Must be called from ChessBoardActivity.onDestroy().
+     */
+    public void cancelAiHandler() {
+        isDestroyed = true;
+        isAiThinking = false;
+        aiHandler.removeCallbacksAndMessages(null);
     }
 
     public void promote(Chessman man) {
@@ -818,9 +822,12 @@ public class Chess {
         // Clear selection when moves are reset
         clearSelectionHighlight();
 
-        for (View v : validMoveButtons)
-            ((ViewGroup) v.getParent()).removeView(v);
-
+        // [WARN-02] Guard against NPE when parent is null (e.g. after rotation)
+        for (View v : validMoveButtons) {
+            if (v.getParent() != null) {
+                ((ViewGroup) v.getParent()).removeView(v);
+            }
+        }
         validMoveButtons.clear();
     }
 
@@ -960,8 +967,33 @@ public class Chess {
         resetValidMoveButtons();
         clearCheckAnimation();
 
+        // [BUG-04] Detect if this was a promotion move:
+        // After promotion, chessmen[toX][toY] is the promoted piece (Queen/Rook/etc.),
+        // while lastMove.movedPiece is the original Pawn object.
+        Chessman currentPieceAtDest = chessmen[lastMove.toX][lastMove.toY];
+        boolean wasPromotion = (currentPieceAtDest != null)
+                && (currentPieceAtDest != lastMove.movedPiece)
+                && (lastMove.movedPiece instanceof Pawn);
+
+        Chessman movedPiece;
+        if (wasPromotion) {
+            // Remove promoted piece's button from the board
+            if (currentPieceAtDest.button != null && currentPieceAtDest.button.getParent() != null) {
+                ((ViewGroup) currentPieceAtDest.button.getParent()).removeView(currentPieceAtDest.button);
+            }
+            // Restore original Pawn
+            movedPiece = lastMove.movedPiece;
+            movedPiece.type = Chessman.ChessmanType.Pawn;
+            movedPiece.isDead = false;
+            movedPiece.createButton();
+            boardLayout.addView(movedPiece.button);
+        } else {
+            movedPiece = currentPieceAtDest;
+        }
+
+        if (movedPiece == null) return; // Safety guard
+
         // Move piece back to original position
-        Chessman movedPiece = chessmen[lastMove.toX][lastMove.toY];
         chessmen[lastMove.fromX][lastMove.fromY] = movedPiece;
         chessmen[lastMove.toX][lastMove.toY] = null;
         movedPiece.setPoint(new Point(lastMove.fromX, lastMove.fromY));
@@ -970,7 +1002,7 @@ public class Chess {
         movedPiece.moveButton(lastMove.fromX, lastMove.fromY);
 
         // Restore first move status for pawns
-        if (lastMove.wasFirstMove && movedPiece.type == Chessman.ChessmanType.Pawn) {
+        if (lastMove.wasFirstMove && movedPiece instanceof Pawn) {
             ((Pawn) movedPiece).firstMove = true;
         }
 

@@ -3,11 +3,7 @@ package com.saigonphantomlabs
 import android.app.Application
 import android.util.Log
 import com.google.android.gms.ads.MobileAds
-import com.saigonphantomlabs.chess.BuildConfig
 import com.saigonphantomlabs.sdkadbmob.AdMobManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MyApplication : Application() {
     override fun onCreate() {
@@ -16,8 +12,9 @@ class MyApplication : Application() {
     }
 
     private fun setupAdmob() {
-        CoroutineScope(Dispatchers.IO).launch {
-            MobileAds.initialize(this@MyApplication) {}
+        // [BUG-05] MobileAds.initialize() must be called on the Main Thread (Google requirement).
+        // AdMobManager.init() internally spawns its own Thread for GAID, so no IO dispatcher needed.
+        MobileAds.initialize(this@MyApplication) {
             AdMobManager.init(this@MyApplication) { success, gaidCurrent ->
                 Log.d("roy93~", "AdMobManager init success $success, gaidCurrent $gaidCurrent")
             }

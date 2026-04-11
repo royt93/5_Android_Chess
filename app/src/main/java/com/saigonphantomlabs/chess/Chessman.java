@@ -281,7 +281,8 @@ public abstract class Chessman {
                 && parent.chessmen[x][y].color != color
                 && parent.chessmen[x][y].type == ChessmanType.Knight)
             return false;
-        x = point.x - 2;
+        // [WARN-01] Fixed: was (-2,-1) duplicate; correct value is (+2,-1)
+        x = point.x + 2;
         y = point.y - 1;
         if (Point.isValid(x, y) && parent.chessmen[x][y] != null
                 && parent.chessmen[x][y].color != color

@@ -23,6 +23,8 @@ public class SplashActivity extends AppCompatActivity {
     private static final long MIN_SPLASH_DURATION = 1000L;
     private long splashStartTime;
     private boolean isNavigating = false;
+    // [WARN-06] Store handler reference to cancel pending callbacks on destroy
+    private android.os.Handler splashHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,9 @@ public class SplashActivity extends AppCompatActivity {
                 long remainingTime = MIN_SPLASH_DURATION - elapsedTime;
 
                 if (remainingTime > 0) {
-                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    // [WARN-06] Use stored handler so we can cancel it in onDestroy()
+                    splashHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+                    splashHandler.postDelayed(() -> {
                         runOnUiThread(() -> navigateToMainActivity());
                     }, remainingTime);
                 } else {
@@ -80,5 +84,16 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // Prevent back button during splash
+    }
+
+    @Override
+    protected void onDestroy() {
+        // [WARN-06] Cancel pending navigation callback if Activity is destroyed first
+        if (splashHandler != null) {
+            splashHandler.removeCallbacksAndMessages(null);
+        }
+        // [BUG-03] Clear stale Activity reference from AdMobManager
+        AdMobManager.INSTANCE.clearCurrentActivity();
+        super.onDestroy();
     }
 }

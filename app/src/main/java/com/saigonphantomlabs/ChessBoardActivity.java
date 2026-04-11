@@ -632,6 +632,21 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
 
     @Override
     protected void onDestroy() {
+        // [BUG-02] Cancel the infinite blink animator to prevent View/Context leak
+        if (currentBlinkAnimator != null) {
+            currentBlinkAnimator.cancel();
+            currentBlinkAnimator = null;
+        }
+        // [ML-04] Stop AI handler callbacks before destroying
+        if (chess != null) {
+            chess.cancelAiHandler();
+        }
+        // [BUG-02] Clear interstitial listener so AdMobManager doesn't hold Activity reference
+        AdMobManager.INSTANCE.setInterstitialListener(null);
+        // [ML-02] Safety: null out static reference to break Activity leak chain
+        if (Storage.chess == chess) {
+            Storage.chess = null;
+        }
         if (adView != null) {
             adView.destroy();
         }
