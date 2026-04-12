@@ -29,7 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.material.button.MaterialButton;
+import androidx.appcompat.widget.AppCompatButton;
 import com.saigonphantomlabs.chess.BuildConfig;
 import com.saigonphantomlabs.chess.Chess;
 import com.saigonphantomlabs.chess.Chessman;
@@ -57,8 +57,8 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     private LinearLayout capturedWhitePiecesContainer;
 
     // Buttons
-    private MaterialButton btnUndo;
-    private MaterialButton btnRestart;
+    private AppCompatButton btnUndo;
+    private AppCompatButton btnRestart;
 
     public Chess chess = null;
 
@@ -265,25 +265,51 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     }
 
     private void updateTurnIndicators(Chessman.PlayerColor turn) {
+        if (currentBlinkAnimator != null) {
+            currentBlinkAnimator.cancel();
+            currentBlinkAnimator = null;
+        }
+        
+        // Ensure dots are reset
+        View whiteDot = findViewById(R.id.whiteTurnDot);
+        if(whiteDot != null) { whiteDot.setScaleX(1f); whiteDot.setScaleY(1f); }
+        View blackDot = findViewById(R.id.blackTurnDot);
+        if(blackDot != null) { blackDot.setScaleX(1f); blackDot.setScaleY(1f); }
+
         if (turn == Chessman.PlayerColor.Black) {
-            blackTurnIndicator.setVisibility(View.VISIBLE);
+            animatePopIn(blackTurnIndicator);
             whiteTurnIndicator.setVisibility(View.INVISIBLE);
-            startBlinkingAnimation(blackTurnIndicator);
+            startBreathingDot(blackDot);
         } else {
-            whiteTurnIndicator.setVisibility(View.VISIBLE);
+            animatePopIn(whiteTurnIndicator);
             blackTurnIndicator.setVisibility(View.INVISIBLE);
-            startBlinkingAnimation(whiteTurnIndicator);
+            startBreathingDot(whiteDot);
         }
     }
 
-    private void startBlinkingAnimation(View indicator) {
-        if (currentBlinkAnimator != null) {
-            currentBlinkAnimator.cancel();
-        }
-        indicator.clearAnimation();
+    private void animatePopIn(View indicator) {
+        indicator.setVisibility(View.VISIBLE);
+        indicator.setAlpha(0f);
+        indicator.setScaleX(0.5f);
+        indicator.setScaleY(0.5f);
+        
+        indicator.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(400)
+            .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f))
+            .start();
+    }
 
-        currentBlinkAnimator = ObjectAnimator.ofFloat(indicator, "alpha", 1f, 0.3f);
-        currentBlinkAnimator.setDuration(400);
+    private void startBreathingDot(View dotView) {
+        if (dotView == null) return;
+        
+        android.animation.PropertyValuesHolder scaleX = android.animation.PropertyValuesHolder.ofFloat("scaleX", 1f, 1.5f);
+        android.animation.PropertyValuesHolder scaleY = android.animation.PropertyValuesHolder.ofFloat("scaleY", 1f, 1.5f);
+        
+        currentBlinkAnimator = ObjectAnimator.ofPropertyValuesHolder(dotView, scaleX, scaleY);
+        currentBlinkAnimator.setDuration(600);
         currentBlinkAnimator.setRepeatCount(ValueAnimator.INFINITE);
         currentBlinkAnimator.setRepeatMode(ValueAnimator.REVERSE);
         currentBlinkAnimator.start();

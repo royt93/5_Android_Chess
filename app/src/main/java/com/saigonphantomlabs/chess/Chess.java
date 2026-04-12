@@ -248,6 +248,8 @@ public class Chess {
         chessmen[xt][yt] = chessmen[xf][yf];
         chessmen[xt][yt].setPoint(new Point(xt, yt));
         chessmen[xf][yf] = null;
+        
+        Log.d("roy93~", chessmen[xt][yt].color + " Moved: " + chessmen[xt][yt].type.name() + " from [" + xf + "," + yf + "] to [" + xt + "," + yt + "]");
 
         King myKing = (chessmen[xt][yt].color == Chessman.PlayerColor.White) ? whiteKing : blackKing;
 
@@ -258,6 +260,7 @@ public class Chess {
 
         if (isKingSafe) {
             if (tempMan != null) {
+                Log.d("roy93~", myKing.color + " Captured: " + tempMan.type.name() + " at [" + xt + "," + yt + "]");
                 kill(tempMan);
                 // Add captured piece to display
                 ((ChessBoardActivity) ctx).addCapturedPiece(tempMan);
@@ -292,7 +295,7 @@ public class Chess {
         clearCheckAnimation();
 
         if (status == King.KingRiskType.CheckMate) {
-            Log.d("roy93~", "checkOpponentKingStatus: CHECKMATE detected!");
+            Log.d("roy93~", "CHECKMATE! " + whichPlayerTurn + " Wins! Game Over.");
             gameEnd = true;
             playCheckSound();
             showCheckAnimation(opponentKing);
@@ -1005,6 +1008,7 @@ public class Chess {
         }
 
         MoveRecord lastMove = moveHistory.pop();
+        Log.d("roy93~", "Undo Triggered: " + lastMove.movedPiece.type.name() + " back to [" + lastMove.fromX + "," + lastMove.fromY + "]");
 
         // Clear any selection
         resetValidMoveButtons();
@@ -1098,6 +1102,7 @@ public class Chess {
      * Reset game to initial state
      */
     public void resetGame() {
+        Log.d("roy93~", "=== GAME START / RESET ===");
         // Clear history
         moveHistory.clear();
         deadMen.clear();

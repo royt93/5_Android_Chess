@@ -49,16 +49,18 @@
         android:id="@+id/blackTurnIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:background="@drawable/bg_captured_black"
-        android:paddingVertical="4dp"
+        android:background="@drawable/bg_pill_turn_black"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/capturedBlackPieces">
         
         <View
+            android:id="@+id/blackTurnDot"
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:layout_marginEnd="8dp"
@@ -70,7 +72,11 @@
             android:fontFamily="@font/exo2"
             android:textColor="@color/game_neon_cyan"
             android:textSize="12sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:shadowColor="@color/game_cyan_glow"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="16" />
     </LinearLayout>
 
     <!-- Glowing Aura behind the Board -->
@@ -110,18 +116,19 @@
         android:id="@+id/whiteTurnIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:visibility="invisible"
-        android:background="@drawable/bg_captured_white"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="4dp"
+        android:background="@drawable/bg_pill_turn_white"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="8dp"
         app:layout_constraintBottom_toTopOf="@id/capturedWhitePieces"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
         
         <View
+            android:id="@+id/whiteTurnDot"
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:layout_marginEnd="8dp"
@@ -133,7 +140,11 @@
             android:fontFamily="@font/exo2"
             android:textColor="@color/game_gold_primary"
             android:textSize="12sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:shadowColor="@color/game_gold_glow"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="16" />
     </LinearLayout>
 
     <!-- Captured pieces for White (shows BLACK pieces captured by white) -->
@@ -162,8 +173,8 @@
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="wrap_content"
-        android:layout_height="56dp"
-        android:layout_marginBottom="1dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/ad_layout_include"
@@ -171,39 +182,41 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <!-- Restart Button - Always visible -->
-        <com.google.android.material.button.MaterialButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnRestart"
-            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/play_again"
             android:textColor="@color/game_text_muted"
             android:fontFamily="@font/exo2"
             android:visibility="gone"
-            app:backgroundTint="@color/game_bg_surface"
-            app:strokeColor="@color/game_bg_elevated"
-            app:strokeWidth="1dp"
-            app:cornerRadius="24dp"
-            app:icon="@drawable/ic_restart"
-            app:iconTint="@color/game_text_muted" />
+            android:background="@drawable/bg_btn_secondary"
+            android:drawableStart="@drawable/ic_restart"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/game_text_muted"
+            android:paddingHorizontal="24dp"
+            android:textAllCaps="false"/>
 
         <!-- Undo Button -->
-        <com.google.android.material.button.MaterialButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnUndo"
-            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:text="@string/undo"
             android:textColor="@color/white"
             android:fontFamily="@font/exo2"
             android:visibility="gone"
-            app:backgroundTint="@color/game_bg_elevated"
-            app:strokeColor="@color/game_gold_primary"
-            app:strokeWidth="1dp"
-            app:cornerRadius="24dp"
-            app:icon="@drawable/ic_undo"
-            app:iconTint="@color/game_gold_primary" />
+            android:background="@drawable/bg_btn_pve"
+            android:drawableStart="@drawable/ic_undo"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/white"
+            android:paddingHorizontal="24dp"
+            android:textAllCaps="false"
+            android:shadowColor="@color/game_cyan_glow"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="12"/>
 
     </LinearLayout>
 
