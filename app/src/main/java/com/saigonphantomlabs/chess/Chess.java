@@ -336,15 +336,20 @@ public class Chess {
         if (king == null || king.button == null)
             return;
 
+        // Apply Red Glow Aura
+        king.button.setBackground(ctx.getResources().getDrawable(R.drawable.bg_piece_in_check, ctx.getTheme()));
+
         // Intense Flash Animation: scale up and fade
         PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.25f, 1f);
         PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.25f, 1f);
-        PropertyValuesHolder pvhAlpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.2f, 1f);
+        PropertyValuesHolder pvhAlpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.4f, 1f);
         
         checkFlashAnimator = ObjectAnimator.ofPropertyValuesHolder(king.button, pvhX, pvhY, pvhAlpha);
-        checkFlashAnimator.setDuration(300);
+        checkFlashAnimator.setDuration(400);
         checkFlashAnimator.setRepeatCount(ValueAnimator.INFINITE);
         checkFlashAnimator.start();
+
+        performCheckHaptic();
     }
 
     /**
@@ -357,6 +362,7 @@ public class Chess {
         }
         if (kingInCheck != null && kingInCheck.button != null) {
             kingInCheck.button.setAlpha(1f);
+            kingInCheck.button.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         }
         kingInCheck = null;
     }
@@ -898,9 +904,30 @@ public class Chess {
             Vibrator vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null && vibrator.hasVibrator()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                    long[] timings = {0, 20, 30, 50};
+                    int[] amplitudes = {0, 100, 0, 255};
+                    vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1));
                 } else {
-                    vibrator.vibrate(50);
+                    vibrator.vibrate(80);
+                }
+            }
+        }
+    }
+
+    /**
+     * Perform Double-pulse haptic feedback for Check condition
+     */
+    public void performCheckHaptic() {
+        if (ctx != null) {
+            Vibrator vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    long[] timings = {0, 50, 50, 50, 50, 200};
+                    int[] amplitudes = {0, 255, 0, 150, 0, 255};
+                    vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1));
+                } else {
+                    long[] pattern = {0, 50, 50, 50, 50, 200};
+                    vibrator.vibrate(pattern, -1);
                 }
             }
         }

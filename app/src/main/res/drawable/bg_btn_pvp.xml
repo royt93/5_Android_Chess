@@ -2,12 +2,24 @@
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="#40D4AF37">
     <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/game_bg_elevated" />
-            <corners android:radius="@dimen/corner_game" />
-            <stroke
-                android:width="@dimen/game_stroke_width"
-                android:color="@color/game_gold_primary" />
-        </shape>
+        <layer-list>
+            <!-- Outer Glow -->
+            <item android:top="-2dp" android:left="-2dp" android:right="-2dp" android:bottom="-2dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/corner_game" />
+                    <stroke android:width="4dp" android:color="#40D4AF37" />
+                </shape>
+            </item>
+            <!-- Core Button -->
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#1A0D0D0F" />
+                    <corners android:radius="@dimen/corner_game" />
+                    <stroke
+                        android:width="1dp"
+                        android:color="@color/game_gold_primary" />
+                </shape>
+            </item>
+        </layer-list>
     </item>
 </ripple>

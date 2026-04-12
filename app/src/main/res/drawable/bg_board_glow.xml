@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    
+    <!-- A deep dark body with a thick neon cyan/gold border to generate glow -->
+    <solid android:color="#1AFFFFFF"/>
+    
+    <!-- Thick stroke acts as the intense aura -->
+    <stroke
+        android:width="12dp"
+        android:color="#4000FFFF" />
+    
+    <!-- Corner radius for smooth blending behind the board -->
+    <corners android:radius="8dp" />
+</shape>

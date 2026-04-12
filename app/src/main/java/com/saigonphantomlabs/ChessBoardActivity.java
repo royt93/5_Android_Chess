@@ -47,6 +47,10 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     public FrameLayout boardLayout;
     public View blackTurnIndicator;
     public View whiteTurnIndicator;
+    
+    // Dynamic background overlays
+    public View whiteTurnGlow;
+    public View blackTurnGlow;
 
     // Captured pieces containers
     private LinearLayout capturedBlackPiecesContainer;
@@ -117,6 +121,9 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
         boardLayout = findViewById(R.id.boardLayout);
         blackTurnIndicator = findViewById(R.id.blackTurnIndicator);
         whiteTurnIndicator = findViewById(R.id.whiteTurnIndicator);
+        
+        whiteTurnGlow = findViewById(R.id.whiteTurnGlow);
+        blackTurnGlow = findViewById(R.id.blackTurnGlow);
         capturedBlackPiecesContainer = findViewById(R.id.capturedBlackPiecesContainer);
         capturedWhitePiecesContainer = findViewById(R.id.capturedWhitePiecesContainer);
         btnUndo = findViewById(R.id.btnUndo);
@@ -240,6 +247,18 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     public void animateTurnChange(Chessman.PlayerColor turn) {
         // Update turn indicators
         updateTurnIndicators(turn);
+
+        // Background Glow transition
+        if (whiteTurnGlow != null && blackTurnGlow != null) {
+            long duration = 800; // Smooth theater fade
+            if (turn == Chessman.PlayerColor.White) {
+                whiteTurnGlow.animate().alpha(1f).setDuration(duration).start();
+                blackTurnGlow.animate().alpha(0f).setDuration(duration).start();
+            } else {
+                whiteTurnGlow.animate().alpha(0f).setDuration(duration).start();
+                blackTurnGlow.animate().alpha(1f).setDuration(duration).start();
+            }
+        }
 
         // Update status bar and navigation bar tint
         updateSystemBarsTint();

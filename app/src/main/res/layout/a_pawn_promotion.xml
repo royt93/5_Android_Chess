@@ -26,10 +26,10 @@
             android:fontFamily="@font/cinzel"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:shadowColor="@color/game_gold_dark"
+            android:shadowColor="@color/game_gold_glow"
             android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="4"/>
+            android:shadowDy="0"
+            android:shadowRadius="24"/>
 
         <!-- Piece selection grid -->
         <LinearLayout
@@ -72,7 +72,11 @@
                         android:fontFamily="@font/exo2"
                         android:textColor="@color/game_gold_primary"
                         android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:shadowColor="@color/game_gold_glow"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="8" />
                 </LinearLayout>
             </FrameLayout>
 
@@ -109,7 +113,11 @@
                         android:fontFamily="@font/exo2"
                         android:textColor="@color/game_gold_primary"
                         android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:shadowColor="@color/game_gold_glow"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="8" />
                 </LinearLayout>
             </FrameLayout>
 
@@ -146,7 +154,11 @@
                         android:fontFamily="@font/exo2"
                         android:textColor="@color/game_gold_primary"
                         android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:shadowColor="@color/game_gold_glow"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="8" />
                 </LinearLayout>
             </FrameLayout>
 
@@ -183,7 +195,11 @@
                         android:fontFamily="@font/exo2"
                         android:textColor="@color/game_gold_primary"
                         android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:shadowColor="@color/game_gold_glow"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="8" />
                 </LinearLayout>
             </FrameLayout>
 

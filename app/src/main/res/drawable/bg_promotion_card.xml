@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/game_bg_surface" />
-    <corners android:radius="16dp" />
-    <stroke
-        android:width="2dp"
-        android:color="#00000000" /> <!-- Will be changed on state/hover -->
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer Glow -->
+    <item android:top="-2dp" android:left="-2dp" android:right="-2dp" android:bottom="-2dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <stroke android:width="4dp" android:color="#30D4AF37" />
+        </shape>
+    </item>
+    <!-- Core Button -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/game_bg_surface" />
+            <corners android:radius="16dp" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/game_gold_primary" />
+        </shape>
+    </item>
+</layer-list>

@@ -178,6 +178,7 @@ public abstract class Chessman {
                                         .withEndAction(() -> {
                                             Log.d("roy93~", "moveButton [" + color + " " + type + "] FINISHED. Updating LayoutParams to Grid (" + x + "," + y + ")");
                                             updateLayoutPositionAndResetTranslation(x, y);
+                                            button.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS, android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                         })
                                         .start();
                             })

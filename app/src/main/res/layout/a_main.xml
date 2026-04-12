@@ -130,7 +130,11 @@
                     android:fontFamily="@font/cinzel"
                     android:textColor="@color/game_gold_light"
                     android:textSize="@dimen/game_button_text_size"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:shadowColor="@color/game_gold_glow"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="16" />
             </LinearLayout>
 
             <!-- Play AI Button (Secondary) -->
@@ -159,7 +163,11 @@
                     android:fontFamily="@font/cinzel"
                     android:textColor="@color/white"
                     android:textSize="@dimen/game_button_text_size"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:shadowColor="@color/game_cyan_glow"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="16" />
             </LinearLayout>
 
             <!-- Stats & Rules Row -->
@@ -196,7 +204,11 @@
                         android:fontFamily="@font/exo2"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:shadowColor="#88FFFFFF"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="12" />
                 </LinearLayout>
 
                 <!-- Rules Button -->
@@ -226,7 +238,11 @@
                         android:fontFamily="@font/exo2"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:shadowColor="#88FFFFFF"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="12" />
                 </LinearLayout>
             </LinearLayout>
 
