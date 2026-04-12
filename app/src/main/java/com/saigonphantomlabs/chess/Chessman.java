@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import android.util.Log;
 
 public abstract class Chessman {
     public enum ChessmanType {
@@ -79,7 +80,10 @@ public abstract class Chessman {
                 minDimension - (width * getPoint().y + width));
 
         btn.setLayoutParams(lp);
-        btn.setBackground(icon);
+        btn.setImageDrawable(icon);
+        btn.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        btn.setPadding(0, 0, 0, 0);
+        btn.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
 
         btn.setOnClickListener(v -> {
             // Add selection feedback animation - quick pulse
@@ -140,27 +144,42 @@ public abstract class Chessman {
         final float destX = width * x;
         final float destY = width * y;
 
-        // Phase 1: Lift up the piece with scale and elevation
+        Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 1 STARTED -> (" + startX + "," + startY + ") to destX/Y (" + destX + "," + destY + ")");
+
+        // Phase 1: Intense Lift and spin
         button.animate()
-                .scaleX(1.15f)
-                .scaleY(1.15f)
-                .translationZ(12f)
+                .scaleX(1.3f)
+                .scaleY(1.3f)
+                .translationZ(30f)
+                .rotation(45f)
                 .setDuration(120)
-                .setInterpolator(new OvershootInterpolator(1.2f))
+                .setInterpolator(new OvershootInterpolator(2f))
                 .withEndAction(() -> {
-                    // Phase 2: Move to destination using translationX/Y from current layout
-                    // position
+                    Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 2 FLIGHT started");
+                    // Phase 2: Fast flight
                     button.animate()
                             .translationX(destX - startX)
                             .translationY(destY - startY)
-                            .scaleX(1.0f)
-                            .scaleY(1.0f)
-                            .translationZ(0f)
-                            .setDuration(280)
-                            .setInterpolator(new BounceInterpolator())
+                            .scaleX(1.2f)
+                            .scaleY(1.2f)
+                            .rotation(-15f)
+                            .setDuration(200)
+                            .setInterpolator(new android.view.animation.AccelerateInterpolator())
                             .withEndAction(() -> {
-                                // Phase 3: Update layout position and reset translation to zero
-                                updateLayoutPositionAndResetTranslation(x, y);
+                                Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 3 SLAM started");
+                                // Phase 3: Slam down with huge bounce
+                                button.animate()
+                                        .scaleX(1.0f)
+                                        .scaleY(1.0f)
+                                        .translationZ(0f)
+                                        .rotation(0f)
+                                        .setDuration(200)
+                                        .setInterpolator(new BounceInterpolator())
+                                        .withEndAction(() -> {
+                                            Log.d("roy93~", "moveButton [" + color + " " + type + "] FINISHED. Updating LayoutParams to Grid (" + x + "," + y + ")");
+                                            updateLayoutPositionAndResetTranslation(x, y);
+                                        })
+                                        .start();
                             })
                             .start();
                 })
@@ -181,6 +200,7 @@ public abstract class Chessman {
     // Update layout position and reset translation atomically
     private void updateLayoutPositionAndResetTranslation(int x, int y) {
         if (button != null && button.getLayoutParams() instanceof FrameLayout.LayoutParams) {
+            Log.d("roy93~", "updateLayoutPositionAndResetTranslation [" + color + " " + type + "] mapping to grid (" + x + ", " + y + ")");
             // Update layout position
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) button.getLayoutParams();
             lp.setMargins(width * x, width * y,

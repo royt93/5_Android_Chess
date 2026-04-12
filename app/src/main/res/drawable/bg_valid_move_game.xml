@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer Glow Halo -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/game_cyan_glow" />
+            <size android:width="36dp" android:height="36dp"/>
+        </shape>
+    </item>
+
+    <!-- Inner Neon Dot -->
+    <item android:top="8dp" android:left="8dp" android:right="8dp" android:bottom="8dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/game_neon_cyan" />
+            <!-- Bright center core -->
+            <stroke android:width="2dp" android:color="#FFFFFF" />
+            <size android:width="20dp" android:height="20dp"/>
+        </shape>
+    </item>
+</layer-list>

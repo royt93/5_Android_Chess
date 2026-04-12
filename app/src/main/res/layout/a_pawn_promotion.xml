@@ -1,20 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#80000000"
+    android:background="#B30D0D0F"
     tools:context="com.saigonphantomlabs.PawnPromotionActivity">
-
-    <ImageView
-        android:id="@+id/ivBkg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0.3"
-        android:contentDescription="@string/app_name"
-        android:scaleType="centerCrop"
-        tools:src="@drawable/ic_bkg_1" />
 
     <LinearLayout
         android:id="@+id/rootLayout"
@@ -32,9 +22,14 @@
             android:layout_marginBottom="24dp"
             android:text="@string/promotionQuestion"
             android:textAlignment="center"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/game_gold_light"
+            android:fontFamily="@font/cinzel"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:shadowColor="@color/game_gold_dark"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="4"/>
 
         <!-- Piece selection grid -->
         <LinearLayout
@@ -45,18 +40,15 @@
             android:orientation="horizontal">
 
             <!-- Queen -->
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:id="@+id/cardQueen"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
+                android:background="@drawable/bg_promotion_card"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:rippleColor="#40FF5722">
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -77,25 +69,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/queen"
-                        android:textColor="#000000"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/game_gold_primary"
                         android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
 
             <!-- Rook -->
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:id="@+id/cardRook"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
+                android:background="@drawable/bg_promotion_card"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:rippleColor="#40FF5722">
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -116,25 +106,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/rook"
-                        android:textColor="#000000"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/game_gold_primary"
                         android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
 
             <!-- Bishop -->
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:id="@+id/cardBishop"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
+                android:background="@drawable/bg_promotion_card"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:rippleColor="#40FF5722">
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -155,25 +143,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/bishop"
-                        android:textColor="#000000"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/game_gold_primary"
                         android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
 
             <!-- Knight -->
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:id="@+id/cardKnight"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
+                android:background="@drawable/bg_promotion_card"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
-                app:rippleColor="#40FF5722">
+                android:focusable="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -194,11 +180,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/knight"
-                        android:textColor="#000000"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/game_gold_primary"
                         android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
 
         </LinearLayout>
     </LinearLayout>

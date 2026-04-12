@@ -13,4 +13,13 @@
     <dimen name="banner_ad_margin">8dp</dimen>
     <dimen name="banner_label_padding">16dp</dimen>
     <dimen name="banner_label_corner_radius">45dp</dimen>
+
+    <!-- Game Reskin Dimensions -->
+    <dimen name="button_height_game">80dp</dimen>
+    <dimen name="button_height_game_compact">56dp</dimen>
+    <dimen name="corner_game">12dp</dimen>
+    <dimen name="corner_dialog_game">20dp</dimen>
+    <dimen name="game_stroke_width">2dp</dimen>
+    <dimen name="game_title_text_size">36sp</dimen>
+    <dimen name="game_button_text_size">20sp</dimen>
 </resources>

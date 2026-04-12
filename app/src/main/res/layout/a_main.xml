@@ -3,14 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_game_gradient"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context="com.saigonphantomlabs.MainActivity">
 
+    <!-- Subtle animated bg overlay -->
     <ImageView
         android:id="@+id/ivBkg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
+        android:alpha="0.2"
         tools:src="@drawable/ic_bkg_1" />
 
     <LinearLayout
@@ -18,36 +23,212 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:paddingBottom="16dp">
 
-        <!-- Top Section: Copyright & Version -->
-        <LinearLayout
+        <!-- Top Section: Header -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="32dp">
+            android:padding="16dp"
+            android:background="#20000000">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/copyright_text"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:alpha="0.8" />
+                android:layout_gravity="start|center_vertical"
+                android:text="✦ CHESS MASTER"
+                android:fontFamily="@font/exo2"
+                android:textColor="@color/game_gold_primary"
+                android:textSize="12sp"
+                android:letterSpacing="0.2" />
 
             <TextView
                 android:id="@+id/tvVersionTop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:gravity="center"
-                android:textColor="@color/white"
+                android:layout_gravity="end|center_vertical"
+                android:textColor="@color/game_text_muted"
+                android:fontFamily="@font/exo2"
                 android:textSize="12sp"
-                android:alpha="0.7"
-                tools:text="Version 1.0.0" />
+                tools:text="v2026.04" />
+        </FrameLayout>
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.8" />
+            
+        <!-- Logo Area -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_marginBottom="32dp">
+            
+            <ImageView
+                android:id="@+id/ivMainLogo"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_kingw"
+                app:tint="@color/game_gold_primary"
+                android:layout_marginBottom="8dp"/>
+                
+            <TextView
+                android:id="@+id/tvMainTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CHESS MASTER"
+                android:fontFamily="@font/cinzel"
+                android:textColor="@color/game_gold_light"
+                android:textSize="@dimen/game_title_text_size"
+                android:textStyle="bold"
+                android:shadowColor="@color/game_gold_glow"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="24"/>
+        </LinearLayout>
+
+        <!-- Middle Section: Game Mode Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingHorizontal="32dp">
+
+            <!-- Play PvP Button (Primary) -->
+            <LinearLayout
+                android:id="@+id/btnPlayPvP"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_game"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_btn_pvp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/ic_play"
+                    app:tint="@color/game_gold_primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/play_pvp"
+                    android:fontFamily="@font/cinzel"
+                    android:textColor="@color/game_gold_light"
+                    android:textSize="@dimen/game_button_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Play AI Button (Secondary) -->
+            <LinearLayout
+                android:id="@+id/btnPlayPvE"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_game"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_btn_pve"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp"
+                    android:src="@drawable/ic_puzzle"
+                    app:tint="@color/game_neon_cyan" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/play_ai"
+                    android:fontFamily="@font/cinzel"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/game_button_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Stats & Rules Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                
+                <!-- Stats Button -->
+                <LinearLayout
+                    android:id="@+id/btnStats"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/button_height_game_compact"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_btn_secondary"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_trophy"
+                        app:tint="@color/game_text_muted" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stats"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Rules Button -->
+                <LinearLayout
+                    android:id="@+id/btnRules"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/button_height_game_compact"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_btn_secondary"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_rules"
+                        app:tint="@color/game_text_muted" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rules"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -56,142 +237,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
-
-        <!-- Middle Section: Game Mode Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingHorizontal="32dp">
-
-            <!-- Play PvP Button (Primary) -->
-            <LinearLayout
-                android:id="@+id/btnPlayPvP"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_button_start"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="12dp"
-                    android:contentDescription="@string/play_pvp"
-                    android:src="@drawable/ic_play"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/play_pvp"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textAllCaps="true" />
-            </LinearLayout>
-
-            <!-- Play AI Button (Secondary) -->
-            <LinearLayout
-                android:id="@+id/btnPlayPvE"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_button_more"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="12dp"
-                    android:contentDescription="@string/play_ai"
-                    android:src="@drawable/ic_puzzle"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/play_ai"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textAllCaps="true" />
-            </LinearLayout>
-
-            <!-- Stats Button (Tertiary) -->
-            <LinearLayout
-                android:id="@+id/btnStats"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_button_more"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_marginEnd="12dp"
-                    android:contentDescription="@string/stats"
-                    android:src="@drawable/ic_trophy"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/stats"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textAllCaps="true" />
-            </LinearLayout>
-
-            <!-- Rules Button -->
-            <LinearLayout
-                android:id="@+id/btnRules"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_button_more"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_marginEnd="12dp"
-                    android:contentDescription="@string/rules"
-                    android:src="@drawable/ic_rules"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rules"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textAllCaps="true" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- Spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.8" />
-
 
         <!-- Bottom Section: Action Buttons (Rate, More, Share) -->
         <LinearLayout
@@ -204,61 +249,58 @@
             <!-- Rate App -->
             <LinearLayout
                 android:id="@+id/btnRateApp"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_button_rate"
+                android:background="@drawable/bg_btn_secondary"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_star"
-                    app:tint="@color/white" />
+                    app:tint="@color/game_gold_primary" />
             </LinearLayout>
 
             <!-- More Apps -->
             <LinearLayout
                 android:id="@+id/btnMoreApps"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginHorizontal="8dp"
-                android:background="@drawable/bg_button_more"
+                android:background="@drawable/bg_btn_secondary"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_apps"
-                    app:tint="@color/white" />
+                    app:tint="@color/game_text_muted" />
             </LinearLayout>
 
             <!-- Share App -->
             <LinearLayout
                 android:id="@+id/btnShareApp"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="8dp"
-                android:background="@drawable/bg_button_share"
+                android:background="@drawable/bg_btn_secondary"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_share"
-                    app:tint="@color/white" />
+                    app:tint="@color/game_text_muted" />
             </LinearLayout>
 
         </LinearLayout>

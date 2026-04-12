@@ -1,22 +1,24 @@
 <resources>
 
-    <!--    <style name="Theme.Chess" parent="Theme.MaterialComponents.DayNight.DarkActionBar">-->
+    <!-- Theme for main flow -->
     <style name="Theme.Chess" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/black</item>
-        <item name="colorPrimaryVariant">@color/black</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/black</item>
-        <item name="colorSecondaryVariant">@color/black</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">@color/black</item>
+        <item name="colorPrimary">@color/game_gold_primary</item>
+        <item name="colorPrimaryVariant">@color/game_gold_dark</item>
+        <item name="colorOnPrimary">@color/game_bg_deep</item>
+        <item name="colorSecondary">@color/game_neon_cyan</item>
+        <item name="colorSecondaryVariant">@color/game_blue_info</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/game_bg_deep</item>
+        <item name="android:navigationBarColor">@color/game_bg_deep</item>
+        <item name="android:windowBackground">@color/game_bg_deep</item>
     </style>
 
-    <!--    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">-->
+    <!-- Splash Theme -->
     <style name="SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowBackground">@drawable/startup</item>
-        <item name="android:navigationBarColor">@color/black</item>
-        <item name="android:statusBarColor">@color/black</item>
-
+        <!-- Temporary use background color as we will handle background in layout XML -->
+        <item name="android:windowBackground">@color/game_bg_deep</item>
+        <item name="android:navigationBarColor">@color/game_bg_deep</item>
+        <item name="android:statusBarColor">@color/game_bg_deep</item>
     </style>
 </resources>

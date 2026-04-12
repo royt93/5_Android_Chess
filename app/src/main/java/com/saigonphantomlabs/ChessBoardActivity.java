@@ -242,19 +242,7 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
         updateTurnIndicators(turn);
 
         // Update status bar and navigation bar tint
-        updateSystemBarsTint(turn);
-
-        // Background color animation
-        ValueAnimator colorAnimation;
-        if (turn == Chessman.PlayerColor.White)
-            colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), whiteColor, blackColor);
-        else
-            colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), blackColor, whiteColor);
-
-        colorAnimation.setDuration(300);
-        colorAnimation
-                .addUpdateListener(animator -> backgroundLayout.setBackgroundColor((int) animator.getAnimatedValue()));
-        colorAnimation.start();
+        updateSystemBarsTint();
     }
 
     private void updateTurnIndicators(Chessman.PlayerColor turn) {
@@ -592,22 +580,16 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
         }
     }
 
-    private void updateSystemBarsTint(Chessman.PlayerColor turn) {
+    private void updateSystemBarsTint() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Window window = getWindow();
             View decorView = window.getDecorView();
             int flags = decorView.getSystemUiVisibility();
 
-            if (turn == Chessman.PlayerColor.White) {
-                flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-                }
-            } else {
-                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-                }
+            // Always use dark mode (light text, dark background) for the Game UI
+            flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
             }
 
             decorView.setSystemUiVisibility(flags);

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:startColor="#E60D0D12"
+        android:endColor="#E61A1A2E"
+        android:angle="135" />
+    <corners android:radius="@dimen/corner_dialog_game" />
+    <stroke
+        android:width="2dp"
+        android:color="#40FFFFFF" />
+</shape>

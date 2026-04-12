@@ -3,28 +3,79 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_game_gradient"
     tools:context="com.saigonphantomlabs.SplashActivity">
 
+    <!-- Subtle Particle or Pattern Overlay (if available, using bkg but dark) -->
     <ImageView
         android:id="@+id/ivBkg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
+        android:alpha="0.15"
         tools:src="@drawable/ic_bkg_1" />
 
     <LinearLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Logo Icon -->
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_kingw"
+            app:tint="@color/game_gold_primary"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CHESS MASTER"
+            android:fontFamily="@font/cinzel"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="@color/game_gold_primary"
+            android:shadowColor="@color/game_gold_glow"
+            android:shadowDx="0"
+            android:shadowDy="4"
+            android:shadowRadius="8"/>
+
+        <!-- Subtitle -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STRATEGY GAME"
+            android:fontFamily="@font/exo2"
+            android:textSize="14sp"
+            android:textColor="@color/game_text_muted"
+            android:letterSpacing="0.3"
+            android:layout_marginTop="8dp"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:indeterminate="true"
+            android:progressTint="@color/game_gold_primary"
+            android:indeterminateTint="@color/game_gold_primary" />
+            
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Powered by AI Engine"
+            android:fontFamily="@font/exo2"
+            android:textSize="12sp"
+            android:textColor="#556677"
+            android:layout_marginTop="8dp"/>
 
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/white" />
 </FrameLayout>

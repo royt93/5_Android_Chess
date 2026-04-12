@@ -26,4 +26,42 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">#424242</item>
     </style>
+
+    <!-- Project Common Styles: Typography -->
+    <style name="GameText" parent="Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@font/exo2</item>
+        <item name="android:textColor">@color/game_white_piece</item>
+    </style>
+
+    <style name="GameText.Title">
+        <item name="android:fontFamily">@font/cinzel</item>
+        <item name="android:textColor">@color/game_gold_primary</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">@color/game_gold_glow</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">16</item>
+    </style>
+
+    <style name="GameText.Subtitle">
+        <item name="android:fontFamily">@font/cinzel</item>
+        <item name="android:textColor">@color/game_gold_light</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="GameText.Body">
+        <item name="android:fontFamily">@font/exo2</item>
+        <item name="android:textColor">@color/game_text_muted</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
+
+    <style name="GameText.Label">
+        <item name="android:fontFamily">@font/exo2</item>
+        <item name="android:textColor">@color/game_neon_cyan</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

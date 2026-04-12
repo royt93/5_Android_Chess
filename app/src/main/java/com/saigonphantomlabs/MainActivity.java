@@ -47,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout btnShareApp;
     private LinearLayout btnRules;
     private TextView tvVersion;
+    
+    // UI Animators
+    private android.animation.AnimatorSet heartbeatAnim;
+    private android.animation.ObjectAnimator flickerAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,6 +221,10 @@ public class MainActivity extends AppCompatActivity {
      * Animate entry of all interactive views with cascading effect
      */
     private void animateEntryViews() {
+        // App Logo
+        ImageView ivMainLogo = findViewById(R.id.ivMainLogo);
+        TextView tvMainTitle = findViewById(R.id.tvMainTitle);
+
         // Array of views to animate with their delays
         View[] topViews = { tvVersion };
 
@@ -230,12 +238,13 @@ public class MainActivity extends AppCompatActivity {
         }
         for (View v : mainViews) {
             v.setAlpha(0f);
-            v.setScaleX(0.3f);
-            v.setScaleY(0.3f);
+            v.setScaleX(0.1f);
+            v.setScaleY(0.1f);
+            v.setTranslationX(200f);
         }
         for (View v : bottomViews) {
             v.setAlpha(0f);
-            v.setTranslationY(100f);
+            v.setTranslationY(150f);
         }
 
         // Animate top views - fade in from top
@@ -250,16 +259,17 @@ public class MainActivity extends AppCompatActivity {
                     .start();
         }
 
-        // Animate main button - scale up with overshoot
+        // Extremely dramatic bounce slide for main buttons
         for (int i = 0; i < mainViews.length; i++) {
             View v = mainViews[i];
             v.animate()
                     .alpha(1f)
                     .scaleX(1f)
                     .scaleY(1f)
-                    .setStartDelay(400 + i * 100L)
-                    .setDuration(500)
-                    .setInterpolator(new OvershootInterpolator(1.5f))
+                    .translationX(0f)
+                    .setStartDelay(100 + i * 120L)
+                    .setDuration(600)
+                    .setInterpolator(new OvershootInterpolator(2.5f)) // very bouncy
                     .start();
         }
 
@@ -274,5 +284,41 @@ public class MainActivity extends AppCompatActivity {
                     .setInterpolator(new DecelerateInterpolator())
                     .start();
         }
+
+        // Add continuous heartbeat glow to main logo
+        if (ivMainLogo != null) {
+            android.animation.ObjectAnimator scaleX = android.animation.ObjectAnimator.ofFloat(ivMainLogo, "scaleX", 1f, 1.15f);
+            android.animation.ObjectAnimator scaleY = android.animation.ObjectAnimator.ofFloat(ivMainLogo, "scaleY", 1f, 1.15f);
+            scaleX.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+            scaleX.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+            scaleX.setDuration(1500);
+            scaleY.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+            scaleY.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+            scaleY.setDuration(1500);
+            heartbeatAnim = new android.animation.AnimatorSet();
+            heartbeatAnim.playTogether(scaleX, scaleY);
+            heartbeatAnim.start();
+        }
+
+        // Add subtle neon flicker to title
+        if (tvMainTitle != null) {
+            flickerAnim = android.animation.ObjectAnimator.ofFloat(tvMainTitle, "alpha", 1f, 0.8f, 1f, 0.95f, 1f);
+            flickerAnim.setDuration(4000);
+            flickerAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+            flickerAnim.start();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (heartbeatAnim != null) {
+            heartbeatAnim.cancel();
+            heartbeatAnim = null;
+        }
+        if (flickerAnim != null) {
+            flickerAnim.cancel();
+            flickerAnim = null;
+        }
+        super.onDestroy();
     }
 }

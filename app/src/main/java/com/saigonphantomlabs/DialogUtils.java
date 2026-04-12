@@ -145,7 +145,7 @@ public class DialogUtils {
      * Show Difficulty Selection Dialog
      */
     public static void showDifficultyDialog(Context context, DifficultySelectionCallback callback) {
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_glass_generic, null);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_difficulty, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
@@ -154,59 +154,82 @@ public class DialogUtils {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        TextView titleView = dialogView.findViewById(R.id.dialog_title);
-        titleView.setText(R.string.select_difficulty);
+        dialogView.findViewById(R.id.btnCancel).setOnClickListener(v -> dialog.dismiss());
 
-        dialogView.findViewById(R.id.dialog_message).setVisibility(View.GONE);
-        dialogView.findViewById(R.id.dialog_icon).setVisibility(View.GONE);
-        dialogView.findViewById(R.id.btn_positive).setVisibility(View.GONE); // Hide OK/Cancel
-        Button btnMsgNegative = dialogView.findViewById(R.id.btn_negative);
-        btnMsgNegative.setText(R.string.cancel);
-        btnMsgNegative.setOnClickListener(v -> dialog.dismiss());
-
-        FrameLayout container = dialogView.findViewById(R.id.dialog_content_container);
-        container.setVisibility(View.VISIBLE);
-
-        // Create Layout for buttons
-        LinearLayout buttonsLayout = new LinearLayout(context);
-        buttonsLayout.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout container = dialogView.findViewById(R.id.difficultyContainer);
 
         int[] difficulties = { R.string.difficulty_easy, R.string.difficulty_medium, R.string.difficulty_hard,
                 R.string.difficulty_unbeatable };
-        int[] colors = {
-                0xFF4CAF50, // Green
-                0xFFFF9800, // Orange
-                0xFFF44336, // Red
-                0xFF9C27B0 // Purple
+        String[] diffNames = { "EASY", "MEDIUM", "HARD", "UNBEATABLE" };
+        String[] diffDesc = { "Novice", "Knight", "Grandmaster", "Magnus" };
+        int[] diffColors = {
+                ContextCompat.getColor(context, R.color.game_green_action),
+                ContextCompat.getColor(context, R.color.game_gold_primary),
+                ContextCompat.getColor(context, R.color.game_red_danger),
+                ContextCompat.getColor(context, R.color.game_neon_cyan)
         };
 
         for (int i = 0; i < difficulties.length; i++) {
-            final int diffResId = difficulties[i];
-            final String diffName = (new String[] { "EASY", "MEDIUM", "HARD", "UNBEATABLE" })[i];
-            Button btn = new com.google.android.material.button.MaterialButton(context);
-            btn.setText(diffResId);
-            btn.setBackgroundColor(colors[i]);
-            btn.setTextColor(Color.WHITE);
-            // btn.setCornerRadius(20) - MaterialButton specific
-            // Let's rely on default style or cast properly if needed but code construction
-            // is verbose
-            // Simpler: use styles.
-            // For now, just functional buttons.
+            final String diffName = diffNames[i];
+            
+            // Create custom row
+            LinearLayout row = new LinearLayout(context);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            row.setBackgroundResource(R.drawable.bg_btn_secondary);
+            row.setClickable(true);
+            row.setFocusable(true);
+            
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150); // ~50dp height
+            lp.setMargins(0, 0, 0, 24);
+            row.setLayoutParams(lp);
+            row.setPadding(32, 16, 32, 16);
 
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 0, 0, 16);
-            btn.setLayoutParams(lp);
+            // Icon/Dot
+            View dot = new View(context);
+            LinearLayout.LayoutParams dotLp = new LinearLayout.LayoutParams(24, 24);
+            dotLp.setMargins(0, 0, 32, 0);
+            dot.setLayoutParams(dotLp);
+            
+            android.graphics.drawable.GradientDrawable dotBg = new android.graphics.drawable.GradientDrawable();
+            dotBg.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+            dotBg.setColor(diffColors[i]);
+            dot.setBackground(dotBg);
+            row.addView(dot);
 
-            btn.setOnClickListener(v -> {
+            // Text Title
+            TextView title = new TextView(context);
+            title.setText(difficulties[i]);
+            title.setTextColor(Color.WHITE);
+            title.setTextSize(16f);
+            try {
+                title.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(context, R.font.cinzel_bold));
+            } catch (Exception e) {
+                title.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+            }
+            LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            title.setLayoutParams(titleLp);
+            row.addView(title);
+            
+            // Text Subtitle (Desc)
+            TextView desc = new TextView(context);
+            desc.setText(diffDesc[i]);
+            desc.setTextColor(ContextCompat.getColor(context, R.color.game_text_muted));
+            desc.setTextSize(14f);
+            try {
+                desc.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(context, R.font.exo2_regular));
+            } catch (Exception e) {
+                desc.setTypeface(android.graphics.Typeface.DEFAULT);
+            }
+            row.addView(desc);
+
+            row.setOnClickListener(v -> {
                 dialog.dismiss();
                 if (callback != null)
                     callback.onSelected(diffName);
             });
-            buttonsLayout.addView(btn);
+            container.addView(row);
         }
-
-        container.addView(buttonsLayout);
 
         Animation enterAnim = AnimationUtils.loadAnimation(context, R.anim.dialog_enter_anim);
         dialogView.startAnimation(enterAnim);

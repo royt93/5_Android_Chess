@@ -7,4 +7,31 @@
     <!-- Ad Banner Colors -->
     <color name="ad_label_background">#2196F3</color>
     <color name="ad_label_text">#FFFFFF</color>
+
+    <!-- Game Reskin Theme Colors -->
+    <color name="game_bg_deep">#0D0D0F</color>
+    <color name="game_bg_surface">#1A1A2E</color>
+    <color name="game_bg_elevated">#16213E</color>
+    
+    <color name="game_gold_primary">#FFD700</color>
+    <color name="game_gold_light">#FFF9A6</color>
+    <color name="game_gold_dark">#D4AF37</color>
+    <color name="game_gold_glow">#80FFD700</color>
+    
+    <color name="game_red_danger">#FF0055</color>
+    <color name="game_red_glow">#60FF0055</color>
+    <color name="game_green_action">#00FF88</color>
+    <color name="game_blue_info">#0088FF</color>
+    
+    <color name="game_white_piece">#FFFFFF</color>
+    <color name="game_black_piece">#0A0A0A</color>
+    <color name="game_board_light">#F0D9B5</color>
+    <color name="game_board_dark">#B58863</color>
+    
+    <color name="game_neon_cyan">#00FFFF</color>
+    <color name="game_cyan_glow">#6000FFFF</color>
+    <color name="game_neon_magenta">#FF00FF</color>
+    <color name="game_magenta_glow">#60FF00FF</color>
+    
+    <color name="game_text_muted">#AACCFF</color>
 </resources>

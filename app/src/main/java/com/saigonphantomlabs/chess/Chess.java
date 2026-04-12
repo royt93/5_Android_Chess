@@ -206,6 +206,9 @@ public class Chess {
         Chessman capturedPiece = chessmen[to.x][to.y];
         boolean wasFirstMove = (movedPiece.type == Chessman.ChessmanType.Pawn) && ((Pawn) movedPiece).firstMove;
 
+        // Reset highlights BEFORE starting animations to prevent property overwrites cancelling the sequence
+        resetValidMoveButtons();
+
         if (move(from.x, from.y, to.x, to.y)) {
             Log.d("roy93~", "doMove: move executed successfully on data model");
             // Record the move for history/undo
@@ -216,7 +219,6 @@ public class Chess {
             // Update undo button visibility
             ((ChessBoardActivity) ctx).updateUndoButton(true);
 
-            resetValidMoveButtons();
             if (chessmen[to.x][to.y].type == Chessman.ChessmanType.Pawn &&
                     (chessmen[to.x][to.y].color == Chessman.PlayerColor.White && chessmen[to.x][to.y].getPoint().y == 0
                             || chessmen[to.x][to.y].color == Chessman.PlayerColor.Black
@@ -334,11 +336,14 @@ public class Chess {
         if (king == null || king.button == null)
             return;
 
-        // Flash animation using color overlay
-        checkFlashAnimator = ObjectAnimator.ofFloat(king.button, "alpha", 1f, 0.3f);
-        checkFlashAnimator.setDuration(200);
-        checkFlashAnimator.setRepeatCount(5);
-        checkFlashAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        // Intense Flash Animation: scale up and fade
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.25f, 1f);
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.25f, 1f);
+        PropertyValuesHolder pvhAlpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.2f, 1f);
+        
+        checkFlashAnimator = ObjectAnimator.ofPropertyValuesHolder(king.button, pvhX, pvhY, pvhAlpha);
+        checkFlashAnimator.setDuration(300);
+        checkFlashAnimator.setRepeatCount(ValueAnimator.INFINITE);
         checkFlashAnimator.start();
     }
 
@@ -577,14 +582,14 @@ public class Chess {
         // Haptic feedback for capture
         performCaptureHaptic();
 
-        // Add death animation - spin and fade out
+        // Intense explosion death animation
         m.button.animate()
-                .scaleX(0.3f)
-                .scaleY(0.3f)
+                .scaleX(1.8f)
+                .scaleY(1.8f)
                 .alpha(0f)
-                .rotation(360f)
-                .setDuration(250)
-                .setInterpolator(new AccelerateInterpolator())
+                .rotation(1080f)
+                .setDuration(400)
+                .setInterpolator(new AccelerateInterpolator(1.5f))
                 .withEndAction(() -> {
                     // Remove button after animation completes
                     if (m.button.getParent() != null) {
@@ -653,6 +658,8 @@ public class Chess {
         isDestroyed = true;
         isAiThinking = false;
         aiHandler.removeCallbacksAndMessages(null);
+        clearCheckAnimation();
+        clearSelectionHighlight();
     }
 
     public void promote(Chessman man) {
@@ -785,7 +792,7 @@ public class Chess {
                 minDimension - (width * p.y + width));
 
         btn.setLayoutParams(lp);
-        btn.setBackground(ctx.getResources().getDrawable(R.drawable.ic_point, ctx.getTheme()));
+        btn.setBackground(ctx.getResources().getDrawable(R.drawable.bg_valid_move_game, ctx.getTheme()));
 
         btn.setOnClickListener(v -> {
             onBoardClick(p.x, p.y);
@@ -799,14 +806,18 @@ public class Chess {
         validMoveButtons.add(btn);
         boardLayout.addView(btn);
 
-        // Animate pop-in with stagger effect
+        // Animate pop-in with bouncy neon effect
         btn.animate()
-                .alpha(0.85f)
-                .scaleX(1f)
-                .scaleY(1f)
-                .setStartDelay(index * 30L)
-                .setDuration(200)
-                .setInterpolator(new OvershootInterpolator(2f))
+                .alpha(1.0f)
+                .scaleX(1.1f)
+                .scaleY(1.1f)
+                .setStartDelay(index * 40L)
+                .setDuration(250)
+                .setInterpolator(new BounceInterpolator())
+                .withEndAction(() -> {
+                    // Settle back to normal size
+                    btn.animate().scaleX(1f).scaleY(1f).setDuration(150).start();
+                })
                 .start();
     }
 
@@ -819,6 +830,7 @@ public class Chess {
     }
 
     public void resetValidMoveButtons() {
+        Log.d("roy93~", "resetValidMoveButtons() Triggered: Clearing UI move dots and selection highlights");
         // Clear selection when moves are reset
         clearSelectionHighlight();
 
@@ -838,12 +850,14 @@ public class Chess {
         if (man == null || man.button == null)
             return;
 
-        // Create pulse animation using PropertyValuesHolder
-        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.1f, 1.0f);
-        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.1f, 1.0f);
+        man.button.setBackground(ctx.getResources().getDrawable(R.drawable.bg_piece_selected, ctx.getTheme()));
+
+        // Create strong pulsing heartbeat animation
+        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.25f, 1.0f);
+        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.25f, 1.0f);
 
         selectionPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(man.button, scaleX, scaleY);
-        selectionPulseAnimator.setDuration(800);
+        selectionPulseAnimator.setDuration(500);
         selectionPulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
         selectionPulseAnimator.start();
     }
@@ -852,6 +866,7 @@ public class Chess {
      * Clear selection highlight from previously selected piece
      */
     private void clearSelectionHighlight() {
+        Log.d("roy93~", "clearSelectionHighlight() Triggered");
         if (selectionPulseAnimator != null) {
             selectionPulseAnimator.cancel();
             selectionPulseAnimator = null;
@@ -860,6 +875,7 @@ public class Chess {
             // Reset to normal state
             selectedPiece.button.setScaleX(1.0f);
             selectedPiece.button.setScaleY(1.0f);
+            selectedPiece.button.setBackground(null);
         }
         selectedPiece = null;
     }

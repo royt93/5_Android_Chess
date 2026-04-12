@@ -25,6 +25,10 @@ public class SplashActivity extends AppCompatActivity {
     private boolean isNavigating = false;
     // [WARN-06] Store handler reference to cancel pending callbacks on destroy
     private android.os.Handler splashHandler;
+    
+    // UI Animators
+    private android.animation.AnimatorSet logoAnim;
+    private android.animation.ObjectAnimator flickerAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,28 @@ public class SplashActivity extends AppCompatActivity {
                 .load(R.drawable.ic_bkg_1)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
+
+        ImageView ivLogo = findViewById(R.id.ivLogo);
+        android.widget.TextView tvTitle = findViewById(R.id.tvTitle);
+
+        // Breathing animation for Logo
+        android.animation.ObjectAnimator scaleX = android.animation.ObjectAnimator.ofFloat(ivLogo, "scaleX", 1.0f, 1.15f);
+        android.animation.ObjectAnimator scaleY = android.animation.ObjectAnimator.ofFloat(ivLogo, "scaleY", 1.0f, 1.15f);
+        scaleX.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        scaleX.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+        scaleX.setDuration(1200);
+        scaleY.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        scaleY.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+        scaleY.setDuration(1200);
+        logoAnim = new android.animation.AnimatorSet();
+        logoAnim.playTogether(scaleX, scaleY);
+        logoAnim.start();
+
+        // Neon flicker effect for title
+        flickerAnim = android.animation.ObjectAnimator.ofFloat(tvTitle, "alpha", 1.0f, 0.7f, 1.0f, 0.9f, 1.0f);
+        flickerAnim.setDuration(3000);
+        flickerAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        flickerAnim.start();
 
         AdMobManager.INSTANCE.setCurrentActivity(this);
 
@@ -88,9 +114,17 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // [WARN-06] Cancel pending navigation callback if Activity is destroyed first
         if (splashHandler != null) {
             splashHandler.removeCallbacksAndMessages(null);
+            splashHandler = null;
+        }
+        if (logoAnim != null) {
+            logoAnim.cancel();
+            logoAnim = null;
+        }
+        if (flickerAnim != null) {
+            flickerAnim.cancel();
+            flickerAnim = null;
         }
         // [BUG-03] Clear stale Activity reference from AdMobManager
         AdMobManager.INSTANCE.clearCurrentActivity();

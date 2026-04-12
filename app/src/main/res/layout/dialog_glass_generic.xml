@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:background="@drawable/dialog_background"
+    android:background="@drawable/bg_dialog_game"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="24dp">
@@ -11,55 +11,34 @@
     <!-- Icon -->
     <ImageView
         android:id="@+id/dialog_icon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="@null"
-        android:src="@drawable/ic_trophy" />
+        android:src="@drawable/ic_warning_ember"
+        app:tint="@color/game_gold_primary" />
 
-    <!-- Title -->
     <TextView
         android:id="@+id/dialog_title"
+        style="@style/GameText.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:gravity="center"
-        android:text="Title"
-        android:textColor="#333333"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="8dp"
+        android:text="Title" />
 
-    <!-- Message (Scrollable if long) -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginBottom="16dp"
-        android:scrollbars="none">
-
-        <TextView
-            android:id="@+id/dialog_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Message content goes here."
-            android:textColor="#555555"
-            android:textSize="14sp"
-            android:lineSpacingExtra="4dp"/>
-    </ScrollView>
-
-    <!-- Custom Content Container (For Lists, Stats, etc.) -->
-    <FrameLayout
-        android:id="@+id/dialog_content_container"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/dialog_message"
+        style="@style/GameText.Body"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:visibility="gone" />
+        android:text="Message body..."
+        android:textAlignment="center" />
 
-    <!-- Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
@@ -69,11 +48,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="@string/cancel"
-            android:textColor="#757575"
-            app:cornerRadius="16dp" 
-            app:strokeColor="#BDBDBD"
-            app:strokeWidth="1dp"/>
+            android:fontFamily="@font/exo2"
+            android:text="CANCEL"
+            android:textColor="@color/game_neon_cyan"
+            app:cornerRadius="12dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_positive"
@@ -81,10 +59,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="@string/ok"
-            app:backgroundTint="#4CAF50"
-            app:cornerRadius="16dp" />
-
+            android:fontFamily="@font/exo2"
+            android:text="OK"
+            android:textColor="@color/game_bg_deep"
+            android:textStyle="bold"
+            app:backgroundTint="@color/game_gold_primary"
+            app:cornerRadius="12dp" />
     </LinearLayout>
-
 </LinearLayout>
