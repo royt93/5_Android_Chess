@@ -6,6 +6,13 @@
     android:background="#B30D0D0F"
     tools:context="com.saigonphantomlabs.PawnPromotionActivity">
 
+    <ImageView
+        android:id="@+id/ivBkg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop" />
+
     <LinearLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
@@ -40,19 +47,25 @@
             android:orientation="horizontal">
 
             <!-- Queen -->
-            <FrameLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardQueen"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_promotion_card"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:rippleColor="@color/game_gold_glow"
+                app:strokeColor="@android:color/transparent"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_promotion_card"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
@@ -78,22 +91,28 @@
                         android:shadowDy="0"
                         android:shadowRadius="8" />
                 </LinearLayout>
-            </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Rook -->
-            <FrameLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardRook"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_promotion_card"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:rippleColor="@color/game_gold_glow"
+                app:strokeColor="@android:color/transparent"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_promotion_card"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
@@ -119,22 +138,28 @@
                         android:shadowDy="0"
                         android:shadowRadius="8" />
                 </LinearLayout>
-            </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Bishop -->
-            <FrameLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardBishop"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_promotion_card"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:rippleColor="@color/game_gold_glow"
+                app:strokeColor="@android:color/transparent"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_promotion_card"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
@@ -160,22 +185,28 @@
                         android:shadowDy="0"
                         android:shadowRadius="8" />
                 </LinearLayout>
-            </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Knight -->
-            <FrameLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardKnight"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_promotion_card"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:rippleColor="@color/game_gold_glow"
+                app:strokeColor="@android:color/transparent"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_promotion_card"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="12dp">
@@ -201,7 +232,7 @@
                         android:shadowDy="0"
                         android:shadowRadius="8" />
                 </LinearLayout>
-            </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </LinearLayout>
