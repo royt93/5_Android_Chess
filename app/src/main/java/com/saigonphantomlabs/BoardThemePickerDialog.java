@@ -17,8 +17,9 @@ import com.saigonphantomlabs.chess.BoardThemeManager;
 import com.saigonphantomlabs.chess.R;
 
 /**
- * BoardThemePickerDialog — bottom-sheet with 12 themes in 3 groups of 4.
- * Config persisted to SharedPreferences (survives app kill/restart).
+ * BoardThemePickerDialog — bottom-sheet with 20 light board themes.
+ * Layout: 5 named groups × 4 tiles each.
+ * Default theme: CLASSIC (ordinal 0).
  */
 public class BoardThemePickerDialog {
 
@@ -26,74 +27,57 @@ public class BoardThemePickerDialog {
         void onSelected(BoardThemeManager.Theme theme);
     }
 
-    // Group labels
-    private static final String[] GROUP_LABELS   = { "DARK & NEON", "NATURAL", "LIGHT & BRIGHT" };
-    private static final int      THEMES_PER_ROW = 4;
-
     public static void show(Context context, BoardThemeManager.Theme currentTheme,
                             OnThemeSelected callback) {
         float dp = context.getResources().getDisplayMetrics().density;
 
-        // Root scroll container
         ScrollView scroll = new ScrollView(context);
         scroll.setFillViewport(true);
 
         LinearLayout root = new LinearLayout(context);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackground(buildPanelBg(dp));
-        root.setPadding((int)(16 * dp), 0, (int)(16 * dp), (int)(20 * dp));
+        root.setPadding((int)(16 * dp), 0, (int)(16 * dp), (int)(24 * dp));
         scroll.addView(root);
 
-        // Drag handle
         addDragHandle(root, dp);
-
-        // Title
         addTitle(root, dp, context);
 
-        // Full divider
-        addDivider(root, dp, 0x25FFFFFF, 16);
-
-        AlertDialog[] dialogRef = new AlertDialog[1];
+        AlertDialog[] dialogRef = { null };
         BoardThemeManager.Theme[] all = BoardThemeManager.Theme.values();
+        String[] groups  = BoardThemeManager.GROUP_LABELS;
+        int perGroup     = BoardThemeManager.THEMES_PER_GROUP; // 4
 
-        // 3 groups × 4 themes each
-        for (int group = 0; group < 3; group++) {
-            // Group header label
-            addGroupLabel(root, dp, context, GROUP_LABELS[group]);
+        for (int g = 0; g < groups.length; g++) {
+            addGroupLabel(root, dp, context, groups[g]);
 
-            // Row of 4 tiles
             LinearLayout row = new LinearLayout(context);
             row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setWeightSum(perGroup);
             LinearLayout.LayoutParams rowLp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            rowLp.bottomMargin = (int)(12 * dp);
+            rowLp.bottomMargin = (int)(14 * dp);
             row.setLayoutParams(rowLp);
-            row.setWeightSum(THEMES_PER_ROW);
 
-            for (int col = 0; col < THEMES_PER_ROW; col++) {
-                int idx = group * THEMES_PER_ROW + col;
+            for (int col = 0; col < perGroup; col++) {
+                int idx = g * perGroup + col;
                 if (idx >= all.length) break;
-                BoardThemeManager.Theme theme = all[idx];
-                int[] colors = BoardThemeManager.THEMES[idx];
-                boolean isSelected = (theme == currentTheme);
 
-                FrameLayout tile = buildTile(context, dp, theme, idx, colors, isSelected, dialogRef, callback);
-                LinearLayout.LayoutParams tileLp = new LinearLayout.LayoutParams(0,
-                        ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-                int hMargin = (int)(3 * dp);
-                tileLp.setMarginStart(col == 0 ? 0 : hMargin);
-                tileLp.setMarginEnd(col == THEMES_PER_ROW - 1 ? 0 : hMargin);
+                FrameLayout tile = buildTile(context, dp, all[idx], idx,
+                        all[idx] == currentTheme, dialogRef, callback);
+                LinearLayout.LayoutParams tileLp = new LinearLayout.LayoutParams(
+                        0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+                int hm = (int)(3 * dp);
+                tileLp.setMarginStart(col == 0 ? 0 : hm);
+                tileLp.setMarginEnd(col == perGroup - 1 ? 0 : hm);
                 tile.setLayoutParams(tileLp);
                 row.addView(tile);
             }
             root.addView(row);
         }
 
-        // Build dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, 0);
-        builder.setView(scroll);
-        builder.setCancelable(true);
-        AlertDialog dialog = builder.create();
+        AlertDialog dialog = new AlertDialog.Builder(context, 0)
+                .setView(scroll).setCancelable(true).create();
         dialogRef[0] = dialog;
 
         if (dialog.getWindow() != null) {
@@ -105,31 +89,33 @@ public class BoardThemePickerDialog {
         dialog.show();
     }
 
-    // ─── Private helpers ────────────────────────────────────────────────────
+    // ─── Tile builder ──────────────────────────────────────────────────────
 
-    private static FrameLayout buildTile(Context ctx, float dp, BoardThemeManager.Theme theme,
-                                          int idx, int[] colors, boolean isSelected,
+    private static FrameLayout buildTile(Context ctx, float dp,
+                                          BoardThemeManager.Theme theme, int idx,
+                                          boolean isSelected,
                                           AlertDialog[] dialogRef, OnThemeSelected callback) {
+        int[] colors = BoardThemeManager.THEMES[idx];
+
         FrameLayout tile = new FrameLayout(ctx);
         tile.setClickable(true);
         tile.setFocusable(true);
-        tile.setPadding((int)(6 * dp), (int)(8 * dp), (int)(6 * dp), (int)(8 * dp));
+        tile.setPadding((int)(5 * dp), (int)(8 * dp), (int)(5 * dp), (int)(8 * dp));
 
+        // Tile background — light warm white panel
         GradientDrawable tileBg = new GradientDrawable();
         tileBg.setShape(GradientDrawable.RECTANGLE);
         tileBg.setCornerRadius(10 * dp);
-        // Light themes: slightly lighter panel background
-        boolean isLight = (idx >= 8);
-        tileBg.setColor(isLight ? 0xFF1E2A3A : 0xFF0D1624);
-        tileBg.setStroke(isSelected ? (int)(2 * dp) : (int)(1 * dp),
-                isSelected ? colors[2] : 0x22FFFFFF);
+        tileBg.setColor(isSelected ? 0xFFFFFFFF : 0xFFF7F5F2);
+        tileBg.setStroke(isSelected ? (int)(2.5f * dp) : (int)(1 * dp),
+                isSelected ? colors[2] : 0xFFDDCCBB);
         tile.setBackground(tileBg);
 
         LinearLayout content = new LinearLayout(ctx);
         content.setOrientation(LinearLayout.VERTICAL);
         content.setGravity(Gravity.CENTER);
 
-        // Mini 4x4 board preview
+        // Mini 4×4 board preview
         android.widget.ImageView mini = new android.widget.ImageView(ctx);
         int previewPx = (int)(52 * dp);
         LinearLayout.LayoutParams miniLp = new LinearLayout.LayoutParams(previewPx, previewPx);
@@ -137,10 +123,11 @@ public class BoardThemePickerDialog {
         mini.setLayoutParams(miniLp);
         mini.setImageBitmap(drawMini(colors, previewPx));
 
+        // Rounded border around preview
         GradientDrawable miniShape = new GradientDrawable();
         miniShape.setShape(GradientDrawable.RECTANGLE);
         miniShape.setCornerRadius(5 * dp);
-        miniShape.setStroke(1, colors[2]);
+        miniShape.setStroke((int)(1.5f * dp), colors[2]);
         mini.setBackground(miniShape);
         mini.setClipToOutline(true);
         content.addView(mini);
@@ -153,7 +140,7 @@ public class BoardThemePickerDialog {
         emojiLp.topMargin = (int)(4 * dp);
         emoji.setLayoutParams(emojiLp);
         emoji.setText(BoardThemeManager.THEME_EMOJIS[idx]);
-        emoji.setTextSize(13f);
+        emoji.setTextSize(12f);
         emoji.setGravity(Gravity.CENTER);
         content.addView(emoji);
 
@@ -164,28 +151,28 @@ public class BoardThemePickerDialog {
         nameLp.topMargin = (int)(2 * dp);
         name.setLayoutParams(nameLp);
         name.setText(BoardThemeManager.THEME_NAMES[idx]);
-        name.setTextSize(8.5f);
-        name.setTextColor(isSelected ? colors[2] : 0x99FFFFFF);
+        name.setTextSize(8f);
+        name.setTextColor(isSelected ? colors[2] : 0xFF888877);
         name.setGravity(Gravity.CENTER);
-        name.setLetterSpacing(0.05f);
+        name.setLetterSpacing(0.04f);
         content.addView(name);
 
+        // Checkmark for selected
         if (isSelected) {
             TextView check = new TextView(ctx);
             check.setText("✓");
-            check.setTextSize(9f);
+            check.setTextSize(10f);
             check.setTextColor(colors[2]);
             check.setGravity(Gravity.CENTER);
             LinearLayout.LayoutParams chkLp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            chkLp.topMargin = (int)(1 * dp);
             check.setLayoutParams(chkLp);
             content.addView(check);
         }
 
-        FrameLayout.LayoutParams contentLp = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        content.setLayoutParams(contentLp);
-        tile.addView(content);
+        tile.addView(content, new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
         tile.setOnClickListener(v -> {
             v.animate().scaleX(0.92f).scaleY(0.92f).setDuration(70)
@@ -199,9 +186,11 @@ public class BoardThemePickerDialog {
         return tile;
     }
 
+    // ─── Mini board (4×4 preview) ──────────────────────────────────────────
+
     private static android.graphics.Bitmap drawMini(int[] colors, int sizePx) {
-        android.graphics.Bitmap bmp = android.graphics.Bitmap.createBitmap(sizePx, sizePx,
-                android.graphics.Bitmap.Config.RGB_565);
+        android.graphics.Bitmap bmp = android.graphics.Bitmap.createBitmap(
+                sizePx, sizePx, android.graphics.Bitmap.Config.RGB_565);
         android.graphics.Canvas c = new android.graphics.Canvas(bmp);
         android.graphics.Paint p = new android.graphics.Paint();
         int sq = sizePx / 4;
@@ -213,27 +202,40 @@ public class BoardThemePickerDialog {
         return bmp;
     }
 
+    // ─── Layout helpers ────────────────────────────────────────────────────
+
+    private static GradientDrawable buildPanelBg(float dp) {
+        GradientDrawable bg = new GradientDrawable();
+        bg.setShape(GradientDrawable.RECTANGLE);
+        bg.setCornerRadii(new float[]{ 22*dp, 22*dp, 22*dp, 22*dp, 0, 0, 0, 0 });
+        // Warm off-white panel — matches the light themes palette
+        bg.setColor(0xFFF8F5F0);
+        bg.setStroke((int)(1 * dp), 0xFFDDCCBB);
+        return bg;
+    }
+
     private static void addDragHandle(LinearLayout root, float dp) {
         android.view.View handle = new android.view.View(root.getContext());
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams((int)(36 * dp), (int)(4 * dp));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                (int)(36 * dp), (int)(4 * dp));
         lp.gravity = Gravity.CENTER_HORIZONTAL;
-        lp.topMargin = (int)(10 * dp);
-        lp.bottomMargin = (int)(12 * dp);
+        lp.topMargin    = (int)(10 * dp);
+        lp.bottomMargin = (int)(14 * dp);
         handle.setLayoutParams(lp);
         GradientDrawable bg = new GradientDrawable();
         bg.setShape(GradientDrawable.RECTANGLE);
         bg.setCornerRadius(4 * dp);
-        bg.setColor(0x33FFFFFF);
+        bg.setColor(0xFFCCBBAA);
         handle.setBackground(bg);
         root.addView(handle);
     }
 
     private static void addTitle(LinearLayout root, float dp, Context ctx) {
         TextView title = new TextView(ctx);
-        title.setText("BOARD THEME");
-        title.setTextSize(13f);
-        title.setTextColor(0xFF00CCFF);
-        title.setLetterSpacing(0.18f);
+        title.setText("CHOOSE BOARD THEME");
+        title.setTextSize(12f);
+        title.setTextColor(0xFF5A3E28);
+        title.setLetterSpacing(0.14f);
         title.setGravity(Gravity.CENTER);
         try {
             title.setTypeface(androidx.core.content.res.ResourcesCompat
@@ -241,7 +243,7 @@ public class BoardThemePickerDialog {
         } catch (Exception ignored) {}
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.bottomMargin = (int)(10 * dp);
+        lp.bottomMargin = (int)(14 * dp);
         title.setLayoutParams(lp);
         root.addView(title);
     }
@@ -255,49 +257,23 @@ public class BoardThemePickerDialog {
         rowLp.bottomMargin = (int)(8 * dp);
         row.setLayoutParams(rowLp);
 
-        // Decorative line
-        android.view.View line = new android.view.View(ctx);
-        LinearLayout.LayoutParams lineLp = new LinearLayout.LayoutParams(0, 1, 1f);
-        line.setLayoutParams(lineLp);
-        line.setBackgroundColor(0x20FFFFFF);
-        row.addView(line);
+        android.view.View lineL = new android.view.View(ctx);
+        lineL.setLayoutParams(new LinearLayout.LayoutParams(0, 1, 1f));
+        lineL.setBackgroundColor(0xFFCCBBAA);
+        row.addView(lineL);
 
-        // Label text
         TextView tv = new TextView(ctx);
         tv.setText("  " + label + "  ");
-        tv.setTextSize(9f);
-        tv.setTextColor(0x88FFFFFF);
-        tv.setLetterSpacing(0.12f);
+        tv.setTextSize(9.5f);
+        tv.setTextColor(0xFF8B6A4A);
+        tv.setLetterSpacing(0.10f);
         row.addView(tv);
 
-        // Right decorative line
-        android.view.View line2 = new android.view.View(ctx);
-        LinearLayout.LayoutParams line2Lp = new LinearLayout.LayoutParams(0, 1, 1f);
-        line2.setLayoutParams(line2Lp);
-        line2.setBackgroundColor(0x20FFFFFF);
-        row.addView(line2);
+        android.view.View lineR = new android.view.View(ctx);
+        lineR.setLayoutParams(new LinearLayout.LayoutParams(0, 1, 1f));
+        lineR.setBackgroundColor(0xFFCCBBAA);
+        row.addView(lineR);
 
         root.addView(row);
-    }
-
-    private static void addDivider(LinearLayout root, float dp, int color, int bottomMarginDp) {
-        android.view.View div = new android.view.View(root.getContext());
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 1);
-        lp.bottomMargin = (int)(bottomMarginDp * dp);
-        div.setLayoutParams(lp);
-        div.setBackgroundColor(color);
-        root.addView(div);
-    }
-
-    private static GradientDrawable buildPanelBg(float dp) {
-        GradientDrawable bg = new GradientDrawable();
-        bg.setShape(GradientDrawable.RECTANGLE);
-        bg.setCornerRadii(new float[]{
-                20 * dp, 20 * dp, 20 * dp, 20 * dp, 0, 0, 0, 0
-        });
-        bg.setColor(0xF2060812);
-        bg.setStroke((int)(1 * dp), 0x2000CCFF);
-        return bg;
     }
 }
