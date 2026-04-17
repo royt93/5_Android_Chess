@@ -208,9 +208,9 @@ public class BoardThemePickerDialog {
         GradientDrawable bg = new GradientDrawable();
         bg.setShape(GradientDrawable.RECTANGLE);
         bg.setCornerRadii(new float[]{ 22*dp, 22*dp, 22*dp, 22*dp, 0, 0, 0, 0 });
-        // Warm off-white panel — matches the light themes palette
-        bg.setColor(0xFFF8F5F0);
-        bg.setStroke((int)(1 * dp), 0xFFDDCCBB);
+        // Dark glassmorphic panel — contrasts with the light board previews
+        bg.setColor(0xF2060812);
+        bg.setStroke((int)(1 * dp), 0x2200CCFF);
         return bg;
     }
 
@@ -225,7 +225,7 @@ public class BoardThemePickerDialog {
         GradientDrawable bg = new GradientDrawable();
         bg.setShape(GradientDrawable.RECTANGLE);
         bg.setCornerRadius(4 * dp);
-        bg.setColor(0xFFCCBBAA);
+        bg.setColor(0x33FFFFFF);
         handle.setBackground(bg);
         root.addView(handle);
     }
@@ -234,8 +234,8 @@ public class BoardThemePickerDialog {
         TextView title = new TextView(ctx);
         title.setText("CHOOSE BOARD THEME");
         title.setTextSize(12f);
-        title.setTextColor(0xFF5A3E28);
-        title.setLetterSpacing(0.14f);
+        title.setTextColor(0xFF00CCFF);
+        title.setLetterSpacing(0.16f);
         title.setGravity(Gravity.CENTER);
         try {
             title.setTypeface(androidx.core.content.res.ResourcesCompat
@@ -259,19 +259,19 @@ public class BoardThemePickerDialog {
 
         android.view.View lineL = new android.view.View(ctx);
         lineL.setLayoutParams(new LinearLayout.LayoutParams(0, 1, 1f));
-        lineL.setBackgroundColor(0xFFCCBBAA);
+        lineL.setBackgroundColor(0x22FFFFFF);
         row.addView(lineL);
 
         TextView tv = new TextView(ctx);
         tv.setText("  " + label + "  ");
         tv.setTextSize(9.5f);
-        tv.setTextColor(0xFF8B6A4A);
+        tv.setTextColor(0x88FFFFFF);
         tv.setLetterSpacing(0.10f);
         row.addView(tv);
 
         android.view.View lineR = new android.view.View(ctx);
         lineR.setLayoutParams(new LinearLayout.LayoutParams(0, 1, 1f));
-        lineR.setBackgroundColor(0xFFCCBBAA);
+        lineR.setBackgroundColor(0x22FFFFFF);
         row.addView(lineR);
 
         root.addView(row);
