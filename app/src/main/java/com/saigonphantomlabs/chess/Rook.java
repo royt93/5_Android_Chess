@@ -11,7 +11,11 @@ public class Rook extends Chessman {
 
     @Override
     public void createButton() {
-        createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.ic_rookb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.ic_rookw, parent.ctx.getTheme()), minDimension, parent.ctx);
+        int resId = (color == PlayerColor.Black) ? R.drawable.ic_rookb : R.drawable.ic_rookw;
+        createButton(
+            parent.ctx.getResources().getDrawable(resId, parent.ctx.getTheme()),
+            resId, color == PlayerColor.White,
+            minDimension, parent.ctx);
     }
 
     @Override

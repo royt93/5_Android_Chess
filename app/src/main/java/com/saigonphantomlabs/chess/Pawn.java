@@ -14,11 +14,13 @@ public class Pawn extends Chessman {
 
     @Override
     public void createButton() {
+        int resId = (color == PlayerColor.Black) ? R.drawable.ic_pawnb : R.drawable.ic_pawnw;
         createButton(
-                color == PlayerColor.Black
-                        ? parent.ctx.getResources().getDrawable(R.drawable.ic_pawnb, parent.ctx.getTheme())
-                        : parent.ctx.getResources().getDrawable(R.drawable.ic_pawnw, parent.ctx.getTheme()),
-                minDimension, parent.ctx);
+            color == PlayerColor.Black
+                ? parent.ctx.getResources().getDrawable(R.drawable.ic_pawnb, parent.ctx.getTheme())
+                : parent.ctx.getResources().getDrawable(R.drawable.ic_pawnw, parent.ctx.getTheme()),
+            resId, color == PlayerColor.White,
+            minDimension, parent.ctx);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class Pawn extends Chessman {
         Point left = new Point(current.x - 1, current.y + step);
         if (left.isValid()) {
             Chessman target = parent.chessmen[left.x][left.y];
-            if (target != null && target.color != color && !target.isDead) { // Added isDead check
+            if (target != null && target.color != color && !target.isDead) {
                 moves.add(left);
             }
         }
@@ -61,10 +63,9 @@ public class Pawn extends Chessman {
         Point right = new Point(current.x + 1, current.y + step);
         if (right.isValid()) {
             Chessman target = parent.chessmen[right.x][right.y];
-            if (target != null && target.color != color && !target.isDead) { // Added isDead check
+            if (target != null && target.color != color && !target.isDead) {
                 moves.add(right);
             }
         }
-
     }
 }

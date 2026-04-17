@@ -1,8 +1,8 @@
 package com.saigonphantomlabs.chess;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
@@ -70,7 +70,7 @@ public abstract class Chessman {
 
     public abstract void createButton();
 
-    public void createButton(Drawable icon, int minDimension, Context ctx) {
+    public void createButton(Drawable icon, int resId, boolean isWhite, int minDimension, Context ctx) {
         ImageButton btn = new ImageButton(ctx);
         width = minDimension / 8;
         this.minDimension = minDimension;
@@ -80,24 +80,31 @@ public abstract class Chessman {
                 minDimension - (width * getPoint().y + width));
 
         btn.setLayoutParams(lp);
-        btn.setImageDrawable(icon);
+
+        // Apply pseudo-3D enhancement: drop shadow + rim light + specular highlight
+        if (resId != 0) {
+            BitmapDrawable d3 = PieceRenderer.get3dPiece(ctx, resId, isWhite, width);
+            btn.setImageDrawable(d3 != null ? d3 : icon);
+        } else {
+            btn.setImageDrawable(icon);
+        }
+
         btn.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         btn.setPadding(0, 0, 0, 0);
         btn.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
 
         btn.setOnClickListener(v -> {
-            // Add selection feedback animation - quick pulse
+            // Squeeze feedback (no scale > 1.0 — no clipping)
             v.animate()
-                    .scaleX(1.1f)
-                    .scaleY(1.1f)
-                    .setDuration(80)
+                    .scaleX(0.88f)
+                    .scaleY(0.88f)
+                    .setDuration(70)
                     .withEndAction(() -> {
                         v.animate()
                                 .scaleX(1.0f)
                                 .scaleY(1.0f)
-                                .setDuration(80)
+                                .setDuration(100)
                                 .withEndAction(() -> {
-                                    // Ensure properties are reset after selection animation
                                     v.setScaleX(1.0f);
                                     v.setScaleY(1.0f);
                                     v.setClickable(true);
@@ -113,27 +120,19 @@ public abstract class Chessman {
         this.button = btn;
     }
 
+    /** Legacy overload — kept for compatibility, delegates to new 3D method */
+    public void createButton(Drawable icon, int minDimension, Context ctx) {
+        createButton(icon, 0, false, minDimension, ctx);
+    }
+
     // Method to reset all animation properties (including position)
     public void resetButtonState() {
         resetAnimationProperties();
     }
 
     public void moveButton(int x, int y) {
-        // Play sound with proper resource management to avoid memory leak
-        try {
-            MediaPlayer mp;
-            if (color == PlayerColor.White) {
-                mp = MediaPlayer.create(parent.ctx, R.raw.chess_1);
-            } else {
-                mp = MediaPlayer.create(parent.ctx, R.raw.chess_2);
-            }
-            if (mp != null) {
-                mp.setOnCompletionListener(MediaPlayer::release);
-                mp.start();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // OPT: Sound via SoundPool in parent (zero-latency, no new object per move)
+        parent.playMoveSound(color == PlayerColor.White);
 
         // Get current position
         FrameLayout.LayoutParams currentLp = (FrameLayout.LayoutParams) button.getLayoutParams();
@@ -146,28 +145,28 @@ public abstract class Chessman {
 
         Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 1 STARTED -> (" + startX + "," + startY + ") to destX/Y (" + destX + "," + destY + ")");
 
-        // Phase 1: Intense Lift and spin
+        // Phase 1: Lift (elevationZ + rotation — NO scale > 1.0)
         button.animate()
-                .scaleX(1.3f)
-                .scaleY(1.3f)
+                .scaleX(1.0f)
+                .scaleY(1.0f)
                 .translationZ(30f)
-                .rotation(45f)
+                .rotation(30f)
                 .setDuration(120)
-                .setInterpolator(new OvershootInterpolator(2f))
+                .setInterpolator(new OvershootInterpolator(1.5f))
                 .withEndAction(() -> {
                     Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 2 FLIGHT started");
-                    // Phase 2: Fast flight
+                    // Phase 2: Fast flight at 1.0 scale
                     button.animate()
                             .translationX(destX - startX)
                             .translationY(destY - startY)
-                            .scaleX(1.2f)
-                            .scaleY(1.2f)
-                            .rotation(-15f)
+                            .scaleX(1.0f)
+                            .scaleY(1.0f)
+                            .rotation(-10f)
                             .setDuration(200)
                             .setInterpolator(new android.view.animation.AccelerateInterpolator())
                             .withEndAction(() -> {
                                 Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 3 SLAM started");
-                                // Phase 3: Slam down with huge bounce
+                                // Phase 3: Slam down
                                 button.animate()
                                         .scaleX(1.0f)
                                         .scaleY(1.0f)
@@ -176,7 +175,7 @@ public abstract class Chessman {
                                         .setDuration(200)
                                         .setInterpolator(new BounceInterpolator())
                                         .withEndAction(() -> {
-                                            Log.d("roy93~", "moveButton [" + color + " " + type + "] FINISHED. Updating LayoutParams to Grid (" + x + "," + y + ")");
+                                            Log.d("roy93~", "moveButton [" + color + " " + type + "] FINISHED.");
                                             updateLayoutPositionAndResetTranslation(x, y);
                                             button.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS, android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                         })

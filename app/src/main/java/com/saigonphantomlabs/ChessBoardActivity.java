@@ -41,6 +41,8 @@ import com.saigonphantomlabs.sdkadbmob.UIUtils;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.AdError;
 
+import com.saigonphantomlabs.chess.BoardThemeManager;
+import com.saigonphantomlabs.chess.PieceRenderer;
 import kotlin.Unit;
 
 public class ChessBoardActivity extends AppCompatActivity implements AdMobManager.InterstitialAdListener {
@@ -57,6 +59,8 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     private LinearLayout capturedWhitePiecesContainer;
     private AppCompatButton btnUndo;
     private AppCompatButton btnRestart;
+    private ImageView boardImage;            // The board PNG / Canvas-drawn board
+    private BoardThemeManager.Theme currentTheme;  // Active board color theme
 
     public Chess chess = null;
     public int displayWidth;
@@ -125,6 +129,20 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
             if (chess != null && !chess.isAiThinking) showRestartConfirmDialog();
         });
 
+        // Board theme button (if present in layout)
+        boardImage = findViewById(R.id.boardImage);
+        View btnTheme = findViewById(R.id.btnBoardTheme);
+        if (btnTheme != null) {
+            btnTheme.setOnClickListener(v -> {
+                BoardThemePickerDialog.show(ChessBoardActivity.this, currentTheme, theme -> {
+                    currentTheme = theme;
+                    if (boardImage != null) {
+                        BoardThemeManager.applyTheme(boardImage, theme, boardImage.getWidth());
+                    }
+                });
+            });
+        }
+
         getOnBackPressedDispatcher().addCallback(this,
                 new androidx.activity.OnBackPressedCallback(true) {
                     @Override public void handleOnBackPressed() { handleBackPress(); }
@@ -172,7 +190,14 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
                             chess.changeLayout(ChessBoardActivity.this, boardSize, boardLayout);
                         }
                         // Register touch handler
-                        findViewById(R.id.boardImage).setOnTouchListener(ChessBoardActivity.this::onTouch);
+                        ImageView bImg = boardImage != null ? boardImage : (ImageView) findViewById(R.id.boardImage);
+                        if (bImg != null) bImg.setOnTouchListener(ChessBoardActivity.this::onTouch);
+
+                        // Apply saved board theme (draws 8x8 board via Canvas)
+                        currentTheme = BoardThemeManager.load(ChessBoardActivity.this);
+                        if (boardImage != null) {
+                            BoardThemeManager.applyTheme(boardImage, currentTheme, boardSize);
+                        }
 
                         // Hero: board flies in
                         boardLayout.setAlpha(0f);
@@ -514,6 +539,16 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
 
     @Override protected void onResume() { super.onResume(); if (adView != null) adView.resume(); }
     @Override protected void onPause() { if (adView != null) adView.pause(); super.onPause(); }
+
+    /** OPT: Release 3D-piece bitmap cache under memory pressure */
+    @Override public void onLowMemory() {
+        super.onLowMemory();
+        PieceRenderer.clearCache();
+    }
+    @Override public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        if (level >= TRIM_MEMORY_MODERATE) PieceRenderer.clearCache();
+    }
 
     @Override
     protected void onDestroy() {

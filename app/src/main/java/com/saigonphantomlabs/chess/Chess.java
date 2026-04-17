@@ -5,7 +5,8 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.MediaPlayer;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -30,7 +31,8 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Chess {
-    public ArrayList<Chessman> deadMen = new ArrayList<>();
+    // OPT: pre-sized to typical game max (32 pieces can be captured)
+    public ArrayList<Chessman> deadMen = new ArrayList<>(32);
     public Chessman[/* column - x */][/* row - y */] chessmen = new Chessman[8][8];
     public Chessman.PlayerColor whichPlayerTurn = Chessman.PlayerColor.Black;
     public Point lastManPoint = null;
@@ -39,7 +41,14 @@ public class Chess {
     private Chessman manToPromote = null;
     private FrameLayout boardLayout = null;
 
-    public ArrayList<View> validMoveButtons = new ArrayList<>();
+    // OPT: pre-sized to max legal moves per piece (queen max ~27)
+    public ArrayList<View> validMoveButtons = new ArrayList<>(28);
+
+    // OPT: SoundPool — loaded once, plays with near-zero latency vs MediaPlayer
+    private SoundPool soundPool;
+    private int soundIdMove1 = 0;  // white move
+    private int soundIdMove2 = 0;  // black move
+    private boolean soundReady = false;
 
     // Game state
     private boolean gameEnd = false;
@@ -74,6 +83,8 @@ public class Chess {
         setLayoutParams(ctx, minDimension, boardLayout);
         this.aiEngine = new AIEngine();
         this.statsManager = new GameStatsManager(ctx);
+        // OPT: init SoundPool once
+        initSoundPool(ctx);
         /*
          * BOARD
          * < X >
@@ -342,12 +353,9 @@ public class Chess {
         // Apply Red Glow Aura
         king.button.setBackground(ctx.getResources().getDrawable(R.drawable.bg_piece_in_check, ctx.getTheme()));
 
-        // Intense Flash Animation: scale up and fade
-        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.25f, 1f);
-        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.25f, 1f);
-        PropertyValuesHolder pvhAlpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.4f, 1f);
-        
-        checkFlashAnimator = ObjectAnimator.ofPropertyValuesHolder(king.button, pvhX, pvhY, pvhAlpha);
+        // Alpha flash on king button — NO scale (button is in boardLayout, clip-sensitive)
+        PropertyValuesHolder pvhAlpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.15f, 1f);
+        checkFlashAnimator = ObjectAnimator.ofPropertyValuesHolder(king.button, pvhAlpha);
         checkFlashAnimator.setDuration(400);
         checkFlashAnimator.setRepeatCount(ValueAnimator.INFINITE);
         checkFlashAnimator.start();
@@ -373,31 +381,32 @@ public class Chess {
     /**
      * Play check warning sound
      */
-    private void playCheckSound() {
-        try {
-            MediaPlayer mp = MediaPlayer.create(ctx, R.raw.chess_1);
-            if (mp != null) {
-                mp.setOnCompletionListener(MediaPlayer::release);
-                mp.start();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void playCheckSound()    { playSound(soundIdMove1); }
+    private void playIllegalMoveSound() { playSound(soundIdMove2); }
+
+    /** OPT: Route all sounds through SoundPool */
+    public void playMoveSound(boolean isWhite) { playSound(isWhite ? soundIdMove1 : soundIdMove2); }
+
+    private void playSound(int soundId) {
+        if (soundReady && soundPool != null && soundId != 0) {
+            soundPool.play(soundId, 1f, 1f, 1, 0, 1f);
         }
     }
 
-    /**
-     * Play illegal move sound
-     */
-    private void playIllegalMoveSound() {
-        try {
-            MediaPlayer mp = MediaPlayer.create(ctx, R.raw.chess_2);
-            if (mp != null) {
-                mp.setOnCompletionListener(MediaPlayer::release);
-                mp.start();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void initSoundPool(Context ctx) {
+        AudioAttributes attrs = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        soundPool = new SoundPool.Builder()
+                .setMaxStreams(3)
+                .setAudioAttributes(attrs)
+                .build();
+        soundPool.setOnLoadCompleteListener((sp, sampleId, status) -> {
+            if (status == 0) soundReady = true;
+        });
+        soundIdMove1 = soundPool.load(ctx, R.raw.chess_1, 1);
+        soundIdMove2 = soundPool.load(ctx, R.raw.chess_2, 1);
     }
 
     private King.KingRiskType validateKing(King k) {
@@ -591,16 +600,15 @@ public class Chess {
         // Haptic feedback for capture
         performCaptureHaptic();
 
-        // Intense explosion death animation
+        // Death animation: fade-out only (no scale overflow — button still in boardLayout until removed)
         m.button.animate()
-                .scaleX(1.8f)
-                .scaleY(1.8f)
                 .alpha(0f)
-                .rotation(1080f)
-                .setDuration(400)
+                .rotation(180f)
+                .scaleX(0f)
+                .scaleY(0f)
+                .setDuration(350)
                 .setInterpolator(new AccelerateInterpolator(1.5f))
                 .withEndAction(() -> {
-                    // Remove button after animation completes
                     if (m.button.getParent() != null) {
                         ((ViewGroup) m.button.getParent()).removeView(m.button);
                     }
@@ -669,6 +677,8 @@ public class Chess {
         aiHandler.removeCallbacksAndMessages(null);
         clearCheckAnimation();
         clearSelectionHighlight();
+        // OPT: Release SoundPool resources
+        if (soundPool != null) { soundPool.release(); soundPool = null; soundReady = false; }
     }
 
     public void promote(Chessman man) {
@@ -732,55 +742,22 @@ public class Chess {
                     // Play transformation completion sound
                     playTransformationSound();
 
-                    // Dramatic entrance animation
+                    // Dramatic entrance: grow from tiny to 1.0, never exceeds 1.0
                     newPiece.button.animate()
-                            .scaleX(1.3f)
-                            .scaleY(1.3f)
+                            .scaleX(1.0f)
+                            .scaleY(1.0f)
                             .rotation(0f)
                             .alpha(1.0f)
                             .setDuration(500)
-                            .setInterpolator(new OvershootInterpolator(2.0f))
-                            .withEndAction(() -> {
-                                // Phase 3: Settle to normal size with bounce
-                                newPiece.button.animate()
-                                        .scaleX(1.0f)
-                                        .scaleY(1.0f)
-                                        .setDuration(300)
-                                        .setInterpolator(new BounceInterpolator())
-                                        .withEndAction(() -> {
-                                            // Ensure all properties are reset
-                                            newPiece.resetButtonState();
-                                        })
-                                        .start();
-                            })
+                            .setInterpolator(new OvershootInterpolator(1.5f))
+                            .withEndAction(() -> newPiece.resetButtonState())
                             .start();
                 })
                 .start();
     }
 
-    private void playPromotionSound() {
-        try {
-            MediaPlayer mp = MediaPlayer.create(ctx, R.raw.chess_1);
-            if (mp != null) {
-                mp.start();
-                mp.setOnCompletionListener(MediaPlayer::release);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void playTransformationSound() {
-        try {
-            MediaPlayer mp = MediaPlayer.create(ctx, R.raw.chess_2);
-            if (mp != null) {
-                mp.start();
-                mp.setOnCompletionListener(MediaPlayer::release);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    private void playPromotionSound()     { playSound(soundIdMove1); }
+    private void playTransformationSound() { playSound(soundIdMove2); }
 
     private void addMenToBoard(FrameLayout boardLayout) {
         for (int i = 0; i < 8; i++)
@@ -815,18 +792,14 @@ public class Chess {
         validMoveButtons.add(btn);
         boardLayout.addView(btn);
 
-        // Animate pop-in with bouncy neon effect
+        // Animate pop-in: grow from 0 to 1.0 only — never exceeds bounds
         btn.animate()
                 .alpha(1.0f)
-                .scaleX(1.1f)
-                .scaleY(1.1f)
+                .scaleX(1.0f)
+                .scaleY(1.0f)
                 .setStartDelay(index * 40L)
                 .setDuration(250)
-                .setInterpolator(new BounceInterpolator())
-                .withEndAction(() -> {
-                    // Settle back to normal size
-                    btn.animate().scaleX(1f).scaleY(1f).setDuration(150).start();
-                })
+                .setInterpolator(new OvershootInterpolator(1.2f))
                 .start();
     }
 
@@ -861,11 +834,9 @@ public class Chess {
 
         man.button.setBackground(ctx.getResources().getDrawable(R.drawable.bg_piece_selected, ctx.getTheme()));
 
-        // Create strong pulsing heartbeat animation
-        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.25f, 1.0f);
-        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.25f, 1.0f);
-
-        selectionPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(man.button, scaleX, scaleY);
+        // Alpha pulse — NO scale (piece button in boardLayout, must not overflow)
+        PropertyValuesHolder alphaPhv = PropertyValuesHolder.ofFloat(View.ALPHA, 1.0f, 0.45f, 1.0f);
+        selectionPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(man.button, alphaPhv);
         selectionPulseAnimator.setDuration(500);
         selectionPulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
         selectionPulseAnimator.start();

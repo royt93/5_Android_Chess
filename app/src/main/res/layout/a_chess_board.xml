@@ -210,6 +210,21 @@
             android:clipChildren="false"
             android:clipToPadding="false">
 
+            <!-- Board theme picker — same style as btnUndo for visual consistency -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBoardTheme"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="🎨 Theme"
+                android:textColor="@color/white"
+                android:fontFamily="@font/exo2"
+                android:background="@drawable/bg_btn_pve"
+                android:paddingHorizontal="20dp"
+                android:textAllCaps="false"
+                android:shadowColor="@color/game_cyan_glow"
+                android:shadowDx="0" android:shadowDy="0" android:shadowRadius="12"
+                android:layout_marginEnd="8dp" />
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnRestart"
                 android:layout_width="wrap_content"

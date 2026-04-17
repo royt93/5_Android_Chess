@@ -5,7 +5,7 @@ public class King extends Chessman {
     public enum KingRiskType {
         Check,
         CheckMate,
-        Stalemate, // No legal moves but not in check - DRAW
+        Stalemate,
         Safe
     }
 
@@ -19,12 +19,11 @@ public class King extends Chessman {
 
     @Override
     public void createButton() {
-        // todo : try to use ResourcesCombat.getDrawable()
+        int resId = (color == PlayerColor.Black) ? R.drawable.ic_kingb : R.drawable.ic_kingw;
         createButton(
-                color == PlayerColor.Black
-                        ? parent.ctx.getResources().getDrawable(R.drawable.ic_kingb, parent.ctx.getTheme())
-                        : parent.ctx.getResources().getDrawable(R.drawable.ic_kingw, parent.ctx.getTheme()),
-                minDimension, parent.ctx);
+            parent.ctx.getResources().getDrawable(resId, parent.ctx.getTheme()),
+            resId, color == PlayerColor.White,
+            minDimension, parent.ctx);
     }
 
     @Override

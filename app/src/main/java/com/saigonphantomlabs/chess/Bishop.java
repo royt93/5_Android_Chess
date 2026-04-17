@@ -11,7 +11,11 @@ public class Bishop extends Chessman {
 
     @Override
     public void createButton() {
-        super.createButton(color == PlayerColor.Black ? parent.ctx.getResources().getDrawable(R.drawable.ic_bishopb, parent.ctx.getTheme()) : parent.ctx.getResources().getDrawable(R.drawable.ic_bishopw, parent.ctx.getTheme()), minDimension, parent.ctx);
+        int resId = (color == PlayerColor.Black) ? R.drawable.ic_bishopb : R.drawable.ic_bishopw;
+        super.createButton(
+            parent.ctx.getResources().getDrawable(resId, parent.ctx.getTheme()),
+            resId, color == PlayerColor.White,
+            minDimension, parent.ctx);
     }
 
     @Override
