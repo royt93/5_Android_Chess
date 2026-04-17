@@ -1,17 +1,20 @@
 package com.saigonphantomlabs;
 
-import android.app.Dialog;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.button.MaterialButton;
 import com.saigonphantomlabs.chess.R;
 
 public class DialogUtils {
@@ -50,7 +54,7 @@ public class DialogUtils {
         TextView titleView = dialogView.findViewById(R.id.dialog_title);
         TextView messageView = dialogView.findViewById(R.id.dialog_message);
         ImageView iconView = dialogView.findViewById(R.id.dialog_icon);
-        Button btnPositive = dialogView.findViewById(R.id.btn_positive);
+        MaterialButton btnPositive = dialogView.findViewById(R.id.btn_positive);
 
         titleView.setText(title);
         messageView.setText(message);
@@ -69,7 +73,7 @@ public class DialogUtils {
         });
 
         if (negativeText != null) {
-            Button btnMsgNegative = dialogView.findViewById(R.id.btn_negative);
+            MaterialButton btnMsgNegative = dialogView.findViewById(R.id.btn_negative);
             btnMsgNegative.setText(negativeText);
             btnMsgNegative.setOnClickListener(v -> {
                 dialog.dismiss();
@@ -85,6 +89,8 @@ public class DialogUtils {
         dialogView.startAnimation(enterAnim);
 
         dialog.show();
+        // Allow scale animation to overflow dialog window edges (no clipping)
+        disableDialogClipping(dialog);
     }
 
     /**
@@ -169,72 +175,132 @@ public class DialogUtils {
                 ContextCompat.getColor(context, R.color.game_neon_cyan)
         };
 
+        // Rank emojis for visual distinction
+        String[] rankEmojis = { "🟢", "🟡", "🔴", "⚡" };
+        float display = context.getResources().getDisplayMetrics().density;
+
         for (int i = 0; i < difficulties.length; i++) {
             final String diffName = diffNames[i];
-            
-            // Create custom row
+            final int color = diffColors[i];
+
+            // --- Row container ---
             LinearLayout row = new LinearLayout(context);
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            row.setBackgroundResource(R.drawable.bg_btn_secondary);
             row.setClickable(true);
             row.setFocusable(true);
-            
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150); // ~50dp height
-            lp.setMargins(0, 0, 0, 24);
+            int rowH = (int) (72 * display);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, rowH);
+            lp.setMargins(0, 0, 0, (int)(12 * display));
             row.setLayoutParams(lp);
-            row.setPadding(32, 16, 32, 16);
+            int pH = (int)(20 * display); int pV = (int)(12 * display);
+            row.setPadding(pH, pV, pH, pV);
 
-            // Icon/Dot
-            View dot = new View(context);
-            LinearLayout.LayoutParams dotLp = new LinearLayout.LayoutParams(24, 24);
-            dotLp.setMargins(0, 0, 32, 0);
-            dot.setLayoutParams(dotLp);
-            
-            android.graphics.drawable.GradientDrawable dotBg = new android.graphics.drawable.GradientDrawable();
-            dotBg.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-            dotBg.setColor(diffColors[i]);
-            dot.setBackground(dotBg);
-            row.addView(dot);
+            // Layered background: dark body + left glow strip via GradientDrawable
+            GradientDrawable body = new GradientDrawable();
+            body.setShape(GradientDrawable.RECTANGLE);
+            body.setCornerRadius(16 * display);
+            body.setColor(Color.parseColor("#22" + String.format("%06X", color & 0xFFFFFF)));
+            body.setStroke((int)(1 * display), color & 0x99FFFFFF);
+            row.setBackground(body);
 
-            // Text Title
+            // Left color accent bar
+            View accentBar = new View(context);
+            LinearLayout.LayoutParams barLp = new LinearLayout.LayoutParams(
+                    (int)(4 * display), ViewGroup.LayoutParams.MATCH_PARENT);
+            barLp.setMargins(0, 0, (int)(16 * display), 0);
+            accentBar.setLayoutParams(barLp);
+            GradientDrawable barBg = new GradientDrawable();
+            barBg.setShape(GradientDrawable.RECTANGLE);
+            barBg.setCornerRadius(4 * display);
+            barBg.setColor(color);
+            accentBar.setBackground(barBg);
+            row.addView(accentBar);
+
+            // Rank emoji
+            TextView emoji = new TextView(context);
+            emoji.setText(rankEmojis[i]);
+            emoji.setTextSize(20f);
+            LinearLayout.LayoutParams eLp = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            eLp.setMargins(0, 0, (int)(14 * display), 0);
+            emoji.setLayoutParams(eLp);
+            row.addView(emoji);
+
+            // Text column
+            LinearLayout textCol = new LinearLayout(context);
+            textCol.setOrientation(LinearLayout.VERTICAL);
+            textCol.setLayoutParams(new LinearLayout.LayoutParams(0,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+            // Title
             TextView title = new TextView(context);
             title.setText(difficulties[i]);
-            title.setTextColor(Color.WHITE);
-            title.setTextSize(16f);
-            try {
-                title.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(context, R.font.cinzel_bold));
-            } catch (Exception e) {
-                title.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
-            }
-            LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-            title.setLayoutParams(titleLp);
-            row.addView(title);
-            
-            // Text Subtitle (Desc)
+            title.setTextColor(color);
+            title.setTextSize(15f);
+            title.setShadowLayer(16f, 0, 0, color & 0x80FFFFFF);
+            try { title.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(context, R.font.cinzel_bold)); }
+            catch (Exception e) { title.setTypeface(android.graphics.Typeface.DEFAULT_BOLD); }
+            textCol.addView(title);
+
+            // Subtitle
             TextView desc = new TextView(context);
             desc.setText(diffDesc[i]);
             desc.setTextColor(ContextCompat.getColor(context, R.color.game_text_muted));
-            desc.setTextSize(14f);
-            try {
-                desc.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(context, R.font.exo2_regular));
-            } catch (Exception e) {
-                desc.setTypeface(android.graphics.Typeface.DEFAULT);
-            }
-            row.addView(desc);
+            desc.setTextSize(12f);
+            try { desc.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(context, R.font.exo2_regular)); }
+            catch (Exception e) { desc.setTypeface(android.graphics.Typeface.DEFAULT); }
+            textCol.addView(desc);
 
+            row.addView(textCol);
+
+            // Arrow indicator →
+            TextView arrow = new TextView(context);
+            arrow.setText("▶");
+            arrow.setTextColor(color & 0x80FFFFFF);
+            arrow.setTextSize(14f);
+            row.addView(arrow);
+
+            // Touch feedback with scale
             row.setOnClickListener(v -> {
-                dialog.dismiss();
-                if (callback != null)
-                    callback.onSelected(diffName);
+                v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(80)
+                        .withEndAction(() -> {
+                            v.animate().scaleX(1f).scaleY(1f).setDuration(120).start();
+                            dialog.dismiss();
+                            if (callback != null) callback.onSelected(diffName);
+                        }).start();
             });
+
+            // Start hidden for stagger
+            row.setAlpha(0f);
+            row.setTranslationX(120f);
             container.addView(row);
+        } // end for-loop
+
+        // Stagger row entries — handlers stored so they can be cancelled on dismiss
+        final java.util.List<Handler> staggerHandlers = new java.util.ArrayList<>();
+        for (int i = 0; i < container.getChildCount(); i++) {
+            final View rowView = container.getChildAt(i);
+            final int idx = i;
+            Handler h = new Handler(Looper.getMainLooper());
+            staggerHandlers.add(h);
+            h.postDelayed(() ->
+                    rowView.animate().alpha(1f).translationX(0f)
+                            .setDuration(350).setInterpolator(new OvershootInterpolator(1.2f)).start(),
+                    80 + idx * 80L);
         }
 
         Animation enterAnim = AnimationUtils.loadAnimation(context, R.anim.dialog_enter_anim);
         dialogView.startAnimation(enterAnim);
 
         dialog.show();
+        disableDialogClipping(dialog);
+
+        // Cancel stagger handlers if dialog dismissed before they fire
+        dialog.setOnDismissListener(d -> {
+            for (Handler h : staggerHandlers) h.removeCallbacksAndMessages(null);
+        });
     }
 
     public interface DifficultySelectionCallback {
@@ -253,5 +319,33 @@ public class DialogUtils {
                 R.drawable.ic_trophy,
                 null,
                 null);
+    }
+
+    /**
+     * Disables clipping on the dialog's decor view hierarchy so that
+     * entry scale/bounce animations are not cut off at the window boundary.
+     */
+    private static void disableDialogClipping(AlertDialog dialog) {
+        if (dialog.getWindow() == null) return;
+        View decor = dialog.getWindow().getDecorView();
+        setNoClip(decor);
+        if (decor instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) decor;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                View child = vg.getChildAt(i);
+                setNoClip(child);
+                if (child instanceof ViewGroup) {
+                    ViewGroup vg2 = (ViewGroup) child;
+                    for (int j = 0; j < vg2.getChildCount(); j++) setNoClip(vg2.getChildAt(j));
+                }
+            }
+        }
+    }
+
+    private static void setNoClip(View v) {
+        if (v instanceof ViewGroup) {
+            ((ViewGroup) v).setClipChildren(false);
+            ((ViewGroup) v).setClipToPadding(false);
+        }
     }
 }

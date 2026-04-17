@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Concentric glow ring for splash pulsing halo effect -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer ring stroke -->
+    <item>
+        <shape android:shape="oval">
+            <stroke android:width="2dp" android:color="#40FFD700" />
+            <solid android:color="#00000000" />
+        </shape>
+    </item>
+    <!-- Soft fill glow inside ring -->
+    <item android:top="6dp" android:left="6dp" android:right="6dp" android:bottom="6dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="50%"
+                android:startColor="#10FFD700"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+</layer-list>

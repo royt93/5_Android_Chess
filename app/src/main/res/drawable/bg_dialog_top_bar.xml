@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dialog top accent bar: gold-to-cyan gradient line -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="0"
+        android:startColor="#00D4AF37"
+        android:centerColor="#FFD4AF37"
+        android:endColor="#0000CCFF" />
+    <corners android:topLeftRadius="20dp" android:topRightRadius="20dp" />
+</shape>

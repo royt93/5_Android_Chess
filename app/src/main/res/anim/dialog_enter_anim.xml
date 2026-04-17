@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Dialog entry: scale từ 0.7 → 1.0 (KHÔNG scale > 1.0 để tránh clipping)
+  Thay overshoot trong XML bằng DecelerateInterpolator + alpha fade
+  Hiệu ứng overshoot sẽ do ViewPropertyAnimator với OvershootInterpolator trong code
+-->
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:fillAfter="true"
-    android:interpolator="@android:anim/decelerate_interpolator">
-    
-    <!-- Slide Up slightly -->
-    <translate
-        android:fromYDelta="10%"
-        android:toYDelta="0%"
-        android:duration="300"/>
-        
-    <!-- Fade In -->
+    android:shareInterpolator="false">
+    <scale
+        android:fromXScale="0.7"
+        android:toXScale="1.0"
+        android:fromYScale="0.7"
+        android:toYScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="320"
+        android:interpolator="@android:anim/decelerate_interpolator" />
     <alpha
         android:fromAlpha="0.0"
         android:toAlpha="1.0"
-        android:duration="300"/>
+        android:duration="250"
+        android:interpolator="@android:anim/decelerate_interpolator" />
 </set>

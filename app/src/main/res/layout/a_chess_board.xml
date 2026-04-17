@@ -1,230 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/backgroundLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_game_gradient"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context="com.saigonphantomlabs.ChessBoardActivity">
 
-    <!-- Turn Glow Overlay - White -->
+    <!-- Turn Glow Overlays — full screen, behind everything -->
     <View android:id="@+id/whiteTurnGlow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_glow_turn_white"
         android:alpha="0" />
 
-    <!-- Turn Glow Overlay - Black -->
     <View android:id="@+id/blackTurnGlow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_glow_turn_black"
         android:alpha="0" />
 
-    <!-- Captured pieces for Black (shows WHITE pieces captured by black) -->
-    <HorizontalScrollView
-        android:id="@+id/capturedBlackPieces"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/bg_captured_black"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:id="@+id/capturedBlackPiecesContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp" />
-    </HorizontalScrollView>
-
-    <!-- Turn Indicator for Black -->
-    <LinearLayout
-        android:id="@+id/blackTurnIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_pill_turn_black"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/capturedBlackPieces">
-        
-        <View
-            android:id="@+id/blackTurnDot"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_turn_indicator_black"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="BLACK TURN"
-            android:fontFamily="@font/exo2"
-            android:textColor="@color/game_neon_cyan"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:shadowColor="@color/game_cyan_glow"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="16" />
-    </LinearLayout>
-
-    <!-- Glowing Aura behind the Board -->
+    <!-- Corner glows (decorative, can overflow, parent clipChildren=false) -->
     <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/bg_board_glow"
-        android:layout_margin="-4dp"
-        app:layout_constraintTop_toTopOf="@id/boardLayout"
-        app:layout_constraintBottom_toBottomOf="@id/boardLayout"
-        app:layout_constraintStart_toStartOf="@id/boardLayout"
-        app:layout_constraintEnd_toEndOf="@id/boardLayout" />
+        android:id="@+id/cornerGlowTR"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="top|end"
+        android:background="@drawable/bg_particle_glow"
+        android:alpha="0.3"
+        android:translationX="60dp"
+        android:translationY="-60dp" />
 
-    <!-- Chess Board - FIXED POSITION using vertical bias -->
-    <FrameLayout
-        android:id="@+id/boardLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/game_bg_elevated"
-        app:layout_constraintBottom_toTopOf="@id/whiteTurnIndicator"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/blackTurnIndicator"
-        app:layout_constraintVertical_bias="0.5">
+    <View
+        android:id="@+id/cornerGlowBL"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="bottom|start"
+        android:background="@drawable/bg_particle_glow"
+        android:alpha="0.25"
+        android:translationX="-60dp"
+        android:translationY="60dp" />
 
-        <ImageView
-            android:id="@+id/boardImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/ic_chessboard"
-            android:contentDescription="@string/app_name" />
-    </FrameLayout>
-
-    <!-- Turn Indicator for White -->
+    <!-- Main vertical chain — NO overlap guaranteed -->
     <LinearLayout
-        android:id="@+id/whiteTurnIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="invisible"
-        android:background="@drawable/bg_pill_turn_white"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="8dp"
-        app:layout_constraintBottom_toTopOf="@id/capturedWhitePieces"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        
-        <View
-            android:id="@+id/whiteTurnDot"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_turn_indicator_white"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="WHITE TURN"
-            android:fontFamily="@font/exo2"
-            android:textColor="@color/game_gold_primary"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:shadowColor="@color/game_gold_glow"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="16" />
-    </LinearLayout>
-
-    <!-- Captured pieces for White (shows BLACK pieces captured by white) -->
-    <HorizontalScrollView
-        android:id="@+id/capturedWhitePieces"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/bg_captured_white"
-        android:scrollbars="none"
-        app:layout_constraintBottom_toTopOf="@id/buttonContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:id="@+id/capturedWhitePiecesContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp" />
-    </HorizontalScrollView>
-
-    <!-- Button Container -->
-    <LinearLayout
-        android:id="@+id/buttonContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="64dp"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/ad_layout_include"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <!-- Restart Button - Always visible -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnRestart"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/play_again"
-            android:textColor="@color/game_text_muted"
-            android:fontFamily="@font/exo2"
-            android:visibility="gone"
-            android:background="@drawable/bg_btn_secondary"
-            android:drawableStart="@drawable/ic_restart"
-            android:drawablePadding="8dp"
-            android:drawableTint="@color/game_text_muted"
-            android:paddingHorizontal="24dp"
-            android:textAllCaps="false"/>
-
-        <!-- Undo Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnUndo"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="@string/undo"
-            android:textColor="@color/white"
-            android:fontFamily="@font/exo2"
-            android:visibility="gone"
-            android:background="@drawable/bg_btn_pve"
-            android:drawableStart="@drawable/ic_undo"
-            android:drawablePadding="8dp"
-            android:drawableTint="@color/white"
-            android:paddingHorizontal="24dp"
-            android:textAllCaps="false"
-            android:shadowColor="@color/game_cyan_glow"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="12"/>
-
-    </LinearLayout>
-
-    <include
-        android:id="@+id/ad_layout_include"
-        layout="@layout/layout_ad_banner"
+        android:id="@+id/mainContentLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Captured Black row -->
+        <HorizontalScrollView
+            android:id="@+id/capturedBlackPieces"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/bg_captured_black"
+            android:scrollbars="none">
+            <LinearLayout
+                android:id="@+id/capturedBlackPiecesContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp" />
+        </HorizontalScrollView>
+
+        <!-- Black Turn Indicator — clipChildren=false so dot pulse doesn't clip -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+            <LinearLayout
+                android:id="@+id/blackTurnIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_pill_turn_black"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="6dp">
+                <View
+                    android:id="@+id/blackTurnDot"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_turn_indicator_black"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BLACK TURN"
+                    android:fontFamily="@font/exo2"
+                    android:textColor="@color/game_neon_cyan"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:shadowColor="@color/game_cyan_glow"
+                    android:shadowDx="0" android:shadowDy="0" android:shadowRadius="20" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!--
+          BOARD SECTION — ConstraintLayout ensures PERFECT 1:1 square.
+          weight=1 fills remaining space; board inside is dimensionRatio="1:1"
+          → board is always min(parentW, parentH) × min(parentW, parentH).
+          clipChildren=false allows boardPulse animation to overflow slightly.
+        -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/boardContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <FrameLayout
+                android:id="@+id/boardLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/boardImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ic_chessboard"
+                    android:contentDescription="@string/app_name" />
+            </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- White Turn Indicator -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+            <LinearLayout
+                android:id="@+id/whiteTurnIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="invisible"
+                android:background="@drawable/bg_pill_turn_white"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="6dp">
+                <View
+                    android:id="@+id/whiteTurnDot"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_turn_indicator_white"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WHITE TURN"
+                    android:fontFamily="@font/exo2"
+                    android:textColor="@color/game_gold_primary"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:shadowColor="@color/game_gold_glow"
+                    android:shadowDx="0" android:shadowDy="0" android:shadowRadius="20" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Captured White row -->
+        <HorizontalScrollView
+            android:id="@+id/capturedWhitePieces"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/bg_captured_white"
+            android:scrollbars="none">
+            <LinearLayout
+                android:id="@+id/capturedWhitePiecesContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp" />
+        </HorizontalScrollView>
+
+        <!-- Action Buttons — clipChildren=false for button scale animations -->
+        <LinearLayout
+            android:id="@+id/buttonContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRestart"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginEnd="12dp"
+                android:text="@string/play_again"
+                android:textColor="@color/game_text_muted"
+                android:fontFamily="@font/exo2"
+                android:visibility="gone"
+                android:background="@drawable/bg_btn_secondary"
+                android:drawableStart="@drawable/ic_restart"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/game_text_muted"
+                android:paddingHorizontal="20dp"
+                android:textAllCaps="false"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnUndo"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="@string/undo"
+                android:textColor="@color/white"
+                android:fontFamily="@font/exo2"
+                android:visibility="gone"
+                android:background="@drawable/bg_btn_pve"
+                android:drawableStart="@drawable/ic_undo"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/white"
+                android:paddingHorizontal="20dp"
+                android:textAllCaps="false"
+                android:shadowColor="@color/game_cyan_glow"
+                android:shadowDx="0" android:shadowDy="0" android:shadowRadius="12"/>
+        </LinearLayout>
+
+        <!-- Ad Banner -->
+        <include
+            android:id="@+id/ad_layout_include"
+            layout="@layout/layout_ad_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</FrameLayout>

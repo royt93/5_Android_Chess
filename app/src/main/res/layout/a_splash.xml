@@ -4,17 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_game_gradient"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context="com.saigonphantomlabs.SplashActivity">
 
-    <!-- Subtle Particle or Pattern Overlay (if available, using bkg but dark) -->
+    <!-- Animated GIF background -->
     <ImageView
         android:id="@+id/ivBkg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
-        android:alpha="0.15"
-        tools:src="@drawable/ic_bkg_1" />
+        android:alpha="0.20" />
+
+    <!-- Corner fire glow: top-left -->
+    <View
+        android:id="@+id/cornerGlowTL"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="top|start"
+        android:background="@drawable/bg_particle_glow"
+        android:alpha="0.5"
+        android:translationX="-60dp"
+        android:translationY="-60dp" />
+
+    <!-- Corner fire glow: bottom-right -->
+    <View
+        android:id="@+id/cornerGlowBR"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="bottom|end"
+        android:background="@drawable/bg_particle_glow"
+        android:alpha="0.4"
+        android:translationX="60dp"
+        android:translationY="60dp" />
 
     <LinearLayout
         android:id="@+id/rootLayout"
@@ -23,14 +46,59 @@
         android:orientation="vertical"
         android:gravity="center">
 
-        <!-- Logo Icon -->
-        <ImageView
-            android:id="@+id/ivLogo"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@drawable/ic_kingw"
-            app:tint="@color/game_gold_primary"
-            android:layout_marginBottom="16dp"/>
+        <!-- Logo container with glow rings -->
+        <FrameLayout
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <!-- Ring 3 (outermost, faintest) -->
+            <View
+                android:id="@+id/ring3"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_splash_ring"
+                android:alpha="0" />
+
+            <!-- Ring 2 (mid) -->
+            <View
+                android:id="@+id/ring2"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_splash_ring"
+                android:alpha="0" />
+
+            <!-- Ring 1 (inner) -->
+            <View
+                android:id="@+id/ring1"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_splash_ring"
+                android:alpha="0" />
+
+            <!-- Particle glow behind logo -->
+            <View
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_particle_glow" />
+
+            <!-- Logo Icon -->
+            <ImageView
+                android:id="@+id/ivLogo"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_kingw"
+                app:tint="@color/game_gold_primary"
+                android:contentDescription="@string/app_name" />
+        </FrameLayout>
 
         <!-- Title -->
         <TextView
@@ -45,7 +113,7 @@
             android:shadowColor="@color/game_gold_glow"
             android:shadowDx="0"
             android:shadowDy="0"
-            android:shadowRadius="24"/>
+            android:shadowRadius="32" />
 
         <!-- Subtitle -->
         <TextView
@@ -56,18 +124,23 @@
             android:textSize="14sp"
             android:textColor="@color/game_text_muted"
             android:letterSpacing="0.3"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:shadowColor="@color/game_cyan_glow"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="12" />
 
+        <!-- Neon loading bar -->
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="160dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
             android:indeterminate="true"
             android:progressTint="@color/game_gold_primary"
             android:indeterminateTint="@color/game_gold_primary" />
-            
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,7 +148,7 @@
             android:fontFamily="@font/exo2"
             android:textSize="12sp"
             android:textColor="#556677"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 </FrameLayout>

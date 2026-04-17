@@ -1,239 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PAWN PROMOTION — Redesigned: "CHOOSE YOUR DESTINY"
+  Layout concept: Full-screen dramatic overlay.
+  Structure:
+    - Full dark scrim (80% opacity)
+    - Top: Dramatic title area with neon glow + particle effects
+    - Center: 4 large hexagonal-style cards arranged in 2x2 grid
+    - Bottom: Dismiss hint text
+  No negative insets. No scale > 1.0.
+  All parent containers have clipChildren=false.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#B30D0D0F"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context="com.saigonphantomlabs.PawnPromotionActivity">
 
+    <!-- GIF Background -->
     <ImageView
         android:id="@+id/ivBkg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@null"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:alpha="0.18" />
 
+    <!-- Full dark scrim -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CF060812" />
+
+    <!-- Top edge glow line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/bg_dialog_top_bar"
+        android:layout_gravity="top" />
+
+    <!-- Corner decorations (alpha only animated — no scale) -->
+    <View
+        android:id="@+id/cornerGlowTL"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="top|start"
+        android:background="@drawable/bg_particle_glow"
+        android:alpha="0.25" />
+
+    <View
+        android:id="@+id/cornerGlowBR"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="bottom|end"
+        android:background="@drawable/bg_particle_glow"
+        android:alpha="0.2" />
+
+    <View
+        android:id="@+id/cornerGlowTR"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="top|end"
+        android:background="@drawable/bg_particle_glow"
+        android:alpha="0.15" />
+
+    <View
+        android:id="@+id/cornerGlowBL"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="bottom|start"
+        android:background="@drawable/bg_particle_glow"
+        android:alpha="0.15" />
+
+    <!-- Main content: centered vertically -->
     <LinearLayout
-        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:gravity="center"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp">
 
-        <!-- Title -->
+        <!-- Title block -->
+        <TextView
+            android:id="@+id/tvPromoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.4"
+            android:text="PAWN PROMOTED"
+            android:fontFamily="@font/exo2"
+            android:textColor="#80FFFFFF"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
         <TextView
             android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:text="@string/promotionQuestion"
-            android:textAlignment="center"
-            android:textColor="@color/game_gold_light"
-            android:fontFamily="@font/cinzel"
-            android:textSize="24sp"
+            android:text="CHOOSE YOUR DESTINY"
+            android:fontFamily="@font/cinzel_bold"
+            android:textColor="@color/game_gold_primary"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:shadowColor="@color/game_gold_glow"
             android:shadowDx="0"
             android:shadowDy="0"
-            android:shadowRadius="24"/>
+            android:shadowRadius="24"
+            android:layout_marginBottom="8dp" />
 
-        <!-- Piece selection grid -->
+        <!-- Gold divider line -->
+        <View
+            android:layout_width="120dp"
+            android:layout_height="1dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/bg_dialog_top_bar" />
+
+        <!-- 2x2 Card Grid using nested LinearLayouts -->
         <LinearLayout
-            android:id="@+id/pieceContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
-            <!-- Queen -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardQueen"
-                android:layout_width="0dp"
+            <!-- Row 1: Queen + Rook -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:rippleColor="@color/game_gold_glow"
-                app:strokeColor="@android:color/transparent"
-                app:strokeWidth="0dp">
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_promotion_card"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                <!-- Queen Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardQueen"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    app:cardBackgroundColor="#CC100800"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:strokeColor="#BBD4AF37"
+                    app:strokeWidth="1.5dp">
 
-                    <ImageView
-                        android:id="@+id/btnQueen"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:contentDescription="@string/queen"
-                        android:src="@drawable/ic_queenw" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/queen"
-                        android:fontFamily="@font/exo2"
-                        android:textColor="@color/game_gold_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:shadowColor="@color/game_gold_glow"
-                        android:shadowDx="0"
-                        android:shadowDy="0"
-                        android:shadowRadius="8" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <!-- Gold accent top line -->
+                        <View
+                            android:layout_width="32dp"
+                            android:layout_height="2dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="#FFD4AF37" />
 
-            <!-- Rook -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardRook"
-                android:layout_width="0dp"
+                        <ImageView
+                            android:id="@+id/ivQueen"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="QUEEN"
+                            android:fontFamily="@font/cinzel_bold"
+                            android:textColor="@color/game_gold_primary"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"
+                            android:shadowColor="@color/game_gold_glow"
+                            android:shadowDx="0"
+                            android:shadowDy="0"
+                            android:shadowRadius="8" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Rook Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardRook"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    app:cardBackgroundColor="#CC000A14"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:strokeColor="#BB00CCFF"
+                    app:strokeWidth="1.5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <View
+                            android:layout_width="32dp"
+                            android:layout_height="2dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="#FF00CCFF" />
+
+                        <ImageView
+                            android:id="@+id/ivRook"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="ROOK"
+                            android:fontFamily="@font/cinzel_bold"
+                            android:textColor="@color/game_neon_cyan"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"
+                            android:shadowColor="@color/game_cyan_glow"
+                            android:shadowDx="0"
+                            android:shadowDy="0"
+                            android:shadowRadius="8" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Row 2: Bishop + Knight -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:rippleColor="@color/game_gold_glow"
-                app:strokeColor="@android:color/transparent"
-                app:strokeWidth="0dp">
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_promotion_card"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                <!-- Bishop Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBishop"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    app:cardBackgroundColor="#CC0D0010"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:strokeColor="#BBAA44FF"
+                    app:strokeWidth="1.5dp">
 
-                    <ImageView
-                        android:id="@+id/btnRook"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:contentDescription="@string/rook"
-                        android:src="@drawable/ic_rookw" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/rook"
-                        android:fontFamily="@font/exo2"
-                        android:textColor="@color/game_gold_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:shadowColor="@color/game_gold_glow"
-                        android:shadowDx="0"
-                        android:shadowDy="0"
-                        android:shadowRadius="8" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <View
+                            android:layout_width="32dp"
+                            android:layout_height="2dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="#FFAA44FF" />
 
-            <!-- Bishop -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardBishop"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:rippleColor="@color/game_gold_glow"
-                app:strokeColor="@android:color/transparent"
-                app:strokeWidth="0dp">
+                        <ImageView
+                            android:id="@+id/ivBishop"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="@null" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_promotion_card"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="BISHOP"
+                            android:fontFamily="@font/cinzel_bold"
+                            android:textColor="#FFAA44FF"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"
+                            android:shadowDx="0"
+                            android:shadowDy="0"
+                            android:shadowRadius="8"
+                            android:shadowColor="#FFAA44FF" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                    <ImageView
-                        android:id="@+id/btnBishop"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:contentDescription="@string/bishop"
-                        android:src="@drawable/ic_bishopw" />
+                <!-- Knight Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardKnight"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    app:cardBackgroundColor="#CC100600"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="8dp"
+                    app:strokeColor="#BBFF6600"
+                    app:strokeWidth="1.5dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/bishop"
-                        android:fontFamily="@font/exo2"
-                        android:textColor="@color/game_gold_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:shadowColor="@color/game_gold_glow"
-                        android:shadowDx="0"
-                        android:shadowDy="0"
-                        android:shadowRadius="8" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
 
-            <!-- Knight -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardKnight"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:rippleColor="@color/game_gold_glow"
-                app:strokeColor="@android:color/transparent"
-                app:strokeWidth="0dp">
+                        <View
+                            android:layout_width="32dp"
+                            android:layout_height="2dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="#FFFF6600" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_promotion_card"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                        <ImageView
+                            android:id="@+id/ivKnight"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="@null" />
 
-                    <ImageView
-                        android:id="@+id/btnKnight"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:contentDescription="@string/knight"
-                        android:src="@drawable/ic_knightw" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/knight"
-                        android:fontFamily="@font/exo2"
-                        android:textColor="@color/game_gold_primary"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:shadowColor="@color/game_gold_glow"
-                        android:shadowDx="0"
-                        android:shadowDy="0"
-                        android:shadowRadius="8" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="KNIGHT"
+                            android:fontFamily="@font/cinzel_bold"
+                            android:textColor="#FFFF6600"
+                            android:textSize="11sp"
+                            android:letterSpacing="0.15"
+                            android:shadowDx="0"
+                            android:shadowDy="0"
+                            android:shadowRadius="8"
+                            android:shadowColor="#FFFF6600" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
         </LinearLayout>
+
+        <!-- Bottom hint -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="TAP A PIECE TO PROMOTE"
+            android:fontFamily="@font/exo2"
+            android:textColor="#40FFFFFF"
+            android:textSize="10sp"
+            android:letterSpacing="0.2" />
+
     </LinearLayout>
+
 </FrameLayout>

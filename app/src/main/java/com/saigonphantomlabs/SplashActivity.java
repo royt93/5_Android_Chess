@@ -1,5 +1,8 @@
 package com.saigonphantomlabs;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,12 +26,19 @@ public class SplashActivity extends AppCompatActivity {
     private static final long MIN_SPLASH_DURATION = 1000L;
     private long splashStartTime;
     private boolean isNavigating = false;
-    // [WARN-06] Store handler reference to cancel pending callbacks on destroy
+
+    // Handler for minimum duration delay
     private android.os.Handler splashHandler;
-    
-    // UI Animators
-    private android.animation.AnimatorSet logoAnim;
-    private android.animation.ObjectAnimator flickerAnim;
+
+    // Infinite animator references — all cancelled in onDestroy
+    private AnimatorSet logoAnim;
+    private ObjectAnimator flickerAnim;
+    private AnimatorSet ring1Anim;
+    private AnimatorSet ring2Anim;
+    private AnimatorSet ring3Anim;
+    private ObjectAnimator cornerGlowTLAnim;
+    private ObjectAnimator cornerGlowBRAnim;
+    private ObjectAnimator progressPulseAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +46,12 @@ public class SplashActivity extends AppCompatActivity {
         splashStartTime = System.currentTimeMillis();
         UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_splash);
+
         View rootLayout = findViewById(R.id.rootLayout);
+        UIUtils.INSTANCE.setupEdgeToEdge2(rootLayout, true, true);
+
+        // Load background GIF
         ImageView ivBkg = findViewById(R.id.ivBkg);
-
-        UIUtils.INSTANCE.setupEdgeToEdge2(rootLayout,
-                true,
-                true);
-
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.ic_bkg_1)
@@ -51,54 +60,125 @@ public class SplashActivity extends AppCompatActivity {
 
         ImageView ivLogo = findViewById(R.id.ivLogo);
         android.widget.TextView tvTitle = findViewById(R.id.tvTitle);
+        View ring1 = findViewById(R.id.ring1);
+        View ring2 = findViewById(R.id.ring2);
+        View ring3 = findViewById(R.id.ring3);
+        View cornerTL = findViewById(R.id.cornerGlowTL);
+        View cornerBR = findViewById(R.id.cornerGlowBR);
+        View progressBar = findViewById(R.id.progressBar);
 
-        // Breathing animation for Logo
-        android.animation.ObjectAnimator scaleX = android.animation.ObjectAnimator.ofFloat(ivLogo, "scaleX", 1.0f, 1.15f);
-        android.animation.ObjectAnimator scaleY = android.animation.ObjectAnimator.ofFloat(ivLogo, "scaleY", 1.0f, 1.15f);
-        scaleX.setRepeatCount(android.animation.ValueAnimator.INFINITE);
-        scaleX.setRepeatMode(android.animation.ValueAnimator.REVERSE);
-        scaleX.setDuration(1200);
-        scaleY.setRepeatCount(android.animation.ValueAnimator.INFINITE);
-        scaleY.setRepeatMode(android.animation.ValueAnimator.REVERSE);
-        scaleY.setDuration(1200);
-        logoAnim = new android.animation.AnimatorSet();
-        logoAnim.playTogether(scaleX, scaleY);
-        logoAnim.start();
-
-        // Neon flicker effect for title
-        flickerAnim = android.animation.ObjectAnimator.ofFloat(tvTitle, "alpha", 1.0f, 0.7f, 1.0f, 0.9f, 1.0f);
-        flickerAnim.setDuration(3000);
-        flickerAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
-        flickerAnim.start();
+        startLogoAnimation(ivLogo);
+        startTitleFlicker(tvTitle);
+        startRingPulse(ring1, ring2, ring3);
+        startCornerGlowPulse(cornerTL, cornerBR);
+        startProgressPulse(progressBar);
 
         AdMobManager.INSTANCE.setCurrentActivity(this);
-
-        // AdMob init
         AdMobManager.INSTANCE.initSplashScreen(this, new Function0<Unit>() {
             @Override
             public Unit invoke() {
-                long currentTime = System.currentTimeMillis();
-                long elapsedTime = currentTime - splashStartTime;
-                long remainingTime = MIN_SPLASH_DURATION - elapsedTime;
-
-                if (remainingTime > 0) {
-                    // [WARN-06] Use stored handler so we can cancel it in onDestroy()
+                long elapsed = System.currentTimeMillis() - splashStartTime;
+                long remaining = MIN_SPLASH_DURATION - elapsed;
+                if (remaining > 0) {
                     splashHandler = new android.os.Handler(android.os.Looper.getMainLooper());
-                    splashHandler.postDelayed(() -> {
-                        runOnUiThread(() -> navigateToMainActivity());
-                    }, remainingTime);
+                    splashHandler.postDelayed(() -> runOnUiThread(SplashActivity.this::navigateToMainActivity), remaining);
                 } else {
-                    runOnUiThread(() -> navigateToMainActivity());
+                    runOnUiThread(SplashActivity.this::navigateToMainActivity);
                 }
                 return Unit.INSTANCE;
             }
         });
     }
 
-    private void navigateToMainActivity() {
-        if (isNavigating || isFinishing()) {
-            return;
+    // Logo breathing: scale DOWN only (never above 1.0 — no clipping)
+    private void startLogoAnimation(ImageView ivLogo) {
+        if (ivLogo == null) return;
+        ObjectAnimator scaleX  = ObjectAnimator.ofFloat(ivLogo, "scaleX", 1.0f, 0.90f);
+        ObjectAnimator scaleY  = ObjectAnimator.ofFloat(ivLogo, "scaleY", 1.0f, 0.90f);
+        ObjectAnimator rotation = ObjectAnimator.ofFloat(ivLogo, "rotation", -4f, 4f);
+        for (ObjectAnimator a : new ObjectAnimator[]{scaleX, scaleY, rotation}) {
+            a.setRepeatCount(ValueAnimator.INFINITE);
+            a.setRepeatMode(ValueAnimator.REVERSE);
+            a.setDuration(1400);
         }
+        logoAnim = new AnimatorSet();
+        logoAnim.playTogether(scaleX, scaleY, rotation);
+        logoAnim.start();
+    }
+
+    // Neon flicker for title
+    private void startTitleFlicker(android.widget.TextView tvTitle) {
+        if (tvTitle == null) return;
+        flickerAnim = ObjectAnimator.ofFloat(tvTitle, "alpha", 1.0f, 0.65f, 1.0f, 0.88f, 1.0f);
+        flickerAnim.setDuration(3500);
+        flickerAnim.setRepeatCount(ValueAnimator.INFINITE);
+        flickerAnim.start();
+    }
+
+    // Concentric pulsing rings (halo ripple effect)
+    private void startRingPulse(View ring1, View ring2, View ring3) {
+        ring1Anim = buildRingAnimator(ring1, 0L);
+        ring2Anim = buildRingAnimator(ring2, 400L);
+        ring3Anim = buildRingAnimator(ring3, 800L);
+        if (ring1Anim != null) ring1Anim.start();
+        if (ring2Anim != null) ring2Anim.start();
+        if (ring3Anim != null) ring3Anim.start();
+    }
+
+    /**
+     * Ring ripple effect: translationY UP + alpha fade (like sonar rings rising).
+     * NO scale — rings never overflow their layout bounds.
+     */
+    private AnimatorSet buildRingAnimator(View ring, long startDelay) {
+        if (ring == null) return null;
+        // Rise upward 40dp while fading out
+        ObjectAnimator transY = ObjectAnimator.ofFloat(ring, "translationY", 0f, -40f);
+        ObjectAnimator alpha  = ObjectAnimator.ofFloat(ring, "alpha", 0.8f, 0f);
+        // Scale gently from 0.85 to 1.0 (never above 1.0)
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(ring, "scaleX", 0.85f, 1.0f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(ring, "scaleY", 0.85f, 1.0f);
+        for (ObjectAnimator a : new ObjectAnimator[]{transY, alpha, scaleX, scaleY}) {
+            a.setRepeatCount(ValueAnimator.INFINITE);
+            a.setRepeatMode(ValueAnimator.RESTART);
+            a.setDuration(2000);
+            a.setStartDelay(startDelay);
+            a.setInterpolator(new android.view.animation.DecelerateInterpolator());
+        }
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(transY, alpha, scaleX, scaleY);
+        return set;
+    }
+
+    // Corner glows gentle alpha pulse
+    private void startCornerGlowPulse(View cornerTL, View cornerBR) {
+        if (cornerTL != null) {
+            cornerGlowTLAnim = ObjectAnimator.ofFloat(cornerTL, "alpha", 0.4f, 0.8f);
+            cornerGlowTLAnim.setDuration(2500);
+            cornerGlowTLAnim.setRepeatCount(ValueAnimator.INFINITE);
+            cornerGlowTLAnim.setRepeatMode(ValueAnimator.REVERSE);
+            cornerGlowTLAnim.start();
+        }
+        if (cornerBR != null) {
+            cornerGlowBRAnim = ObjectAnimator.ofFloat(cornerBR, "alpha", 0.3f, 0.7f);
+            cornerGlowBRAnim.setDuration(3000);
+            cornerGlowBRAnim.setRepeatCount(ValueAnimator.INFINITE);
+            cornerGlowBRAnim.setRepeatMode(ValueAnimator.REVERSE);
+            cornerGlowBRAnim.start();
+        }
+    }
+
+    // ProgressBar pulse alpha
+    private void startProgressPulse(View progressBar) {
+        if (progressBar == null) return;
+        progressPulseAnim = ObjectAnimator.ofFloat(progressBar, "alpha", 0.5f, 1.0f);
+        progressPulseAnim.setDuration(800);
+        progressPulseAnim.setRepeatCount(ValueAnimator.INFINITE);
+        progressPulseAnim.setRepeatMode(ValueAnimator.REVERSE);
+        progressPulseAnim.start();
+    }
+
+    private void navigateToMainActivity() {
+        if (isNavigating || isFinishing()) return;
         isNavigating = true;
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -109,25 +189,30 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Prevent back button during splash
+        // Prevent back during splash
     }
 
     @Override
     protected void onDestroy() {
+        // Cancel all infinite animators to prevent context/view leaks
         if (splashHandler != null) {
             splashHandler.removeCallbacksAndMessages(null);
             splashHandler = null;
         }
-        if (logoAnim != null) {
-            logoAnim.cancel();
-            logoAnim = null;
-        }
-        if (flickerAnim != null) {
-            flickerAnim.cancel();
-            flickerAnim = null;
-        }
-        // [BUG-03] Clear stale Activity reference from AdMobManager
+        cancelAll(logoAnim, flickerAnim, ring1Anim, ring2Anim, ring3Anim,
+                  cornerGlowTLAnim, cornerGlowBRAnim, progressPulseAnim);
+        logoAnim = null; flickerAnim = null;
+        ring1Anim = null; ring2Anim = null; ring3Anim = null;
+        cornerGlowTLAnim = null; cornerGlowBRAnim = null;
+        progressPulseAnim = null;
         AdMobManager.INSTANCE.clearCurrentActivity();
         super.onDestroy();
+    }
+
+    private void cancelAll(Object... animators) {
+        for (Object a : animators) {
+            if (a instanceof AnimatorSet) ((AnimatorSet) a).cancel();
+            else if (a instanceof ObjectAnimator) ((ObjectAnimator) a).cancel();
+        }
     }
 }

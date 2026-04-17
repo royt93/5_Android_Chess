@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  DEFINITIVE FIX for border clipping:
+  NO negative insets. Glow ring is INSIDE the view using an inset layer.
+  This never renders outside the view's clip bounds.
+-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Outer Glow -->
-    <item android:top="-2dp" android:left="-2dp" android:right="-2dp" android:bottom="-2dp">
+    <!-- Outer glow ring — fully inside view bounds using positive inset -->
+    <item android:top="0dp" android:left="0dp" android:right="0dp" android:bottom="0dp">
         <shape android:shape="rectangle">
-            <corners android:radius="24dp" />
-            <stroke android:width="4dp" android:color="#4000FFFF" />
+            <corners android:radius="28dp" />
+            <stroke android:width="2dp" android:color="#6000FFFF" />
+            <solid android:color="#00000000" />
         </shape>
     </item>
-    <!-- Core Box -->
-    <item>
+    <!-- Inner body -->
+    <item android:top="4dp" android:left="4dp" android:right="4dp" android:bottom="4dp">
         <shape android:shape="rectangle">
-            <solid android:color="#CC0A0A10" />
+            <solid android:color="#D40A0A10" />
             <corners android:radius="24dp" />
-            <stroke
-                android:width="2dp"
-                android:color="#00FFFF" />
+            <stroke android:width="1.5dp" android:color="#CC00FFFF" />
         </shape>
     </item>
 </layer-list>

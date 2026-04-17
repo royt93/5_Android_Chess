@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_piece_in_check: NO large negative insets.
+  Danger glow contained within minimal overflow (-4dp only).
+-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Outer Danger Glow (Softest, widest) -->
-    <item android:top="-12dp" android:left="-12dp" android:right="-12dp" android:bottom="-12dp">
+    <!-- Inner fill + danger red border — fully inside bounds -->
+    <item>
         <shape android:shape="oval">
-            <solid android:color="#30FF0000" />
+            <solid android:color="#50FF4444" />
+            <stroke android:width="3dp" android:color="#FF0000" />
         </shape>
     </item>
-    
-    <!-- Middle Core Red Glow -->
-    <item android:top="-6dp" android:left="-6dp" android:right="-6dp" android:bottom="-6dp">
+    <!-- Subtle outer danger aura — minimal overflow only -->
+    <item android:top="-4dp" android:left="-4dp" android:right="-4dp" android:bottom="-4dp">
         <shape android:shape="oval">
-            <solid android:color="#70FF2A00" />
-        </shape>
-    </item>
-
-    <!-- Inner Sharp Stroke & Fill -->
-    <item android:top="0dp" android:left="0dp" android:right="0dp" android:bottom="0dp">
-        <shape android:shape="oval">
-            <solid android:color="#40FF4444" />
-            <stroke
-                android:width="4dp"
-                android:color="#FF0000" />
+            <solid android:color="#40FF2A00" />
         </shape>
     </item>
 </layer-list>

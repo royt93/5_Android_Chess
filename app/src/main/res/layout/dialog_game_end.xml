@@ -8,13 +8,27 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-    <ImageView
-        android:id="@+id/dialog_icon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+    <!-- Trophy / outcome icon with glow ring behind it -->
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_trophy"
-        app:tint="@color/game_gold_primary"/>
+        android:layout_gravity="center_horizontal">
+
+        <!-- Radial glow behind icon -->
+        <View
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/bg_particle_glow" />
+
+        <ImageView
+            android:id="@+id/dialog_icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_trophy"
+            app:tint="@color/game_gold_primary" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/dialog_title"
@@ -22,7 +36,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="@string/white_wins" />
+        android:text="@string/white_wins"
+        android:shadowColor="@color/game_gold_glow"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="24" />
 
     <TextView
         android:id="@+id/dialog_message"
@@ -32,13 +50,13 @@
         android:layout_marginBottom="24dp"
         android:text="@string/black_loses" />
 
-    <!-- Stats Container -->
+    <!-- Stats Container with neon border -->
     <LinearLayout
         android:id="@+id/stats_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:background="#0D0D0F"
+        android:background="@drawable/bg_btn_secondary"
         android:orientation="vertical"
         android:padding="12dp">
 
@@ -47,7 +65,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="@string/stats_title" />
+            android:text="@string/stats_title"
+            android:shadowColor="@color/game_cyan_glow"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="8" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,11 +87,15 @@
             <TextView
                 android:id="@+id/stats_duration_value"
                 style="@style/GameText.Body"
-                android:textColor="@color/game_white_piece"
+                android:textColor="@color/game_gold_primary"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="05:23" />
+                android:text="05:23"
+                android:shadowColor="@color/game_gold_glow"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="8" />
         </LinearLayout>
 
         <LinearLayout
@@ -88,11 +114,15 @@
             <TextView
                 android:id="@+id/stats_moves_value"
                 style="@style/GameText.Body"
-                android:textColor="@color/game_white_piece"
+                android:textColor="@color/game_gold_primary"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="42" />
+                android:text="42"
+                android:shadowColor="@color/game_gold_glow"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="8" />
         </LinearLayout>
 
         <LinearLayout
@@ -141,6 +171,7 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Review Board button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -163,6 +194,7 @@
 
     </LinearLayout>
 
+    <!-- Exit / Play Again -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

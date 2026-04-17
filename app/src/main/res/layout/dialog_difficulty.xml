@@ -1,34 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Difficulty Dialog: richly styled -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="320dp"
+    android:layout_width="340dp"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_dialog_game"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:paddingHorizontal="24dp"
+    android:paddingTop="28dp"
+    android:paddingBottom="12dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Header row: icon + title -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        style="@style/GameText.Title"
-        android:text="⚔ SELECT OPPONENT" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
 
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_puzzle"
+            app:tint="@color/game_neon_cyan"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚔ SELECT OPPONENT"
+            android:fontFamily="@font/cinzel"
+            android:textColor="@color/game_gold_light"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:shadowColor="@color/game_gold_glow"
+            android:shadowDx="0" android:shadowDy="0" android:shadowRadius="16" />
+    </LinearLayout>
+
+    <!-- Difficulty buttons injected here -->
     <LinearLayout
         android:id="@+id/difficultyContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="16dp">
-        <!-- Buttons will be injected here dynamically, using bg_btn_secondary or dynamically styled -->
-    </LinearLayout>
+        android:layout_marginBottom="8dp" />
 
+    <!-- Cancel button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancel"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="48dp"
         android:fontFamily="@font/exo2"
         android:text="CANCEL"
         android:textColor="@color/game_text_muted"

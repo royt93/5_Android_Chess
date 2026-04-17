@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#40D4AF37">
+<!-- bg_btn_pvp: NO negative insets. Triple glow rings inside bounds using positive insets. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outermost soft glow (inside bounds) -->
     <item>
-        <layer-list>
-            <!-- Outer Glow -->
-            <item android:top="-2dp" android:left="-2dp" android:right="-2dp" android:bottom="-2dp">
-                <shape android:shape="rectangle">
-                    <corners android:radius="@dimen/corner_game" />
-                    <stroke android:width="4dp" android:color="#40D4AF37" />
-                </shape>
-            </item>
-            <!-- Core Button -->
-            <item>
-                <shape android:shape="rectangle">
-                    <solid android:color="#1A0D0D0F" />
-                    <corners android:radius="@dimen/corner_game" />
-                    <stroke
-                        android:width="1dp"
-                        android:color="@color/game_gold_primary" />
-                </shape>
-            </item>
-        </layer-list>
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="#00000000" />
+            <stroke android:width="2dp" android:color="#30FF6B00" />
+        </shape>
     </item>
-</ripple>
+    <!-- Mid glow ring -->
+    <item android:top="3dp" android:left="3dp" android:right="3dp" android:bottom="3dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="17dp" />
+            <solid android:color="#00000000" />
+            <stroke android:width="1.5dp" android:color="#50FF8C00" />
+        </shape>
+    </item>
+    <!-- Fire gradient body -->
+    <item android:top="6dp" android:left="6dp" android:right="6dp" android:bottom="6dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="14dp" />
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#FF3A00"
+                android:centerColor="#CC2D0000"
+                android:endColor="#991A0000" />
+            <stroke android:width="1dp" android:color="#CCFF6B00" />
+        </shape>
+    </item>
+</layer-list>

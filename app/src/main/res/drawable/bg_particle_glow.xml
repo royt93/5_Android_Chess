@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Radial golden particle glow for logo/hero areas -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outermost soft glow -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="50%"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:startColor="#20FFD700"
+                android:centerColor="#10FF8C00"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+    <!-- Mid ring -->
+    <item android:top="20dp" android:left="20dp" android:right="20dp" android:bottom="20dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="50%"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:startColor="#30FFD700"
+                android:centerColor="#15FF6600"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+    <!-- Inner intense glow -->
+    <item android:top="40dp" android:left="40dp" android:right="40dp" android:bottom="40dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="50%"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:startColor="#50FFD700"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+</layer-list>

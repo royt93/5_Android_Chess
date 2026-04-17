@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dialog icon halo: radial gold glow behind icon — solid, no negative insets -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="36dp"
+        android:startColor="#40D4AF37"
+        android:endColor="#00D4AF37" />
+</shape>
