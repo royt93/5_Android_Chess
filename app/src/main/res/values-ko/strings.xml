@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">체스</string>
+    <string name="queen">퀸</string>
+    <string name="rook">룩</string>
+    <string name="bishop">비숍</string>
+    <string name="knight">나이트</string>
+    <string name="promotionQuestion">승급:</string>
+    <string name="saveBoardPrompt">종료하시겠습니까?</string>
+    <string name="yes">네</string>
+    <string name="no">아니요</string>
+    <string name="ok">확인</string>
+    <string name="warning">경고</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">평가</string>
+    <string name="more_apps">더 보기</string>
+    <string name="share_app">공유</string>
+    <string name="share_message">멋진 체스 게임!</string>
+    <string name="share_subject">체스</string>
+    <string name="start_game">시작</string>
+    <string name="undo">취소</string>
+    <string name="check">체크!</string>
+    <string name="checkmate">체크메이트!</string>
+    <string name="white_wins">백 승리!</string>
+    <string name="black_wins">흑 승리!</string>
+    <string name="game_over">종료</string>
+    <string name="play_again">다시</string>
+    <string name="illegal_move">불가능</string>
+    <string name="no_undo_available">취소 불가</string>
+    <string name="restart_confirm">새 게임?</string>
+    <string name="stalemate">스테일메이트!</string>
+    <string name="stalemate_message">무승부.</string>
+    <string name="white_loses">백 패배</string>
+    <string name="black_loses">흑 패배</string>
+    <string name="exit">종료</string>
+    <string name="stats_title">📊 통계</string>
+    <string name="stats_duration">시간</string>
+    <string name="stats_moves">이동</string>
+    <string name="stats_white_captured">백 잡음</string>
+    <string name="stats_black_captured">흑 잡음</string>
+    <string name="play_pvp">1대1</string>
+    <string name="play_ai">AI 대전</string>
+    <string name="stats">통계</string>
+    <string name="rules">규칙</string>
+    <string name="select_difficulty">난이도</string>
+    <string name="review_board">보드 확인</string>
+    <string name="got_it">확인</string>
+    <string name="cancel">취소</string>
+    <string name="difficulty_easy">쉬움</string>
+    <string name="difficulty_medium">보통</string>
+    <string name="difficulty_hard">어려움</string>
+    <string name="difficulty_unbeatable">불가능</string>
+    <string name="stats_game_title">🏆 통계</string>
+    <string name="close">닫기</string>
+    <string name="ai_performance_format">🤖 AI (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 규칙</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>목표</b></font><br/> 체크메이트.<br/><br/> <font color="#1976D2"><b>이동</b></font><br/> &#8226; <b>킹:</b> 모든 방향으로 1칸.<br/> &#8226; <b>퀸:</b> 가로, 세로, 대각선.<br/> &#8226; <b>룩:</b> 가로, 세로.<br/> &#8226; <b>비숍:</b> 대각선.<br/> &#8226; <b>나이트:</b> \'L\' 자형.<br/> &#8226; <b>폰:</b> 앞으로 1칸, 대각선으로 포획.<br/><br/> <font color="#1976D2"><b>특수</b></font><br/> &#8226; <b>승급:</b> 끝에 도달하면 다른 기물로 승급. ]]></string>
+    <string name="stats_total_games">게임수: %d\n</string>
+    <string name="stats_total_time">시간: %s\n\n</string>
+    <string name="stats_performance_ai">AI 상대:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Ad</string>
+    <string name="advertisement_label">광고</string>
+
+    <string name="message_body_generic">메시지</string>
+    <string name="white_turn">백 차례</string>
+    <string name="black_turn">흑 차례</string>
+    <string name="theme_select">🎨 테마</string>
+    <string name="pawn_promoted">승급 완료</string>
+    <string name="choose_your_destiny">선택</string>
+    <string name="tap_a_piece_to_promote">탭하여 승급</string>
+    <string name="select_language">언어</string>
+    <string name="chess_master">체스 마스터</string>
+    <string name="chess_master_styled">✦ 마스터</string>
+    <string name="strategy_game">전략</string>
+    <string name="powered_by_ai">AI 엔진</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ 상대 선택</string>
+    <string name="stats_duration_label">⏱ 시간</string>
+    <string name="stats_moves_label">🎯 이동</string>
+    <string name="stats_captured_white_label">♙ 백</string>
+    <string name="stats_captured_black_label">♟ 흑</string>
+</resources>

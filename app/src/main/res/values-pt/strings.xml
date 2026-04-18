@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">Xadrez</string>
+    <string name="queen">Rainha</string>
+    <string name="rook">Torre</string>
+    <string name="bishop">Bispo</string>
+    <string name="knight">Cavalo</string>
+    <string name="promotionQuestion">Promover:</string>
+    <string name="saveBoardPrompt">Sair?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="ok">OK</string>
+    <string name="warning">Aviso</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">Avaliar</string>
+    <string name="more_apps">Mais</string>
+    <string name="share_app">Compartilhar</string>
+    <string name="share_message">Olhe este jogo de xadrez!</string>
+    <string name="share_subject">Xadrez</string>
+    <string name="start_game">JOGAR</string>
+    <string name="undo">Desfazer</string>
+    <string name="check">Xeque!</string>
+    <string name="checkmate">Mate!</string>
+    <string name="white_wins">Brancas vencem!</string>
+    <string name="black_wins">Pretas vencem!</string>
+    <string name="game_over">Fim</string>
+    <string name="play_again">Rejogar</string>
+    <string name="illegal_move">Ilegal</string>
+    <string name="no_undo_available">Nada a desfazer</string>
+    <string name="restart_confirm">Novo jogo?</string>
+    <string name="stalemate">Afogado!</string>
+    <string name="stalemate_message">Empate.</string>
+    <string name="white_loses">Brancas perdem</string>
+    <string name="black_loses">Pretas perdem</string>
+    <string name="exit">Sair</string>
+    <string name="stats_title">📊 Estatísticas</string>
+    <string name="stats_duration">Duração</string>
+    <string name="stats_moves">Movimentos</string>
+    <string name="stats_white_captured">Cap. Brancas</string>
+    <string name="stats_black_captured">Cap. Pretas</string>
+    <string name="play_pvp">1 VS 1</string>
+    <string name="play_ai">CONTRA IA</string>
+    <string name="stats">STATS</string>
+    <string name="rules">REGRAS</string>
+    <string name="select_difficulty">Nível</string>
+    <string name="review_board">TABULEIRO</string>
+    <string name="got_it">Entendi</string>
+    <string name="cancel">Cancelar</string>
+    <string name="difficulty_easy">FÁCIL</string>
+    <string name="difficulty_medium">MÉDIO</string>
+    <string name="difficulty_hard">DIFÍCIL</string>
+    <string name="difficulty_unbeatable">IMBATÍVEL</string>
+    <string name="stats_game_title">🏆 Estatísticas</string>
+    <string name="close">Fechar</string>
+    <string name="ai_performance_format">🤖 IA (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 Regras</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>OBJECTIVE</b></font><br/> Checkmate the opponent\'s King.<br/><br/> <font color="#1976D2"><b>PIECE MOVEMENTS</b></font><br/> &#8226; <b>King:</b> One square in any direction.<br/> &#8226; <b>Queen:</b> Any squares diagonally, horizontally, or vertically.<br/> &#8226; <b>Rook:</b> Any squares horizontally or vertically.<br/> &#8226; <b>Bishop:</b> Any squares diagonally.<br/> &#8226; <b>Knight:</b> \'L\' shape jump.<br/> &#8226; <b>Pawn:</b> Forward one square. Captures diagonally.<br/><br/> <font color="#1976D2"><b>SPECIAL MOVES</b></font><br/> &#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end. ]]></string>
+    <string name="stats_total_games">Jogos: %d\n</string>
+    <string name="stats_total_time">Tempo: %s\n\n</string>
+    <string name="stats_performance_ai">Contra IA:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Ad</string>
+    <string name="advertisement_label">Anúncio</string>
+
+    <string name="message_body_generic">Mensagem...</string>
+    <string name="white_turn">TURNO BRANCAS</string>
+    <string name="black_turn">TURNO PRETAS</string>
+    <string name="theme_select">🎨 Tema</string>
+    <string name="pawn_promoted">PROMOVIDO</string>
+    <string name="choose_your_destiny">ESCOLHA</string>
+    <string name="tap_a_piece_to_promote">TOQUE</string>
+    <string name="select_language">Idioma</string>
+    <string name="chess_master">XADREZ</string>
+    <string name="chess_master_styled">✦ MESTRE</string>
+    <string name="strategy_game">ESTRATÉGIA</string>
+    <string name="powered_by_ai">IA</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ OPONENTE</string>
+    <string name="stats_duration_label">⏱ Tempo</string>
+    <string name="stats_moves_label">🎯 Moves</string>
+    <string name="stats_captured_white_label">♙ Brancas</string>
+    <string name="stats_captured_black_label">♟ Pretas</string>
+</resources>

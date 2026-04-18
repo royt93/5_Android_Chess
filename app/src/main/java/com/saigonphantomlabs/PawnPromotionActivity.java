@@ -14,7 +14,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.saigonphantomlabs.BaseActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
@@ -22,7 +22,7 @@ import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
 
-public class PawnPromotionActivity extends AppCompatActivity {
+public class PawnPromotionActivity extends BaseActivity {
 
     // Card views (2x2 grid)
     private MaterialCardView cardQueen, cardRook, cardBishop, cardKnight;

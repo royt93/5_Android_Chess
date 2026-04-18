@@ -98,7 +98,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BLACK TURN"
+                    android:text="@string/black_turn"
                     android:fontFamily="@font/exo2"
                     android:textColor="@color/game_neon_cyan"
                     android:textSize="11sp"
@@ -170,7 +170,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="WHITE TURN"
+                    android:text="@string/white_turn"
                     android:fontFamily="@font/exo2"
                     android:textColor="@color/game_gold_primary"
                     android:textSize="11sp"
@@ -215,7 +215,7 @@
                 android:id="@+id/btnBoardTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
-                android:text="🎨 Theme"
+                android:text="@string/theme_select"
                 android:textColor="@color/white"
                 android:fontFamily="@font/exo2"
                 android:background="@drawable/bg_btn_pve"

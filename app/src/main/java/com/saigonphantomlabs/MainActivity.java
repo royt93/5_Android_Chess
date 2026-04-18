@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.saigonphantomlabs.BaseActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -24,7 +24,7 @@ import com.saigonphantomlabs.chess.R;
 import com.roy.sdkadbmob.UIUtils;
 
 @SuppressLint("CustomSplashScreen")
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private LinearLayout btnPlayPvP;
     private LinearLayout btnPlayPvE;
@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout btnShareApp;
     private LinearLayout btnRules;
     private TextView tvVersion;
+    private LinearLayout btnLanguage;
+    private TextView tvCurrentLanguage;
 
     // Infinite animators — all cancelled in onDestroy
     private AnimatorSet heartbeatAnim;
@@ -73,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
         btnRules = findViewById(R.id.btnRules);
         ImageView ivBkg = findViewById(R.id.ivBkg);
         tvVersion = findViewById(R.id.tvVersionTop);
+        btnLanguage = findViewById(R.id.btnLanguage);
+        tvCurrentLanguage = findViewById(R.id.tvCurrentLanguage);
+        
+        String lang = com.saigonphantomlabs.language.LanguageManager.INSTANCE.getLanguage(this);
+        java.util.Locale locale = new java.util.Locale(lang);
+        String displayLang = locale.getDisplayLanguage(locale);
+        tvCurrentLanguage.setText("🌐 " + displayLang.toUpperCase());
 
         String versionName = BuildConfig.VERSION_NAME;
         tvVersion.setText(getString(R.string.version_format, versionName));
@@ -103,6 +112,11 @@ public class MainActivity extends AppCompatActivity {
         });
         btnRules.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) { DialogUtils.showRulesDialog(MainActivity.this); }
+        });
+        btnLanguage.setOnClickListener(new SafeClickListener() {
+            @Override public void onSafeClick(View view) {
+                new com.saigonphantomlabs.language.LanguageBottomSheet().show(getSupportFragmentManager(), "LanguageBottomSheet");
+            }
         });
     }
 

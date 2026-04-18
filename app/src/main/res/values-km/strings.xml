@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">អុក</string>
+    <string name="queen">មហាក្សត្រី</string>
+    <string name="rook">ទូក</string>
+    <string name="bishop">ដំរី</string>
+    <string name="knight">សេះ</string>
+    <string name="promotionQuestion">ប្តូរ:</string>
+    <string name="saveBoardPrompt">ចេញពីហ្គេម?</string>
+    <string name="yes">បាទ</string>
+    <string name="no">ទេ</string>
+    <string name="ok">OK</string>
+    <string name="warning">ព្រមាន</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">អត្រា</string>
+    <string name="more_apps">ផ្សេងៗ</string>
+    <string name="share_app">ចែករំលែក</string>
+    <string name="share_message">សាកល្បងហ្គេមនេះ!</string>
+    <string name="share_subject">អុក</string>
+    <string name="start_game">ចាប់ផ្ដើម</string>
+    <string name="undo">ត្រឡប់</string>
+    <string name="check">រុក!</string>
+    <string name="checkmate">រុកឃាត!</string>
+    <string name="white_wins">សឈ្នះ!</string>
+    <string name="black_wins">ខ្មៅឈ្នះ!</string>
+    <string name="game_over">បញ្ចប់</string>
+    <string name="play_again">ម្ដងទៀត</string>
+    <string name="illegal_move">មិនអាចទេ</string>
+    <string name="no_undo_available">គ្មានទេ</string>
+    <string name="restart_confirm">ហ្គេមថ្មី?</string>
+    <string name="stalemate">ស្មើ!</string>
+    <string name="stalemate_message">ស្មើ។</string>
+    <string name="white_loses">សចាញ់</string>
+    <string name="black_loses">ខ្មៅចាញ់</string>
+    <string name="exit">ចេញ</string>
+    <string name="stats_title">📊 ស្ថិតិ</string>
+    <string name="stats_duration">ពេល</string>
+    <string name="stats_moves">ចំនួន</string>
+    <string name="stats_white_captured">សស៊ី</string>
+    <string name="stats_black_captured">ខ្មៅស៊ី</string>
+    <string name="play_pvp">១ ទល់ ១</string>
+    <string name="play_ai">លេងជាមួយ AI</string>
+    <string name="stats">ស្ថិតិ</string>
+    <string name="rules">ច្បាប់</string>
+    <string name="select_difficulty">កម្រិត</string>
+    <string name="review_board">មើលក្តារអុក</string>
+    <string name="got_it">យល់ហើយ</string>
+    <string name="cancel">បោះបង់</string>
+    <string name="difficulty_easy">ងាយ</string>
+    <string name="difficulty_medium">មធ្យម</string>
+    <string name="difficulty_hard">ពិបាក</string>
+    <string name="difficulty_unbeatable">ពិបាកខ្លាំង</string>
+    <string name="stats_game_title">🏆 ស្ថិតិ</string>
+    <string name="close">បិទ</string>
+    <string name="ai_performance_format">🤖 AI (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 ច្បាប់</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>OBJECTIVE</b></font><br/> Checkmate the opponent\'s King.<br/><br/> <font color="#1976D2"><b>PIECE MOVEMENTS</b></font><br/> &#8226; <b>King:</b> One square in any direction.<br/> &#8226; <b>Queen:</b> Any squares diagonally, horizontally, or vertically.<br/> &#8226; <b>Rook:</b> Any squares horizontally or vertically.<br/> &#8226; <b>Bishop:</b> Any squares diagonally.<br/> &#8226; <b>Knight:</b> \'L\' shape jump.<br/> &#8226; <b>Pawn:</b> Forward one square. Captures diagonally.<br/><br/> <font color="#1976D2"><b>SPECIAL MOVES</b></font><br/> &#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end. ]]></string>
+    <string name="stats_total_games">ហ្គេម: %d\n</string>
+    <string name="stats_total_time">ពេល: %s\n\n</string>
+    <string name="stats_performance_ai">vs AI:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Ad</string>
+    <string name="advertisement_label">ពាណិជ្ជកម្ម</string>
+
+    <string name="message_body_generic">សារ</string>
+    <string name="white_turn">វេនស</string>
+    <string name="black_turn">វេនខ្មៅ</string>
+    <string name="theme_select">🎨 ផ្ទៃ</string>
+    <string name="pawn_promoted">បានប្តូរ</string>
+    <string name="choose_your_destiny">ជ្រើសរើស</string>
+    <string name="tap_a_piece_to_promote">ចុច</string>
+    <string name="select_language">ភាសា</string>
+    <string name="chess_master">អុក</string>
+    <string name="chess_master_styled">✦ អុក</string>
+    <string name="strategy_game">យុទ្ធសាស្រ្ត</string>
+    <string name="powered_by_ai">AI</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ គូប្រជែង</string>
+    <string name="stats_duration_label">⏱ ពេល</string>
+    <string name="stats_moves_label">🎯 ដើរ</string>
+    <string name="stats_captured_white_label">♙ ស</string>
+    <string name="stats_captured_black_label">♟ ខ្មៅ</string>
+</resources>

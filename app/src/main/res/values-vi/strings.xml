@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">Cờ Vua</string>
+    <string name="queen">Hậu</string>
+    <string name="rook">Xe</string>
+    <string name="bishop">Tượng</string>
+    <string name="knight">Mã</string>
+    <string name="promotionQuestion">Thay chốt bằng:</string>
+    <string name="saveBoardPrompt">Thoát trò chơi?</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
+    <string name="ok">OK</string>
+    <string name="warning">Cảnh báo</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">Đánh giá App</string>
+    <string name="more_apps">App Khác</string>
+    <string name="share_app">Chia sẻ</string>
+    <string name="share_message">Hãy chơi thử Cờ Vua Nhanh cùng tôi!</string>
+    <string name="share_subject">Cờ Vua</string>
+    <string name="start_game">BẮT ĐẦU</string>
+    <string name="undo">Hoàn tác</string>
+    <string name="check">Chiếu!</string>
+    <string name="checkmate">Chiếu hết!</string>
+    <string name="white_wins">Trắng Thắng!</string>
+    <string name="black_wins">Đen Thắng!</string>
+    <string name="game_over">Kết thúc</string>
+    <string name="play_again">Chơi Lại</string>
+    <string name="illegal_move">Nước đi sai!</string>
+    <string name="no_undo_available">Không thể hoàn tác</string>
+    <string name="restart_confirm">Ván mới?</string>
+    <string name="stalemate">Hòa bế tắc!</string>
+    <string name="stalemate_message">Hòa cờ ảo.</string>
+    <string name="white_loses">Trắng Thua!</string>
+    <string name="black_loses">Đen Thua!</string>
+    <string name="exit">Thoát</string>
+    <string name="stats_title">📊 Thống Kê</string>
+    <string name="stats_duration">Thời Lượng</string>
+    <string name="stats_moves">Số Nước Đi</string>
+    <string name="stats_white_captured">Trắng Bắt</string>
+    <string name="stats_black_captured">Đen Bắt</string>
+    <string name="play_pvp">CHƠI 1 VS 1</string>
+    <string name="play_ai">ĐÁNH VỚI MÁY</string>
+    <string name="stats">THỐNG KÊ</string>
+    <string name="rules">LUẬT CHƠI</string>
+    <string name="select_difficulty">Độ Khó</string>
+    <string name="review_board">XEM BÀN CỜ</string>
+    <string name="got_it">OK</string>
+    <string name="cancel">Hủy</string>
+    <string name="difficulty_easy">DỄ</string>
+    <string name="difficulty_medium">THƯỜNG</string>
+    <string name="difficulty_hard">KHÓ</string>
+    <string name="difficulty_unbeatable">BẤT BẠI</string>
+    <string name="stats_game_title">🏆 Thống Kê</string>
+    <string name="close">Đóng</string>
+    <string name="ai_performance_format">🤖 AI (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 Luật</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>MỤC TIÊU</b></font><br/> Chiếu hết Vua.<br/><br/> <font color="#1976D2"><b>CÁCH ĐI</b></font><br/> &#8226; <b>Vua:</b> Một ô hướng bất kỳ.<br/> &#8226; <b>Hậu:</b> Dọc, ngang hoặc chéo.<br/> &#8226; <b>Xe:</b> Ngang hoặc dọc.<br/> &#8226; <b>Tượng:</b> Đường chéo.<br/> &#8226; <b>Mã:</b> Hình chữ \'L\'.<br/> &#8226; <b>Tốt:</b> Tới 1 ô, ăn chéo.<br/><br/> <font color="#1976D2"><b>ĐẶC BIỆT</b></font><br/> &#8226; <b>Phong cấp:</b> Đổi sang Hậu, Xe, Mã, Tượng khi tới ô cuối. ]]></string>
+    <string name="stats_total_games">Tổng Ván: %d\n</string>
+    <string name="stats_total_time">Tổng Giờ: %s\n\n</string>
+    <string name="stats_performance_ai">vs AI:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Quảng cáo</string>
+    <string name="advertisement_label">Quảng cáo</string>
+
+    <string name="message_body_generic">Nội dung...</string>
+    <string name="white_turn">LƯỢT TRẮNG</string>
+    <string name="black_turn">LƯỢT ĐEN</string>
+    <string name="theme_select">🎨 Giao diện</string>
+    <string name="pawn_promoted">PHONG CẤP</string>
+    <string name="choose_your_destiny">CHỌN QUÂN CỜ</string>
+    <string name="tap_a_piece_to_promote">CHẠM ĐỂ CHỌN</string>
+    <string name="select_language">Ngôn Ngữ</string>
+    <string name="chess_master">CỜ VUA</string>
+    <string name="chess_master_styled">✦ CỜ VUA</string>
+    <string name="strategy_game">CHIẾN THUẬT</string>
+    <string name="powered_by_ai">Cung cấp bởi AI</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ CHỌN ĐỐI THỦ</string>
+    <string name="stats_duration_label">⏱ Thời Gian</string>
+    <string name="stats_moves_label">🎯 Nước Đi</string>
+    <string name="stats_captured_white_label">♙ Trắng Ăn</string>
+    <string name="stats_captured_black_label">♟ Đen Ăn</string>
+</resources>

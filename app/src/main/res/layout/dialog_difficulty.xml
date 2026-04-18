@@ -30,7 +30,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="⚔ SELECT OPPONENT"
+            android:text="@string/select_opponent"
             android:fontFamily="@font/cinzel"
             android:textColor="@color/game_gold_light"
             android:textSize="16sp"
@@ -54,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:fontFamily="@font/exo2"
-        android:text="CANCEL"
+        android:text="@string/cancel"
         android:textColor="@color/game_text_muted"
         app:cornerRadius="12dp" />
 

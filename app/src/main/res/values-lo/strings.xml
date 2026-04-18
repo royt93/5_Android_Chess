@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">ໝາກລຸກ</string>
+    <string name="queen">ຄວີນ</string>
+    <string name="rook">ເຮືອ</string>
+    <string name="bishop">ຊ້າງ</string>
+    <string name="knight">ມ້າ</string>
+    <string name="promotionQuestion">ປ່ຽນ:</string>
+    <string name="saveBoardPrompt">ອອກ?</string>
+    <string name="yes">ແມ່ນ</string>
+    <string name="no">ບໍ່</string>
+    <string name="ok">OK</string>
+    <string name="warning">ເຕືອນ</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">ໃຫ້ຄະແນນ</string>
+    <string name="more_apps">ອື່ນໆ</string>
+    <string name="share_app">ແບ່ງປັນ</string>
+    <string name="share_message">ລອງຫຼິ້ນນີ້!</string>
+    <string name="share_subject">ໝາກລຸກ</string>
+    <string name="start_game">ເລີ່ມ</string>
+    <string name="undo">ຍົກເລີກ</string>
+    <string name="check">ລຸກ!</string>
+    <string name="checkmate">ລຸກຄາດ!</string>
+    <string name="white_wins">ຂາວຊະນະ!</string>
+    <string name="black_wins">ດຳຊະນະ!</string>
+    <string name="game_over">ຈົບ</string>
+    <string name="play_again">ອີກຄັ້ງ</string>
+    <string name="illegal_move">ຜິດ</string>
+    <string name="no_undo_available">ບໍ່ມີ</string>
+    <string name="restart_confirm">ເກມໃໝ່?</string>
+    <string name="stalemate">ສະເໝີ!</string>
+    <string name="stalemate_message">ສະເໝີ.</string>
+    <string name="white_loses">ຂາວເສຍ</string>
+    <string name="black_loses">ດຳເສຍ</string>
+    <string name="exit">ອອກ</string>
+    <string name="stats_title">📊 ສະຖິຕິ</string>
+    <string name="stats_duration">ເວລາ</string>
+    <string name="stats_moves">ຍ່າງ</string>
+    <string name="stats_white_captured">ຂາວ</string>
+    <string name="stats_black_captured">ດຳ</string>
+    <string name="play_pvp">1 ຕໍ່ 1</string>
+    <string name="play_ai">AI</string>
+    <string name="stats">ສະຖິຕິ</string>
+    <string name="rules">ກົດ</string>
+    <string name="select_difficulty">ລະດັບ</string>
+    <string name="review_board">ກະດານ</string>
+    <string name="got_it">ເຂົ້າໃຈແລະ</string>
+    <string name="cancel">ຍົກເລີກ</string>
+    <string name="difficulty_easy">ງ່າຍ</string>
+    <string name="difficulty_medium">ປານກາງ</string>
+    <string name="difficulty_hard">ຍາກ</string>
+    <string name="difficulty_unbeatable">ຍາກທີ່ສຸດ</string>
+    <string name="stats_game_title">🏆 ສະຖິຕິ</string>
+    <string name="close">ປິດ</string>
+    <string name="ai_performance_format">🤖 AI (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 ກົດ</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>OBJECTIVE</b></font><br/> Checkmate the opponent\'s King.<br/><br/> <font color="#1976D2"><b>PIECE MOVEMENTS</b></font><br/> &#8226; <b>King:</b> One square in any direction.<br/> &#8226; <b>Queen:</b> Any squares diagonally, horizontally, or vertically.<br/> &#8226; <b>Rook:</b> Any squares horizontally or vertically.<br/> &#8226; <b>Bishop:</b> Any squares diagonally.<br/> &#8226; <b>Knight:</b> \'L\' shape jump.<br/> &#8226; <b>Pawn:</b> Forward one square. Captures diagonally.<br/><br/> <font color="#1976D2"><b>SPECIAL MOVES</b></font><br/> &#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end. ]]></string>
+    <string name="stats_total_games">ເກມ: %d\n</string>
+    <string name="stats_total_time">ເວລາ: %s\n\n</string>
+    <string name="stats_performance_ai">vs AI:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Ad</string>
+    <string name="advertisement_label">ໂຄສະນາ</string>
+
+    <string name="message_body_generic">ຂໍ້ຄວາມ</string>
+    <string name="white_turn">ຕາຂາວ</string>
+    <string name="black_turn">ຕາດຳ</string>
+    <string name="theme_select">🎨 ທີມ</string>
+    <string name="pawn_promoted">ເລື່ອນຊັ້ນ</string>
+    <string name="choose_your_destiny">ເລືອກ</string>
+    <string name="tap_a_piece_to_promote">ແຕະ</string>
+    <string name="select_language">ພາສາ</string>
+    <string name="chess_master">ໝາກລຸກ</string>
+    <string name="chess_master_styled">✦ ໝາກລຸກ</string>
+    <string name="strategy_game">ຍຸດທະສາດ</string>
+    <string name="powered_by_ai">AI</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ ຄູ່ແຂ່ງ</string>
+    <string name="stats_duration_label">⏱ ເວລາ</string>
+    <string name="stats_moves_label">🎯 ຍ່າງ</string>
+    <string name="stats_captured_white_label">♙ ຂາວ</string>
+    <string name="stats_captured_black_label">♟ ດຳ</string>
+</resources>

@@ -26,7 +26,7 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.saigonphantomlabs.BaseActivity;
 import androidx.core.content.ContextCompat;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -42,7 +42,7 @@ import com.saigonphantomlabs.chess.BoardThemeManager;
 import com.saigonphantomlabs.chess.PieceRenderer;
 import kotlin.Unit;
 
-public class ChessBoardActivity extends AppCompatActivity {
+public class ChessBoardActivity extends BaseActivity {
 
     // Core views
     public FrameLayout boardLayout;

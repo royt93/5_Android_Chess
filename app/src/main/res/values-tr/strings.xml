@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">Satranç</string>
+    <string name="queen">Vezir</string>
+    <string name="rook">Kale</string>
+    <string name="bishop">Fil</string>
+    <string name="knight">At</string>
+    <string name="promotionQuestion">Piyon terfisi:</string>
+    <string name="saveBoardPrompt">Çıkılsın mı?</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="ok">Tamam</string>
+    <string name="warning">Uyarı</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">Oy Ver</string>
+    <string name="more_apps">Daha Fazla</string>
+    <string name="share_app">Paylaş</string>
+    <string name="share_message">Bu harika oyunu dene!</string>
+    <string name="share_subject">Satranç</string>
+    <string name="start_game">BAŞLA</string>
+    <string name="undo">Geri</string>
+    <string name="check">Şah!</string>
+    <string name="checkmate">Şah Mat!</string>
+    <string name="white_wins">Beyaz Kazanır!</string>
+    <string name="black_wins">Siyah Kazanır!</string>
+    <string name="game_over">Bitti</string>
+    <string name="play_again">Tekrar</string>
+    <string name="illegal_move">Geçersiz</string>
+    <string name="no_undo_available">Geri alınamaz</string>
+    <string name="restart_confirm">Yeni oyun?</string>
+    <string name="stalemate">Pat!</string>
+    <string name="stalemate_message">Berabere.</string>
+    <string name="white_loses">Beyaz Kaybetti</string>
+    <string name="black_loses">Siyah Kaybetti</string>
+    <string name="exit">Çıkış</string>
+    <string name="stats_title">📊 İstatistikler</string>
+    <string name="stats_duration">Süre</string>
+    <string name="stats_moves">Hamle</string>
+    <string name="stats_white_captured">Beyaz</string>
+    <string name="stats_black_captured">Siyah</string>
+    <string name="play_pvp">1-1 OYNA</string>
+    <string name="play_ai">YZ İLE OYNA</string>
+    <string name="stats">İSTATİSTİK</string>
+    <string name="rules">KURALLAR</string>
+    <string name="select_difficulty">Zorluk</string>
+    <string name="review_board">TAHTA</string>
+    <string name="got_it">Anladım</string>
+    <string name="cancel">İptal</string>
+    <string name="difficulty_easy">KOLAY</string>
+    <string name="difficulty_medium">ORTA</string>
+    <string name="difficulty_hard">ZOR</string>
+    <string name="difficulty_unbeatable">YENİLMEZ</string>
+    <string name="stats_game_title">🏆 İstatistik</string>
+    <string name="close">Kapat</string>
+    <string name="ai_performance_format">🤖 YZ (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 Kurallar</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>OBJECTIVE</b></font><br/> Checkmate the opponent\'s King.<br/><br/> <font color="#1976D2"><b>PIECE MOVEMENTS</b></font><br/> &#8226; <b>King:</b> One square in any direction.<br/> &#8226; <b>Queen:</b> Any squares diagonally, horizontally, or vertically.<br/> &#8226; <b>Rook:</b> Any squares horizontally or vertically.<br/> &#8226; <b>Bishop:</b> Any squares diagonally.<br/> &#8226; <b>Knight:</b> \'L\' shape jump.<br/> &#8226; <b>Pawn:</b> Forward one square. Captures diagonally.<br/><br/> <font color="#1976D2"><b>SPECIAL MOVES</b></font><br/> &#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end. ]]></string>
+    <string name="stats_total_games">Oyun: %d\n</string>
+    <string name="stats_total_time">Süre: %s\n\n</string>
+    <string name="stats_performance_ai">YZ\'ye karşı:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Reklam</string>
+    <string name="advertisement_label">Reklam</string>
+
+    <string name="message_body_generic">Mesaj</string>
+    <string name="white_turn">BEYAZIN SIRASI</string>
+    <string name="black_turn">SİYAHIN SIRASI</string>
+    <string name="theme_select">🎨 Tema</string>
+    <string name="pawn_promoted">TERFİ</string>
+    <string name="choose_your_destiny">SEÇİM</string>
+    <string name="tap_a_piece_to_promote">DOKUN</string>
+    <string name="select_language">Dil</string>
+    <string name="chess_master">SATRANÇ</string>
+    <string name="chess_master_styled">✦ USTA</string>
+    <string name="strategy_game">STRATEJİ</string>
+    <string name="powered_by_ai">YZ Destekli</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ RAKİP</string>
+    <string name="stats_duration_label">⏱ Süre</string>
+    <string name="stats_moves_label">🎯 Hamle</string>
+    <string name="stats_captured_white_label">♙ Beyaz</string>
+    <string name="stats_captured_black_label">♟ Siyah</string>
+</resources>

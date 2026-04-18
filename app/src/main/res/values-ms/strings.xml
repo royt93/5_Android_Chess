@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">Catur</string>
+    <string name="queen">Permaisuri</string>
+    <string name="rook">Tir</string>
+    <string name="bishop">Gajah</string>
+    <string name="knight">Kuda</string>
+    <string name="promotionQuestion">Promosi bidak:</string>
+    <string name="saveBoardPrompt">Keluar?</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="ok">OK</string>
+    <string name="warning">Amaran</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">Nilai App</string>
+    <string name="more_apps">Lain</string>
+    <string name="share_app">Kongsi</string>
+    <string name="share_message">Cuba catur ini!</string>
+    <string name="share_subject">Catur</string>
+    <string name="start_game">MULA</string>
+    <string name="undo">Batal</string>
+    <string name="check">Syah!</string>
+    <string name="checkmate">Syahmat!</string>
+    <string name="white_wins">Putih Menang!</string>
+    <string name="black_wins">Hitam Menang!</string>
+    <string name="game_over">Tamat</string>
+    <string name="play_again">Lagi</string>
+    <string name="illegal_move">Tak sah</string>
+    <string name="no_undo_available">Tiada</string>
+    <string name="restart_confirm">Biasan baru?</string>
+    <string name="stalemate">Buntu!</string>
+    <string name="stalemate_message">Seri.</string>
+    <string name="white_loses">Putih Kalah</string>
+    <string name="black_loses">Hitam Kalah</string>
+    <string name="exit">Keluar</string>
+    <string name="stats_title">📊 Statistik</string>
+    <string name="stats_duration">Masa</string>
+    <string name="stats_moves">Langkah</string>
+    <string name="stats_white_captured">Tangkapan Putih</string>
+    <string name="stats_black_captured">Tangkapan Hitam</string>
+    <string name="play_pvp">1 V 1</string>
+    <string name="play_ai">LAWAN AI</string>
+    <string name="stats">STATISTIK</string>
+    <string name="rules">ATURAN</string>
+    <string name="select_difficulty">Tahap</string>
+    <string name="review_board">LIHAT PAPAN</string>
+    <string name="got_it">Faham</string>
+    <string name="cancel">Batal</string>
+    <string name="difficulty_easy">MUDAH</string>
+    <string name="difficulty_medium">BIASA</string>
+    <string name="difficulty_hard">SULAR</string>
+    <string name="difficulty_unbeatable">HEBAT</string>
+    <string name="stats_game_title">🏆 Statistik</string>
+    <string name="close">Tutup</string>
+    <string name="ai_performance_format">🤖 AI (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 Aturan</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>OBJECTIVE</b></font><br/> Checkmate the opponent\'s King.<br/><br/> <font color="#1976D2"><b>PIECE MOVEMENTS</b></font><br/> &#8226; <b>King:</b> One square in any direction.<br/> &#8226; <b>Queen:</b> Any squares diagonally, horizontally, or vertically.<br/> &#8226; <b>Rook:</b> Any squares horizontally or vertically.<br/> &#8226; <b>Bishop:</b> Any squares diagonally.<br/> &#8226; <b>Knight:</b> \'L\' shape jump.<br/> &#8226; <b>Pawn:</b> Forward one square. Captures diagonally.<br/><br/> <font color="#1976D2"><b>SPECIAL MOVES</b></font><br/> &#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end. ]]></string>
+    <string name="stats_total_games">Main: %d\n</string>
+    <string name="stats_total_time">Masa: %s\n\n</string>
+    <string name="stats_performance_ai">Lawan AI:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Ad</string>
+    <string name="advertisement_label">Iklan</string>
+
+    <string name="message_body_generic">Mesej...</string>
+    <string name="white_turn">GILIRAN PUTIH</string>
+    <string name="black_turn">GILIRAN HITAM</string>
+    <string name="theme_select">🎨 Tema</string>
+    <string name="pawn_promoted">PROMOSI</string>
+    <string name="choose_your_destiny">PILIH</string>
+    <string name="tap_a_piece_to_promote">SENTUH</string>
+    <string name="select_language">Bahasa</string>
+    <string name="chess_master">CATUR</string>
+    <string name="chess_master_styled">✦ MASTER</string>
+    <string name="strategy_game">STRATEGI</string>
+    <string name="powered_by_ai">AI</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ MUSUH</string>
+    <string name="stats_duration_label">⏱ Masa</string>
+    <string name="stats_moves_label">🎯 Langkah</string>
+    <string name="stats_captured_white_label">♙ Putih</string>
+    <string name="stats_captured_black_label">♟ Hitam</string>
+</resources>

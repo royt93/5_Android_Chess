@@ -105,7 +105,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CHESS MASTER"
+            android:text="@string/chess_master"
             android:fontFamily="@font/cinzel"
             android:textSize="36sp"
             android:textStyle="bold"
@@ -119,7 +119,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="STRATEGY GAME"
+            android:text="@string/strategy_game"
             android:fontFamily="@font/exo2"
             android:textSize="14sp"
             android:textColor="@color/game_text_muted"
@@ -144,7 +144,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Powered by AI Engine"
+            android:text="@string/powered_by_ai"
             android:fontFamily="@font/exo2"
             android:textSize="12sp"
             android:textColor="#556677"

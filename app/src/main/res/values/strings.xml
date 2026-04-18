@@ -106,4 +106,23 @@ Checkmate the opponent\'s King.<br/><br/>
     <!-- Ad Labels -->
     <string name="ad_label">Ad</string>
     <string name="advertisement_label">Advertisement</string>
+
+    <string name="message_body_generic">Message body...</string>
+    <string name="white_turn">WHITE TURN</string>
+    <string name="black_turn">BLACK TURN</string>
+    <string name="theme_select">🎨 Theme</string>
+    <string name="pawn_promoted">PAWN PROMOTED</string>
+    <string name="choose_your_destiny">CHOOSE YOUR DESTINY</string>
+    <string name="tap_a_piece_to_promote">TAP A PIECE TO PROMOTE</string>
+    <string name="select_language">Select Language</string>
+    <string name="chess_master">CHESS MASTER</string>
+    <string name="chess_master_styled">✦ CHESS MASTER</string>
+    <string name="strategy_game">STRATEGY GAME</string>
+    <string name="powered_by_ai">Powered by AI Engine</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ SELECT OPPONENT</string>
+    <string name="stats_duration_label">⏱ Duration</string>
+    <string name="stats_moves_label">🎯 Moves</string>
+    <string name="stats_captured_white_label">♙ Captured by White</string>
+    <string name="stats_captured_black_label">♟ Captured by Black</string>
 </resources>

@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">チェス</string>
+    <string name="queen">女王</string>
+    <string name="rook">ルーク</string>
+    <string name="bishop">ビショップ</string>
+    <string name="knight">ナイト</string>
+    <string name="promotionQuestion">昇格先:</string>
+    <string name="saveBoardPrompt">ゲーム終了？</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="ok">OK</string>
+    <string name="warning">警告</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">評価</string>
+    <string name="more_apps">他のアプリ</string>
+    <string name="share_app">共有</string>
+    <string name="share_message">素晴らしいチェスゲーム！</string>
+    <string name="share_subject">チェス</string>
+    <string name="start_game">開始</string>
+    <string name="undo">戻る</string>
+    <string name="check">王手!</string>
+    <string name="checkmate">詰み!</string>
+    <string name="white_wins">白の勝ち!</string>
+    <string name="black_wins">黒の勝ち!</string>
+    <string name="game_over">終了</string>
+    <string name="play_again">もう一度</string>
+    <string name="illegal_move">無効</string>
+    <string name="no_undo_available">戻れません</string>
+    <string name="restart_confirm">新ゲーム？</string>
+    <string name="stalemate">ステイルメイト!</string>
+    <string name="stalemate_message">引き分け。</string>
+    <string name="white_loses">白の負け</string>
+    <string name="black_loses">黒の負け</string>
+    <string name="exit">終了</string>
+    <string name="stats_title">📊 統計</string>
+    <string name="stats_duration">時間</string>
+    <string name="stats_moves">手</string>
+    <string name="stats_white_captured">白の捕獲</string>
+    <string name="stats_black_captured">黒の捕獲</string>
+    <string name="play_pvp">1対1</string>
+    <string name="play_ai">AIと遊ぶ</string>
+    <string name="stats">統計</string>
+    <string name="rules">ルール</string>
+    <string name="select_difficulty">難易度</string>
+    <string name="review_board">盤面確認</string>
+    <string name="got_it">了解</string>
+    <string name="cancel">取消</string>
+    <string name="difficulty_easy">簡単</string>
+    <string name="difficulty_medium">普通</string>
+    <string name="difficulty_hard">難しい</string>
+    <string name="difficulty_unbeatable">無敵</string>
+    <string name="stats_game_title">🏆 統計</string>
+    <string name="close">閉じる</string>
+    <string name="ai_performance_format">🤖 AI (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 ルール</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>目標</b></font><br/> チェックメイト。<br/><br/> <font color="#1976D2"><b>移動</b></font><br/> &#8226; <b>キング:</b> 全方向に1マス。<br/> &#8226; <b>クイーン:</b> 縦横斜め。<br/> &#8226; <b>ルーク:</b> 縦横。<br/> &#8226; <b>ビショップ:</b> 斜め。<br/> &#8226; <b>ナイト:</b> \'L\' 字型。<br/> &#8226; <b>ポーン:</b> 前に1マス、斜めに捕獲。<br/><br/> <font color="#1976D2"><b>特殊</b></font><br/> &#8226; <b>プロモーション:</b> 終点到達で昇格。 ]]></string>
+    <string name="stats_total_games">ゲーム: %d\n</string>
+    <string name="stats_total_time">時間: %s\n\n</string>
+    <string name="stats_performance_ai">AI対戦:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">広告</string>
+    <string name="advertisement_label">広告</string>
+
+    <string name="message_body_generic">メッセージ</string>
+    <string name="white_turn">白の番</string>
+    <string name="black_turn">黒の番</string>
+    <string name="theme_select">🎨 テーマ</string>
+    <string name="pawn_promoted">昇格</string>
+    <string name="choose_your_destiny">選択</string>
+    <string name="tap_a_piece_to_promote">タップして昇格</string>
+    <string name="select_language">言語</string>
+    <string name="chess_master">チェスマスター</string>
+    <string name="chess_master_styled">✦ マスター</string>
+    <string name="strategy_game">戦略ゲーム</string>
+    <string name="powered_by_ai">AIエンジン</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ 対戦相手</string>
+    <string name="stats_duration_label">⏱ 時間</string>
+    <string name="stats_moves_label">🎯 手数</string>
+    <string name="stats_captured_white_label">♙ 白の捕獲</string>
+    <string name="stats_captured_black_label">♟ 黒の捕獲</string>
+</resources>

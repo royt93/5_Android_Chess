@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
-                android:text="✦ CHESS MASTER"
+                android:text="@string/chess_master_styled"
                 android:fontFamily="@font/exo2"
                 android:textColor="@color/game_gold_primary"
                 android:textSize="12sp"
@@ -164,7 +164,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="CHESS MASTER"
+                    android:text="@string/chess_master"
                     android:fontFamily="@font/cinzel"
                     android:textColor="@color/game_gold_light"
                     android:textSize="@dimen/game_title_text_size"
@@ -360,6 +360,32 @@
                         android:shadowDy="0"
                         android:shadowRadius="12" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_game_compact"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_btn_secondary"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvCurrentLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/language_en_placeholder"
+                    android:fontFamily="@font/exo2"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#88FFFFFF"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="12" />
             </LinearLayout>
 
         </LinearLayout>

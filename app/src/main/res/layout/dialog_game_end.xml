@@ -82,7 +82,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="⏱ Duration" />
+                android:text="@string/stats_duration_label" />
 
             <TextView
                 android:id="@+id/stats_duration_value"
@@ -109,7 +109,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="🎯 Moves" />
+                android:text="@string/stats_moves_label" />
 
             <TextView
                 android:id="@+id/stats_moves_value"
@@ -136,7 +136,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="♙ Captured by White" />
+                android:text="@string/stats_captured_white_label" />
 
             <TextView
                 android:id="@+id/stats_white_captured_value"
@@ -158,7 +158,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="♟ Captured by Black" />
+                android:text="@string/stats_captured_black_label" />
 
             <TextView
                 android:id="@+id/stats_black_captured_value"

@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">หมากรุก</string>
+    <string name="queen">ควีน</string>
+    <string name="rook">เรือ</string>
+    <string name="bishop">บิชอป</string>
+    <string name="knight">ม้า</string>
+    <string name="promotionQuestion">เลื่อนขั้น:</string>
+    <string name="saveBoardPrompt">ออก?</string>
+    <string name="yes">ใช่</string>
+    <string name="no">ไม่</string>
+    <string name="ok">OK</string>
+    <string name="warning">คำเตือน</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">ให้คะแนน</string>
+    <string name="more_apps">แอปอื่น</string>
+    <string name="share_app">แชร์</string>
+    <string name="share_message">ดูเกมนี้สิ!</string>
+    <string name="share_subject">หมากรุก</string>
+    <string name="start_game">เริ่ม</string>
+    <string name="undo">เลิกทำ</string>
+    <string name="check">รุก!</string>
+    <string name="checkmate">รุกฆาต!</string>
+    <string name="white_wins">ขาวชนะ!</string>
+    <string name="black_wins">ดำชนะ!</string>
+    <string name="game_over">จบ</string>
+    <string name="play_again">เล่นใหม่</string>
+    <string name="illegal_move">ไม่ถูกต้อง</string>
+    <string name="no_undo_available">เลิกไม่ได้</string>
+    <string name="restart_confirm">เริ่มใหม่?</string>
+    <string name="stalemate">ทางตัน!</string>
+    <string name="stalemate_message">เสมอ.</string>
+    <string name="white_loses">ขาวแพ้</string>
+    <string name="black_loses">ดำแพ้</string>
+    <string name="exit">ออก</string>
+    <string name="stats_title">📊 สถิติ</string>
+    <string name="stats_duration">เวลา</string>
+    <string name="stats_moves">เดิน</string>
+    <string name="stats_white_captured">ขาวกิน</string>
+    <string name="stats_black_captured">ดำกิน</string>
+    <string name="play_pvp">1 ตอ 1</string>
+    <string name="play_ai">เล่นกับ AI</string>
+    <string name="stats">สถิติ</string>
+    <string name="rules">กฎ</string>
+    <string name="select_difficulty">ความยาก</string>
+    <string name="review_board">ดูกระดาน</string>
+    <string name="got_it">โอเค</string>
+    <string name="cancel">ยกเลิก</string>
+    <string name="difficulty_easy">ง่าย</string>
+    <string name="difficulty_medium">กลาง</string>
+    <string name="difficulty_hard">ยาก</string>
+    <string name="difficulty_unbeatable">ไร้พ่าย</string>
+    <string name="stats_game_title">🏆 สถิติ</string>
+    <string name="close">ปิด</string>
+    <string name="ai_performance_format">🤖 AI (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 กฎ</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>OBJECTIVE</b></font><br/> Checkmate the opponent\'s King.<br/><br/> <font color="#1976D2"><b>PIECE MOVEMENTS</b></font><br/> &#8226; <b>King:</b> One square in any direction.<br/> &#8226; <b>Queen:</b> Any squares diagonally, horizontally, or vertically.<br/> &#8226; <b>Rook:</b> Any squares horizontally or vertically.<br/> &#8226; <b>Bishop:</b> Any squares diagonally.<br/> &#8226; <b>Knight:</b> \'L\' shape jump.<br/> &#8226; <b>Pawn:</b> Forward one square. Captures diagonally.<br/><br/> <font color="#1976D2"><b>SPECIAL MOVES</b></font><br/> &#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end. ]]></string>
+    <string name="stats_total_games">เกม: %d\n</string>
+    <string name="stats_total_time">เวลา: %s\n\n</string>
+    <string name="stats_performance_ai">กับ AI:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Ad</string>
+    <string name="advertisement_label">โฆษณา</string>
+
+    <string name="message_body_generic">ข้อความ</string>
+    <string name="white_turn">ขาวเดิน</string>
+    <string name="black_turn">ดำเดิน</string>
+    <string name="theme_select">🎨 ธีม</string>
+    <string name="pawn_promoted">เลื่อนขั้น</string>
+    <string name="choose_your_destiny">เลือก</string>
+    <string name="tap_a_piece_to_promote">แตะ</string>
+    <string name="select_language">ภาษา</string>
+    <string name="chess_master">มาสเตอร์</string>
+    <string name="chess_master_styled">✦ มาสเตอร์</string>
+    <string name="strategy_game">กลยุทธ์</string>
+    <string name="powered_by_ai">AI</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ คู่ต่อสู้</string>
+    <string name="stats_duration_label">⏱ เวลา</string>
+    <string name="stats_moves_label">🎯 ตาเดิน</string>
+    <string name="stats_captured_white_label">♙ ขาว</string>
+    <string name="stats_captured_black_label">♟ ดำ</string>
+</resources>

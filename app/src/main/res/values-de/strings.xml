@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">Schach</string>
+    <string name="queen">Dame</string>
+    <string name="rook">Turm</string>
+    <string name="bishop">Läufer</string>
+    <string name="knight">Springer</string>
+    <string name="promotionQuestion">Bauer wandeln:</string>
+    <string name="saveBoardPrompt">Beenden?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="ok">OK</string>
+    <string name="warning">Warnung</string>
+    <string name="copyright_text">© SAIGON PHANTOM LAB</string>
+    <string name="version_format">Version %s</string>
+    <string name="rate_app">Bewerten</string>
+    <string name="more_apps">Mehr</string>
+    <string name="share_app">Teilen</string>
+    <string name="share_message">Schau dir dieses Schachspiel an!</string>
+    <string name="share_subject">Schach</string>
+    <string name="start_game">START</string>
+    <string name="undo">Zurück</string>
+    <string name="check">Schach!</string>
+    <string name="checkmate">Schachmatt!</string>
+    <string name="white_wins">Weiß gewinnt!</string>
+    <string name="black_wins">Schwarz gewinnt!</string>
+    <string name="game_over">Ende</string>
+    <string name="play_again">Nochmal</string>
+    <string name="illegal_move">Ungültig</string>
+    <string name="no_undo_available">Kein Zug</string>
+    <string name="restart_confirm">Neues Spiel?</string>
+    <string name="stalemate">Patt!</string>
+    <string name="stalemate_message">Unentschieden.</string>
+    <string name="white_loses">Weiß verliert</string>
+    <string name="black_loses">Schwarz verliert</string>
+    <string name="exit">Ende</string>
+    <string name="stats_title">📊 Statistik</string>
+    <string name="stats_duration">Dauer</string>
+    <string name="stats_moves">Züge</string>
+    <string name="stats_white_captured">Weiß schlägt</string>
+    <string name="stats_black_captured">Schwarz schlägt</string>
+    <string name="play_pvp">1 VS 1</string>
+    <string name="play_ai">GEGEN KI</string>
+    <string name="stats">STATISTIK</string>
+    <string name="rules">REGELN</string>
+    <string name="select_difficulty">Level</string>
+    <string name="review_board">BRETT</string>
+    <string name="got_it">Okay</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="difficulty_easy">LEICHT</string>
+    <string name="difficulty_medium">MITTEL</string>
+    <string name="difficulty_hard">SCHWER</string>
+    <string name="difficulty_unbeatable">UNBESIEGBAR</string>
+    <string name="stats_game_title">🏆 Statistik</string>
+    <string name="close">Schließen</string>
+    <string name="ai_performance_format">🤖 KI (%s):\n</string>
+
+    <!-- Game Rules -->
+    <string name="game_rules_title">📜 Regeln</string>
+    <string name="game_rules"><![CDATA[ <font color="#1976D2"><b>OBJECTIVE</b></font><br/> Checkmate the opponent\'s King.<br/><br/> <font color="#1976D2"><b>PIECE MOVEMENTS</b></font><br/> &#8226; <b>King:</b> One square in any direction.<br/> &#8226; <b>Queen:</b> Any squares diagonally, horizontally, or vertically.<br/> &#8226; <b>Rook:</b> Any squares horizontally or vertically.<br/> &#8226; <b>Bishop:</b> Any squares diagonally.<br/> &#8226; <b>Knight:</b> \'L\' shape jump.<br/> &#8226; <b>Pawn:</b> Forward one square. Captures diagonally.<br/><br/> <font color="#1976D2"><b>SPECIAL MOVES</b></font><br/> &#8226; <b>Promotion:</b> Pawn becomes Queen, Rook, Bishop, or Knight at opposite end. ]]></string>
+    <string name="stats_total_games">Spiele: %d\n</string>
+    <string name="stats_total_time">Zeit: %s\n\n</string>
+    <string name="stats_performance_ai">Gegen KI:\n</string>
+    <string name="stats_performance_row">- %1$s: %2$dW - %3$dL - %4$dD\n</string>
+    <string name="duration_h_m_s">%1$dh %2$dm %3$ds</string>
+    <string name="duration_m_s">%1$dm %2$ds</string>
+
+    <!-- Chess Notation -->
+    <string name="symbol_king">K</string>
+    <string name="symbol_queen">Q</string>
+    <string name="symbol_rook">R</string>
+    <string name="symbol_bishop">B</string>
+    <string name="symbol_knight">N</string>
+    <string name="notation_capture">x</string>
+    <string name="notation_move">-</string>
+    <string name="notation_promotion">=</string>
+
+    <!-- Stats Summary Icons & Formatting -->
+    <string name="stats_divider">━━━━━━━━━━━━━━━━━━━━\n</string>
+    <string name="stats_duration_icon">⏱ </string>
+    <string name="stats_moves_icon">🎯 </string>
+    <string name="stats_white_icon">⚪ </string>
+    <string name="stats_black_icon">⚫ </string>
+
+    <!-- App URLs -->
+    <string name="market_details_url">market://details?id=%s</string>
+    <string name="play_store_details_url">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="market_dev_url">market://dev?id=6193840742938642798</string>
+    <string name="play_store_dev_url">https://play.google.com/store/apps/dev?id=6193840742938642798</string>
+
+    <!-- Ad Labels -->
+    <string name="ad_label">Ad</string>
+    <string name="advertisement_label">Werbung</string>
+
+    <string name="message_body_generic">Nachricht...</string>
+    <string name="white_turn">WEISS DRAN</string>
+    <string name="black_turn">SCHWARZ DRAN</string>
+    <string name="theme_select">🎨 Thema</string>
+    <string name="pawn_promoted">GEWANDELT</string>
+    <string name="choose_your_destiny">WÄHLE</string>
+    <string name="tap_a_piece_to_promote">TIPPEN</string>
+    <string name="select_language">Sprache</string>
+    <string name="chess_master">SCHACH</string>
+    <string name="chess_master_styled">✦ MEISTER</string>
+    <string name="strategy_game">STRATEGIE</string>
+    <string name="powered_by_ai">KI</string>
+    <string name="language_en_placeholder">🌐 EN</string>
+    <string name="select_opponent">⚔ GEGNER</string>
+    <string name="stats_duration_label">⏱ Zeit</string>
+    <string name="stats_moves_label">🎯 Züge</string>
+    <string name="stats_captured_white_label">♙ Weiß</string>
+    <string name="stats_captured_black_label">♟ Schwarz</string>
+</resources>
