@@ -1,10 +1,8 @@
 package com.saigonphantomlabs;
 
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
-import android.view.animation.OvershootInterpolator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -18,6 +16,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,20 +25,18 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import com.saigonphantomlabs.BaseActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 
-import androidx.appcompat.widget.AppCompatButton;
-import com.saigonphantomlabs.chess.BuildConfig;
+import com.roy.sdkadbmob.AdManager;
+import com.roy.sdkadbmob.UIUtils;
+import com.saigonphantomlabs.chess.BoardThemeManager;
 import com.saigonphantomlabs.chess.Chess;
 import com.saigonphantomlabs.chess.Chessman;
+import com.saigonphantomlabs.chess.PieceRenderer;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
-import com.roy.sdkadbmob.UIUtils;
-import com.roy.sdkadbmob.AdManager;
 
-import com.saigonphantomlabs.chess.BoardThemeManager;
-import com.saigonphantomlabs.chess.PieceRenderer;
 import kotlin.Unit;
 
 public class ChessBoardActivity extends BaseActivity {
@@ -142,7 +139,10 @@ public class ChessBoardActivity extends BaseActivity {
 
         getOnBackPressedDispatcher().addCallback(this,
                 new androidx.activity.OnBackPressedCallback(true) {
-                    @Override public void handleOnBackPressed() { handleBackPress(); }
+                    @Override
+                    public void handleOnBackPressed() {
+                        handleBackPress();
+                    }
                 });
 
         startAmbientAnimations();
@@ -157,16 +157,18 @@ public class ChessBoardActivity extends BaseActivity {
         // Wait for layout to complete, then init Chess with the actual square board size.
         boardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override public void onGlobalLayout() {
+                    @Override
+                    public void onGlobalLayout() {
                         boardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         if (isFinishing()) return;
 
                         int boardSize = boardLayout.getWidth(); // == height (square guaranteed by XML)
                         if (boardSize <= 0) return;
 
-                        if (Storage.chess == null) {
-                            Storage.chess = chess = new Chess(ChessBoardActivity.this,
+                        if (Storage.getChess() == null) {
+                            chess = new Chess(ChessBoardActivity.this,
                                     boardSize, boardLayout);
+                            Storage.setChess(chess);
                             boolean isVsAi = getIntent().getBooleanExtra("IS_VS_AI", false);
                             chess.isVsComputer = isVsAi;
                             if (isVsAi) {
@@ -180,7 +182,7 @@ public class ChessBoardActivity extends BaseActivity {
                                 }
                             }
                         } else {
-                            chess = Storage.chess;
+                            chess = Storage.getChess();
                             chess.changeLayout(ChessBoardActivity.this, boardSize, boardLayout);
                         }
                         // Register touch handler
@@ -248,7 +250,7 @@ public class ChessBoardActivity extends BaseActivity {
 
     private void handleBackPress() {
         DialogUtils.showQuitDialog(this, () -> {
-            Storage.chess = null;
+            Storage.clearChess();
             AdManager.INSTANCE.showInterstitial(this, new kotlin.jvm.functions.Function1<Boolean, kotlin.Unit>() {
                 @Override
                 public Unit invoke(Boolean adShown) {
@@ -261,7 +263,9 @@ public class ChessBoardActivity extends BaseActivity {
     }
 
     private void showRestartConfirmDialog() {
-        DialogUtils.showRestartDialog(this, () -> { if (chess != null) chess.resetGame(); });
+        DialogUtils.showRestartDialog(this, () -> {
+            if (chess != null) chess.resetGame();
+        });
     }
 
     /**
@@ -274,8 +278,14 @@ public class ChessBoardActivity extends BaseActivity {
         updateTurnIndicators(turn);
 
         // Cancel previous glow animators before starting new ones
-        if (whiteGlowAnim != null) { whiteGlowAnim.cancel(); whiteGlowAnim = null; }
-        if (blackGlowAnim != null) { blackGlowAnim.cancel(); blackGlowAnim = null; }
+        if (whiteGlowAnim != null) {
+            whiteGlowAnim.cancel();
+            whiteGlowAnim = null;
+        }
+        if (blackGlowAnim != null) {
+            blackGlowAnim.cancel();
+            blackGlowAnim = null;
+        }
 
         if (turn == Chessman.PlayerColor.White) {
             // White gets strong gold glow that breathes
@@ -332,7 +342,9 @@ public class ChessBoardActivity extends BaseActivity {
 
     private void resetDot(View dot) {
         if (dot == null) return;
-        dot.setScaleX(1f); dot.setScaleY(1f); dot.setAlpha(1f);
+        dot.setScaleX(1f);
+        dot.setScaleY(1f);
+        dot.setAlpha(1f);
     }
 
     private void animatePopIn(View indicator) {
@@ -369,7 +381,9 @@ public class ChessBoardActivity extends BaseActivity {
         if (btn == null) return;
         if (show && btn.getVisibility() != View.VISIBLE) {
             btn.setVisibility(View.VISIBLE);
-            btn.setAlpha(0f); btn.setScaleX(0.5f); btn.setScaleY(0.5f);
+            btn.setAlpha(0f);
+            btn.setScaleX(0.5f);
+            btn.setScaleY(0.5f);
             btn.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(300)
                     .setInterpolator(new OvershootInterpolator()).start();
         } else if (!show && btn.getVisibility() == View.VISIBLE) {
@@ -391,7 +405,9 @@ public class ChessBoardActivity extends BaseActivity {
         img.setLayoutParams(lp);
         img.setImageResource(getPieceDrawableId(piece));
         img.setTag(piece);
-        img.setScaleX(0f); img.setScaleY(0f); img.setAlpha(0f);
+        img.setScaleX(0f);
+        img.setScaleY(0f);
+        img.setAlpha(0f);
         container.addView(img);
         img.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(300)
                 .setInterpolator(new OvershootInterpolator()).start();
@@ -421,13 +437,20 @@ public class ChessBoardActivity extends BaseActivity {
     private int getPieceDrawableId(Chessman piece) {
         boolean w = piece.color == Chessman.PlayerColor.White;
         switch (piece.type) {
-            case King:   return w ? R.drawable.ic_kingw   : R.drawable.ic_kingb;
-            case Queen:  return w ? R.drawable.ic_queenw  : R.drawable.ic_queenb;
-            case Rook:   return w ? R.drawable.ic_rookw   : R.drawable.ic_rookb;
-            case Bishop: return w ? R.drawable.ic_bishopw : R.drawable.ic_bishopb;
-            case Knight: return w ? R.drawable.ic_knightw : R.drawable.ic_knightb;
-            case Pawn:   return w ? R.drawable.ic_pawnw   : R.drawable.ic_pawnb;
-            default:     return R.drawable.ic_pawnw;
+            case King:
+                return w ? R.drawable.ic_kingw : R.drawable.ic_kingb;
+            case Queen:
+                return w ? R.drawable.ic_queenw : R.drawable.ic_queenb;
+            case Rook:
+                return w ? R.drawable.ic_rookw : R.drawable.ic_rookb;
+            case Bishop:
+                return w ? R.drawable.ic_bishopw : R.drawable.ic_bishopb;
+            case Knight:
+                return w ? R.drawable.ic_knightw : R.drawable.ic_knightb;
+            case Pawn:
+                return w ? R.drawable.ic_pawnw : R.drawable.ic_pawnb;
+            default:
+                return R.drawable.ic_pawnw;
         }
     }
 
@@ -499,7 +522,7 @@ public class ChessBoardActivity extends BaseActivity {
         });
         if (btnExit != null) btnExit.setOnClickListener(v -> {
             dialog.dismiss();
-            Storage.chess = null;
+            Storage.clearChess();
             AdManager.INSTANCE.showInterstitial(this, new kotlin.jvm.functions.Function1<Boolean, Unit>() {
                 @Override
                 public Unit invoke(Boolean adShown) {
@@ -537,15 +560,29 @@ public class ChessBoardActivity extends BaseActivity {
         }
     }
 
-    @Override protected void onResume() { super.onResume(); AdManager.INSTANCE.bannerResume(adView); }
-    @Override protected void onPause() { super.onPause(); AdManager.INSTANCE.bannerPause(adView); }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AdManager.INSTANCE.bannerResume(adView);
+    }
 
-    /** OPT: Release 3D-piece bitmap cache under memory pressure */
-    @Override public void onLowMemory() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AdManager.INSTANCE.bannerPause(adView);
+    }
+
+    /**
+     * OPT: Release 3D-piece bitmap cache under memory pressure
+     */
+    @Override
+    public void onLowMemory() {
         super.onLowMemory();
         PieceRenderer.clearCache();
     }
-    @Override public void onTrimMemory(int level) {
+
+    @Override
+    public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         if (level >= TRIM_MEMORY_MODERATE) PieceRenderer.clearCache();
     }
@@ -553,18 +590,30 @@ public class ChessBoardActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         // Cancel all infinite animators — no leaks
-        cancelAnim(currentBlinkAnimator); currentBlinkAnimator = null;
-        cancelAnim(boardPulseAnim);       boardPulseAnim = null;
-        cancelAnim(cornerTRAnim);         cornerTRAnim = null;
-        cancelAnim(cornerBLAnim);         cornerBLAnim = null;
-        if (whiteGlowAnim != null) { whiteGlowAnim.cancel(); whiteGlowAnim = null; }
-        if (blackGlowAnim != null) { blackGlowAnim.cancel(); blackGlowAnim = null; }
+        cancelAnim(currentBlinkAnimator);
+        currentBlinkAnimator = null;
+        cancelAnim(boardPulseAnim);
+        boardPulseAnim = null;
+        cancelAnim(cornerTRAnim);
+        cornerTRAnim = null;
+        cancelAnim(cornerBLAnim);
+        cornerBLAnim = null;
+        if (whiteGlowAnim != null) {
+            whiteGlowAnim.cancel();
+            whiteGlowAnim = null;
+        }
+        if (blackGlowAnim != null) {
+            blackGlowAnim.cancel();
+            blackGlowAnim = null;
+        }
 
         if (chess != null) chess.cancelAiHandler();
-        if (Storage.chess == chess) Storage.chess = null;
+        if (Storage.getChess() == chess) Storage.clearChess();
         AdManager.INSTANCE.bannerDestroy(adView);
         super.onDestroy();
     }
 
-    private void cancelAnim(ObjectAnimator a) { if (a != null) a.cancel(); }
+    private void cancelAnim(ObjectAnimator a) {
+        if (a != null) a.cancel();
+    }
 }

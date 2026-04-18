@@ -22,7 +22,4 @@ public class Storage {
     public static void clearChess() {
         chessRef = null;
     }
-
-    // Backward compatibility
-    public static Chess chess = null;
 }
