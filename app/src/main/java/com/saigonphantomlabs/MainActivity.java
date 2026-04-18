@@ -21,7 +21,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.saigonphantomlabs.chess.BuildConfig;
 import com.saigonphantomlabs.chess.R;
-import com.saigonphantomlabs.sdkadbmob.UIUtils;
+import com.roy.sdkadbmob.UIUtils;
 
 @SuppressLint("CustomSplashScreen")
 public class MainActivity extends AppCompatActivity {

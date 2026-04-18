@@ -21,6 +21,8 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3612191981543807~4706041811" />
 
+
+
         <activity
             android:name="com.saigonphantomlabs.ChessBoardActivity"
             android:exported="true"

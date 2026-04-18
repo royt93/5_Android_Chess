@@ -46,7 +46,7 @@ public class PawnPromotionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.saigonphantomlabs.sdkadbmob.UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
+        com.roy.sdkadbmob.UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_pawn_promotion);
         if (getSupportActionBar() != null) getSupportActionBar().hide();
 

@@ -19,7 +19,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
-import com.google.android.gms.ads.AdView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,16 +35,14 @@ import com.saigonphantomlabs.chess.Chess;
 import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.chess.Storage;
-import com.saigonphantomlabs.sdkadbmob.AdMobManager;
-import com.saigonphantomlabs.sdkadbmob.UIUtils;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.AdError;
+import com.roy.sdkadbmob.UIUtils;
+import com.roy.sdkadbmob.AdManager;
 
 import com.saigonphantomlabs.chess.BoardThemeManager;
 import com.saigonphantomlabs.chess.PieceRenderer;
 import kotlin.Unit;
 
-public class ChessBoardActivity extends AppCompatActivity implements AdMobManager.InterstitialAdListener {
+public class ChessBoardActivity extends AppCompatActivity {
 
     // Core views
     public FrameLayout boardLayout;
@@ -78,7 +75,7 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     private ValueAnimator whiteGlowAnim;
     private ValueAnimator blackGlowAnim;
 
-    private AdView adView;
+    private View adView;
 
     private final ActivityResultLauncher<Intent> promotionLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -150,14 +147,11 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
 
         startAmbientAnimations();
 
-        AdMobManager.INSTANCE.setCurrentActivity(this);
-        AdMobManager.INSTANCE.setInterstitialListener(this);
-        adView = AdMobManager.INSTANCE.loadBanner(this,
-                BuildConfig.ADMOB_BANNER_ID,
-                findViewById(R.id.banner_container),
-                findViewById(R.id.tvLabelAd),
+        adView = AdManager.INSTANCE.loadBanner(this,
+                (ViewGroup) findViewById(R.id.banner_container),
+                (TextView) findViewById(R.id.tvLabelAd),
                 com.google.android.gms.ads.AdSize.BANNER);
-        AdMobManager.INSTANCE.loadInterstitial(this, BuildConfig.ADMOB_INTERSTITIAL_ID);
+        AdManager.INSTANCE.loadInterstitial(this);
 
         // Board is made square by ConstraintLayout dimensionRatio="1:1" in XML.
         // Wait for layout to complete, then init Chess with the actual square board size.
@@ -255,10 +249,13 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
     private void handleBackPress() {
         DialogUtils.showQuitDialog(this, () -> {
             Storage.chess = null;
-            AdMobManager.INSTANCE.showInterstitial(this, result -> {
-                finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                return Unit.INSTANCE;
+            AdManager.INSTANCE.showInterstitial(this, new kotlin.jvm.functions.Function1<Boolean, kotlin.Unit>() {
+                @Override
+                public Unit invoke(Boolean adShown) {
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    return Unit.INSTANCE;
+                }
             });
         });
     }
@@ -503,10 +500,13 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
         if (btnExit != null) btnExit.setOnClickListener(v -> {
             dialog.dismiss();
             Storage.chess = null;
-            AdMobManager.INSTANCE.showInterstitial(this, result -> {
-                finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                return Unit.INSTANCE;
+            AdManager.INSTANCE.showInterstitial(this, new kotlin.jvm.functions.Function1<Boolean, Unit>() {
+                @Override
+                public Unit invoke(Boolean adShown) {
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    return Unit.INSTANCE;
+                }
             });
         });
         dialog.show();
@@ -537,8 +537,8 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
         }
     }
 
-    @Override protected void onResume() { super.onResume(); if (adView != null) adView.resume(); }
-    @Override protected void onPause() { if (adView != null) adView.pause(); super.onPause(); }
+    @Override protected void onResume() { super.onResume(); AdManager.INSTANCE.bannerResume(adView); }
+    @Override protected void onPause() { super.onPause(); AdManager.INSTANCE.bannerPause(adView); }
 
     /** OPT: Release 3D-piece bitmap cache under memory pressure */
     @Override public void onLowMemory() {
@@ -561,21 +561,10 @@ public class ChessBoardActivity extends AppCompatActivity implements AdMobManage
         if (blackGlowAnim != null) { blackGlowAnim.cancel(); blackGlowAnim = null; }
 
         if (chess != null) chess.cancelAiHandler();
-        AdMobManager.INSTANCE.setInterstitialListener(null);
         if (Storage.chess == chess) Storage.chess = null;
-        if (adView != null) adView.destroy();
+        AdManager.INSTANCE.bannerDestroy(adView);
         super.onDestroy();
     }
 
     private void cancelAnim(ObjectAnimator a) { if (a != null) a.cancel(); }
-
-    @Override public void onAdLoaded() {}
-    @Override public void onAdFailedToLoad(LoadAdError e) {}
-    @Override public void onAdShowed() {}
-    @Override public void onAdDismissed() {
-        AdMobManager.INSTANCE.loadInterstitial(this, BuildConfig.ADMOB_INTERSTITIAL_ID);
-    }
-    @Override public void onAdClicked() {}
-    @Override public void onAdFailedToShow(AdError e) {}
-    @Override public void onAdNotAvailable() {}
 }

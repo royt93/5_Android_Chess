@@ -14,8 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.saigonphantomlabs.chess.R;
-import com.saigonphantomlabs.sdkadbmob.AdMobManager;
-import com.saigonphantomlabs.sdkadbmob.UIUtils;
+import com.roy.sdkadbmob.AdManager;
+import com.roy.sdkadbmob.UIUtils;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -73,18 +73,10 @@ public class SplashActivity extends AppCompatActivity {
         startCornerGlowPulse(cornerTL, cornerBR);
         startProgressPulse(progressBar);
 
-        AdMobManager.INSTANCE.setCurrentActivity(this);
-        AdMobManager.INSTANCE.initSplashScreen(this, new Function0<Unit>() {
+        AdManager.INSTANCE.initSplashScreen(this, new Function0<Unit>() {
             @Override
             public Unit invoke() {
-                long elapsed = System.currentTimeMillis() - splashStartTime;
-                long remaining = MIN_SPLASH_DURATION - elapsed;
-                if (remaining > 0) {
-                    splashHandler = new android.os.Handler(android.os.Looper.getMainLooper());
-                    splashHandler.postDelayed(() -> runOnUiThread(SplashActivity.this::navigateToMainActivity), remaining);
-                } else {
-                    runOnUiThread(SplashActivity.this::navigateToMainActivity);
-                }
+                runOnUiThread(SplashActivity.this::navigateToMainActivity);
                 return Unit.INSTANCE;
             }
         });
@@ -205,7 +197,7 @@ public class SplashActivity extends AppCompatActivity {
         ring1Anim = null; ring2Anim = null; ring3Anim = null;
         cornerGlowTLAnim = null; cornerGlowBRAnim = null;
         progressPulseAnim = null;
-        AdMobManager.INSTANCE.clearCurrentActivity();
+
         super.onDestroy();
     }
 

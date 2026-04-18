@@ -52,6 +52,12 @@ android {
             buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3612191981543807/7792699142\""
             buildConfigField "String", "ADMOB_APP_OPEN_ID", "\"ca-app-pub-3612191981543807/6188629973\""
 
+            buildConfigField "String", "APPLOVIN_SDK_KEY", "\"e75FnQfS9XTTqM1Kne69U7PW_MBgAnGQTFvtwVVui6kRPKs5L7ws9twr5IQWwVfzPKZ5pF2IfDa7lguMgGlCyt\""
+            buildConfigField "String", "APPLOVIN_BANNER_ID", "\"a57589b2c3e6ab95\""
+            buildConfigField "String", "APPLOVIN_INTERSTITIAL_ID", "\"f8a41ab63b05de72\""
+            buildConfigField "String", "APPLOVIN_APP_OPEN_ID", "\"b607ff6edf407b74\""
+            buildConfigField "Boolean", "IS_ENABLE_ADMOB", "false"
+
             signingConfig signingConfigs.release
             debuggable false
             minifyEnabled true
@@ -82,6 +88,12 @@ android {
             buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
             buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("String", "ADMOB_APP_OPEN_ID", "\"ca-app-pub-3940256099942544/9257395921\"")
+
+            buildConfigField "String", "APPLOVIN_SDK_KEY", "\"e75FnQfS9XTTqM1Kne69U7PW_MBgAnGQTFvtwVVui6kRPKs5L7ws9twr5IQWwVfzPKZ5pF2IfDa7lguMgGlCyt\""
+            buildConfigField "String", "APPLOVIN_BANNER_ID", "\"a57589b2c3e6ab95\""
+            buildConfigField "String", "APPLOVIN_INTERSTITIAL_ID", "\"f8a41ab63b05de72\""
+            buildConfigField "String", "APPLOVIN_APP_OPEN_ID", "\"b607ff6edf407b74\""
+            buildConfigField "Boolean", "IS_ENABLE_ADMOB", "false"
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules-debug.pro'
@@ -134,14 +146,13 @@ dependencies {
     // Glide annotation processor
     annotationProcessor 'com.github.bumptech.glide:compiler:5.0.5'
 
-    // AdMob Ads
-    implementation 'com.google.android.gms:play-services-ads:24.5.0'
-    implementation 'com.google.ads.mediation:applovin:13.3.1.1'
-    implementation 'com.google.code.gson:gson:2.13.2'
+    // AdMob Wrapper
+    implementation 'com.github.royt93:AdmobWrapper:1.1.1'
 
     // Kotlin Coroutines & Lifecycle
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-process:2.8.7'
     implementation 'androidx.activity:activity-ktx:1.9.3'
 
     // Debug tools only in debug builds
