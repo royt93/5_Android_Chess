@@ -15,6 +15,20 @@ public class MoveRecord {
     public final Chessman.ChessmanType promotedTo; // null if not a promotion
     public final boolean wasFirstMove; // for pawn's first move tracking
 
+    // --- Special moves (set bởi Chess.doMove cho ván thật; AIEngine không dùng) ---
+    // Nhập thành (castling)
+    public boolean isCastle = false;
+    public int rookFromX, rookFromY, rookToX, rookToY;
+    public Chessman castledRook = null;
+    // Bắt tốt qua đường (en passant)
+    public boolean isEnPassant = false;
+    public int epVictimX, epVictimY; // ô con tốt bị bắt qua đường (khác toX/toY)
+    // Khôi phục cờ "chưa di chuyển" của vua/xe khi undo
+    public boolean movedPieceWasUnmoved = false;
+    // Trạng thái en passant TRƯỚC nước đi này (để undo phục hồi)
+    public Point prevEnPassantTarget = null;
+    public Chessman prevEnPassantVictim = null;
+
     public MoveRecord(int fromX, int fromY, int toX, int toY,
             Chessman movedPiece, Chessman capturedPiece,
             Chessman.ChessmanType promotedTo, boolean wasFirstMove) {

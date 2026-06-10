@@ -6,7 +6,18 @@
       "Bash(find:*)",
       "Bash(xargs ls:*)",
       "Bash(git restore:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Read(//Users/loitran/Library/Android/sdk/**)",
+      "Bash(ls platforms/)",
+      "Bash(ls cmdline-tools/*/bin/sdkmanager tools/bin/sdkmanager)",
+      "Bash(yes)",
+      "Bash(cmdline-tools/latest/bin/sdkmanager \"platforms;android-37\")",
+      "Bash(unzip -l app/build/outputs/apk/debug/app-debug.apk)",
+      "Bash(grep -n 'Log\\\\.[de]\\(\"roy93~\",$' app/src/main/java/com/saigonphantomlabs/chess/Chess.java app/src/main/java/com/saigonphantomlabs/chess/Chessman.java)",
+      "Bash(ffmpeg -v error -i /tmp/mv.mp4 -vf \"fps=12,scale=216:-1,tile=6x4\" /tmp/trail_sheet.png)",
+      "Bash(rm -rf fr2)",
+      "Bash(mkdir fr2 *)",
+      "Bash(ffmpeg -v error -i /tmp/mv.mp4 -vf fps=30 fr2/g_%03d.png)"
     ],
     "deny": [],
     "ask": []

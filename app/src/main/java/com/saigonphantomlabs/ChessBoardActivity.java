@@ -32,6 +32,7 @@ import com.roy.sdkadbmob.AdManager;
 import com.roy.sdkadbmob.UIUtils;
 import com.saigonphantomlabs.chess.BoardThemeManager;
 import com.saigonphantomlabs.chess.Chess;
+import com.saigonphantomlabs.chess.ChessBoardView;
 import com.saigonphantomlabs.chess.Chessman;
 import com.saigonphantomlabs.chess.PieceRenderer;
 import com.saigonphantomlabs.chess.R;
@@ -39,7 +40,7 @@ import com.saigonphantomlabs.chess.Storage;
 
 import kotlin.Unit;
 
-public class ChessBoardActivity extends BaseActivity {
+public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
     // Core views
     public FrameLayout boardLayout;

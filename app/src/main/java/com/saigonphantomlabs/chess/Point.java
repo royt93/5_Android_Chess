@@ -45,4 +45,11 @@ public class Point {
 
         return ((Point) obj).x == this.x && ((Point) obj).y == this.y;
     }
+
+    // [OPT-03] hashCode() phải đi cùng equals() để giữ đúng contract.
+    // x,y luôn nằm trong [0,7] nên (x << 3) | y cho mã băm duy nhất, không đụng độ.
+    @Override
+    public int hashCode() {
+        return (x << 3) | (y & 7);
+    }
 }

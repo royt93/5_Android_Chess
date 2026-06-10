@@ -131,6 +131,10 @@ public abstract class Chessman {
     }
 
     public void moveButton(int x, int y) {
+        // Model-only mode (unit test qua test seam): không có button → mô hình dữ liệu
+        // (chessmen + point) đã được caller cập nhật, bỏ qua phần animation/layout.
+        if (button == null) return;
+
         // OPT: Sound via SoundPool in parent (zero-latency, no new object per move)
         parent.playMoveSound(color == PlayerColor.White);
 
@@ -143,39 +147,43 @@ public abstract class Chessman {
         final float destX = width * x;
         final float destY = width * y;
 
-        Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 1 STARTED -> (" + startX + "," + startY + ") to destX/Y (" + destX + "," + destY + ")");
+        ChessLog.d("moveButton [" + color + " " + type + "] Phase 1 STARTED -> (" + startX + "," + startY + ") to destX/Y (" + destX + "," + destY + ")");
 
-        // Phase 1: Lift (elevationZ + rotation — NO scale > 1.0)
+        final int flightMs = 340; // [1] trượt rõ & chậm hơn (200→340ms) cho dễ thấy
+
+        // Phase 1: Lift (elevationZ + rotation nhẹ — NO scale > 1.0)
         button.animate()
                 .scaleX(1.0f)
                 .scaleY(1.0f)
                 .translationZ(30f)
-                .rotation(30f)
-                .setDuration(120)
+                .rotation(18f) // [1] giảm xoay (30→18) để chuyển động trượt rõ hơn
+                .setDuration(140)
                 .setInterpolator(new OvershootInterpolator(1.5f))
                 .withEndAction(() -> {
-                    Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 2 FLIGHT started");
-                    // Phase 2: Fast flight at 1.0 scale
+                    ChessLog.d("moveButton [" + color + " " + type + "] Phase 2 FLIGHT started");
+                    // [3] Vệt mờ (ghost trail) chạy sau quân trong lúc trượt
+                    spawnMoveTrail(startX, startY, destX, destY, flightMs);
+                    // Phase 2: Flight — trượt mượt ease-in-out, đủ chậm để thấy đường đi
                     button.animate()
                             .translationX(destX - startX)
                             .translationY(destY - startY)
                             .scaleX(1.0f)
                             .scaleY(1.0f)
-                            .rotation(-10f)
-                            .setDuration(200)
-                            .setInterpolator(new android.view.animation.AccelerateInterpolator())
+                            .rotation(-6f)
+                            .setDuration(flightMs)
+                            .setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator())
                             .withEndAction(() -> {
-                                Log.d("roy93~", "moveButton [" + color + " " + type + "] Phase 3 SLAM started");
-                                // Phase 3: Slam down
+                                ChessLog.d("moveButton [" + color + " " + type + "] Phase 3 SLAM started");
+                                // Phase 3: Slam down + nảy nhẹ
                                 button.animate()
                                         .scaleX(1.0f)
                                         .scaleY(1.0f)
                                         .translationZ(0f)
                                         .rotation(0f)
-                                        .setDuration(200)
+                                        .setDuration(220)
                                         .setInterpolator(new BounceInterpolator())
                                         .withEndAction(() -> {
-                                            Log.d("roy93~", "moveButton [" + color + " " + type + "] FINISHED.");
+                                            ChessLog.d("moveButton [" + color + " " + type + "] FINISHED.");
                                             updateLayoutPositionAndResetTranslation(x, y);
                                             button.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS, android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                         })
@@ -184,6 +192,52 @@ public abstract class Chessman {
                             .start();
                 })
                 .start();
+    }
+
+    /**
+     * [3] Vệt mờ (motion trail): sinh vài bản sao bán trong suốt của quân tại ô đầu,
+     * trượt theo cùng đường tới ô đích nhưng trễ dần + mờ dần → tạo "đuôi" phía sau
+     * quân đang di chuyển. Tự gỡ khỏi board khi animation kết thúc.
+     */
+    private void spawnMoveTrail(float startX, float startY, float destX, float destY, int durationMs) {
+        if (button == null || !(button.getParent() instanceof android.view.ViewGroup)) return;
+        final android.view.ViewGroup parent = (android.view.ViewGroup) button.getParent();
+        final android.graphics.drawable.Drawable icon = button.getDrawable();
+        if (icon == null || icon.getConstantState() == null) return;
+
+        final int ghostCount = 3;
+        for (int i = 1; i <= ghostCount; i++) {
+            final android.widget.ImageView ghost = new android.widget.ImageView(parent.getContext());
+            // LEAK-SAFE: dùng newDrawable() (chia sẻ bitmap nhưng KHÔNG đụng callback của
+            // BitmapDrawable đang cache tĩnh trong PieceRenderer) — tránh static cache giữ ghost view.
+            ghost.setImageDrawable(icon.getConstantState().newDrawable());
+            ghost.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, width);
+            lp.leftMargin = (int) startX;
+            lp.topMargin = (int) startY;
+            ghost.setLayoutParams(lp);
+            ghost.setAlpha(0.30f - (i - 1) * 0.08f); // 0.30, 0.22, 0.14
+            ghost.setClickable(false);
+            parent.addView(ghost, 0); // index 0 → nằm sau các quân khác
+
+            ghost.animate()
+                    .translationX(destX - startX)
+                    .translationY(destY - startY)
+                    .alpha(0f)
+                    .setStartDelay(i * 55L) // trễ dần → tụt lại sau quân chính = đuôi
+                    .setDuration(durationMs)
+                    .setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator())
+                    // LEAK-SAFE: listener.onAnimationEnd chạy cả khi HOÀN TẤT lẫn khi BỊ HUỶ
+                    // (withEndAction KHÔNG chạy khi cancel) → ghost luôn được gỡ + xả drawable.
+                    .setListener(new android.animation.AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(android.animation.Animator a) {
+                            ghost.setImageDrawable(null);
+                            if (ghost.getParent() != null) parent.removeView(ghost);
+                        }
+                    })
+                    .start();
+        }
     }
 
     // Update the actual layout margins to the new position
@@ -200,7 +254,7 @@ public abstract class Chessman {
     // Update layout position and reset translation atomically
     private void updateLayoutPositionAndResetTranslation(int x, int y) {
         if (button != null && button.getLayoutParams() instanceof FrameLayout.LayoutParams) {
-            Log.d("roy93~", "updateLayoutPositionAndResetTranslation [" + color + " " + type + "] mapping to grid (" + x + ", " + y + ")");
+            ChessLog.d("updateLayoutPositionAndResetTranslation [" + color + " " + type + "] mapping to grid (" + x + ", " + y + ")");
             // Update layout position
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) button.getLayoutParams();
             lp.setMargins(width * x, width * y,

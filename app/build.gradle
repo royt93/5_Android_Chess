@@ -22,6 +22,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    // Unit test JVM: cho các API android bị stub (vd Log.d) trả default thay vì ném exception
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     buildFeatures {
         buildConfig = true
         viewBinding = true
@@ -156,4 +160,7 @@ dependencies {
 
     // Debug tools only in debug builds
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
+
+    // Unit tests (JVM) — kiểm thử rule logic engine cờ
+    testImplementation 'junit:junit:4.13.2'
 }

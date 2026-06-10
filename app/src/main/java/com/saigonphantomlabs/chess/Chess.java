@@ -37,6 +37,8 @@ public class Chess {
     public Chessman.PlayerColor whichPlayerTurn = Chessman.PlayerColor.Black;
     public Point lastManPoint = null;
     public Context ctx;
+    // Callback UI (đã tách khỏi Activity cụ thể) — xem ChessBoardView
+    private ChessBoardView boardView;
     public int minDimension = 0;
     private Chessman manToPromote = null;
     private FrameLayout boardLayout = null;
@@ -44,23 +46,29 @@ public class Chess {
     // OPT: pre-sized to max legal moves per piece (queen max ~27)
     public ArrayList<View> validMoveButtons = new ArrayList<>(28);
 
-    // OPT: SoundPool — loaded once, plays with near-zero latency vs MediaPlayer
-    private SoundPool soundPool;
-    private int soundIdMove1 = 0;  // white move
-    private int soundIdMove2 = 0;  // black move
-    private boolean soundReady = false;
+    // Âm thanh tách sang ChessAudio (SoundPool) — giảm god-class
+    private ChessAudio audio;
 
     // Game state
     private boolean gameEnd = false;
     private long gameStartTime = System.currentTimeMillis();
     private boolean isDestroyed = false; // [ML-04] Lifecycle guard for AI thread
 
+    // --- Special-move state (chỉ áp dụng cho ván thật) ---
+    // true khi AIEngine đang search → tắt castling & en passant để minimax không bị corrupt
+    public boolean inAiSimulation = false;
+    // Ô con tốt vừa "nhảy qua" (đích của nước bắt tốt qua đường); null nếu không có
+    public Point enPassantTarget = null;
+    // Con tốt vừa đi 2 ô (sẽ bị bắt qua đường nếu đối phương phản công ngay)
+    public Chessman enPassantVictim = null;
+
     // AI Mode
     public boolean isVsComputer = false;
     public AIEngine.Difficulty difficultyLevel = AIEngine.Difficulty.EASY;
     private AIEngine aiEngine;
     public boolean isAiThinking = false;
-    private android.os.Handler aiHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    // Khởi tạo trong constructor production (không field-init) để test seam không chạm Android
+    private android.os.Handler aiHandler;
 
     public King whiteKing = null;
     public King blackKing = null;
@@ -79,12 +87,26 @@ public class Chess {
     private ObjectAnimator checkFlashAnimator = null;
     private King kingInCheck = null;
 
+    /**
+     * Test seam — constructor rỗng chỉ dùng cho unit test rule logic (sinh nước đi).
+     * KHÔNG dùng trong app: bỏ qua mọi khởi tạo Android (SoundPool, board, UI).
+     * `chessmen` đã được khởi tạo inline thành mảng 8x8 rỗng; test tự đặt quân.
+     */
+    Chess() {
+    }
+
+    /** Test seam: tiêm fake ChessBoardView để kiểm thử execution/undo không cần Activity. */
+    void setBoardViewForTest(ChessBoardView view) {
+        this.boardView = view;
+    }
+
     public Chess(Context ctx, int minDimension, FrameLayout boardLayout) {
+        this.boardView = (ChessBoardView) ctx; // ChessBoardActivity implements ChessBoardView
         setLayoutParams(ctx, minDimension, boardLayout);
+        this.aiHandler = new android.os.Handler(android.os.Looper.getMainLooper());
         this.aiEngine = new AIEngine();
         this.statsManager = new GameStatsManager(ctx);
-        // OPT: init SoundPool once
-        initSoundPool(ctx);
+        this.audio = new ChessAudio(ctx);
         /*
          * BOARD
          * < X >
@@ -211,24 +233,90 @@ public class Chess {
     }
 
     public void doMove(Point from, Point to) {
-        Log.d("roy93~", "doMove: confirmed from (" + from.x + "," + from.y + ") to (" + to.x + "," + to.y + ")");
+        ChessLog.d("doMove: confirmed from (" + from.x + "," + from.y + ") to (" + to.x + "," + to.y + ")");
         // Store move info before making the move
         Chessman movedPiece = chessmen[from.x][from.y];
-        Chessman capturedPiece = chessmen[to.x][to.y];
+
+        // --- Phát hiện nước đặc biệt ---
+        boolean isCastleMove = (movedPiece instanceof King)
+                && Math.abs(to.x - from.x) == 2 && to.y == from.y;
+        boolean isEnPassantMove = (movedPiece instanceof Pawn)
+                && to.x != from.x && chessmen[to.x][to.y] == null
+                && enPassantTarget != null && to.equals(enPassantTarget);
+
+        // Con tốt bị bắt qua đường nằm ở (to.x, from.y), KHÔNG phải ô đích
+        Chessman epVictim = null;
+        if (isEnPassantMove) {
+            epVictim = chessmen[to.x][from.y];
+            // Gỡ khỏi data model TRƯỚC khi move() kiểm tra an toàn vua (đúng với discovered check)
+            chessmen[to.x][from.y] = null;
+        }
+
+        Chessman capturedPiece = chessmen[to.x][to.y]; // null cho en passant & castling
         boolean wasFirstMove = (movedPiece.type == Chessman.ChessmanType.Pawn) && ((Pawn) movedPiece).firstMove;
+        boolean movedWasUnmoved =
+                (movedPiece instanceof King && !((King) movedPiece).hasMoved)
+                || (movedPiece instanceof Rook && !((Rook) movedPiece).hasMoved);
+        Point prevEpTarget = enPassantTarget;
+        Chessman prevEpVictim = enPassantVictim;
 
         // Reset highlights BEFORE starting animations to prevent property overwrites cancelling the sequence
         resetValidMoveButtons();
 
         if (move(from.x, from.y, to.x, to.y)) {
-            Log.d("roy93~", "doMove: move executed successfully on data model");
+            ChessLog.d("doMove: move executed successfully on data model");
             // Record the move for history/undo
             MoveRecord record = new MoveRecord(from.x, from.y, to.x, to.y,
-                    movedPiece, capturedPiece, null, wasFirstMove);
+                    movedPiece, isEnPassantMove ? epVictim : capturedPiece, null, wasFirstMove);
+            record.prevEnPassantTarget = prevEpTarget;
+            record.prevEnPassantVictim = prevEpVictim;
+            record.movedPieceWasUnmoved = movedWasUnmoved;
+
+            // En passant: hiển thị quân bị bắt + animation chết
+            if (isEnPassantMove && epVictim != null) {
+                record.isEnPassant = true;
+                record.epVictimX = to.x;
+                record.epVictimY = from.y;
+                kill(epVictim);
+                boardView.addCapturedPiece(epVictim);
+            }
+
+            // Nhập thành: di chuyển xe tương ứng theo vua
+            if (isCastleMove) {
+                int row = from.y;
+                int rookFromX = (to.x == 6) ? 7 : 0; // king-side vs queen-side
+                int rookToX   = (to.x == 6) ? 5 : 3;
+                Chessman rook = chessmen[rookFromX][row];
+                if (rook != null) {
+                    chessmen[rookToX][row] = rook;
+                    chessmen[rookFromX][row] = null;
+                    rook.setPoint(new Point(rookToX, row));
+                    rook.moveButton(rookToX, row);
+                    if (rook instanceof Rook) ((Rook) rook).hasMoved = true;
+                    record.isCastle = true;
+                    record.rookFromX = rookFromX; record.rookFromY = row;
+                    record.rookToX = rookToX;   record.rookToY = row;
+                    record.castledRook = rook;
+                }
+            }
+
+            // Cập nhật cờ hasMoved của vua/xe
+            if (movedPiece instanceof King) ((King) movedPiece).hasMoved = true;
+            if (movedPiece instanceof Rook) ((Rook) movedPiece).hasMoved = true;
+
+            // Cập nhật en passant target cho nước kế tiếp (tốt vừa đi 2 ô)
+            if (movedPiece.type == Chessman.ChessmanType.Pawn && Math.abs(to.y - from.y) == 2) {
+                enPassantTarget = new Point(from.x, (from.y + to.y) / 2);
+                enPassantVictim = movedPiece;
+            } else {
+                enPassantTarget = null;
+                enPassantVictim = null;
+            }
+
             moveHistory.push(record);
 
             // Update undo button visibility
-            ((ChessBoardActivity) ctx).updateUndoButton(true);
+            boardView.updateUndoButton(true);
 
             if (chessmen[to.x][to.y].type == Chessman.ChessmanType.Pawn &&
                     (chessmen[to.x][to.y].color == Chessman.PlayerColor.White && chessmen[to.x][to.y].getPoint().y == 0
@@ -244,13 +332,17 @@ public class Chess {
             }
 
             // Check opponent's king status after move
-            Log.d("roy93~", "doMove: checking opponent king status...");
+            ChessLog.d("doMove: checking opponent king status...");
             checkOpponentKingStatus();
 
             changeTurn();
             lastManPoint = null;
         } else {
-            Log.e("roy93~", "doMove: move failed!");
+            ChessLog.e("doMove: move failed!");
+            // Nước không hợp lệ → trả lại con tốt đã gỡ tạm cho en passant
+            if (isEnPassantMove && epVictim != null) {
+                chessmen[to.x][from.y] = epVictim;
+            }
         }
     }
 
@@ -260,21 +352,21 @@ public class Chess {
         chessmen[xt][yt].setPoint(new Point(xt, yt));
         chessmen[xf][yf] = null;
         
-        Log.d("roy93~", chessmen[xt][yt].color + " Moved: " + chessmen[xt][yt].type.name() + " from [" + xf + "," + yf + "] to [" + xt + "," + yt + "]");
+        ChessLog.d(chessmen[xt][yt].color + " Moved: " + chessmen[xt][yt].type.name() + " from [" + xf + "," + yf + "] to [" + xt + "," + yt + "]");
 
         King myKing = (chessmen[xt][yt].color == Chessman.PlayerColor.White) ? whiteKing : blackKing;
 
         // Only check if our king is safe (not in check)
         // We don't care about Stalemate here because the turn will pass to the opponent
         boolean isKingSafe = myKing.isPointSafe();
-        Log.d("roy93~", "move: " + myKing.color + " king safe=" + isKingSafe);
+        ChessLog.d("move: " + myKing.color + " king safe=" + isKingSafe);
 
         if (isKingSafe) {
             if (tempMan != null) {
-                Log.d("roy93~", myKing.color + " Captured: " + tempMan.type.name() + " at [" + xt + "," + yt + "]");
+                ChessLog.d(myKing.color + " Captured: " + tempMan.type.name() + " at [" + xt + "," + yt + "]");
                 kill(tempMan);
                 // Add captured piece to display
-                ((ChessBoardActivity) ctx).addCapturedPiece(tempMan);
+                boardView.addCapturedPiece(tempMan);
             }
             chessmen[xt][yt].setPoint(new Point(xt, yt));
             chessmen[xt][yt].moveButton(xt, yt);
@@ -297,22 +389,22 @@ public class Chess {
      */
     private void checkOpponentKingStatus() {
         King opponentKing = (whichPlayerTurn == Chessman.PlayerColor.White) ? blackKing : whiteKing;
-        Log.d("roy93~", "checkOpponentKingStatus: checking " + opponentKing.color + " king");
+        ChessLog.d("checkOpponentKingStatus: checking " + opponentKing.color + " king");
 
         King.KingRiskType status = validateKing(opponentKing);
-        Log.d("roy93~", "checkOpponentKingStatus: status = " + status);
+        ChessLog.d("checkOpponentKingStatus: status = " + status);
 
         // Clear any previous check animation
         clearCheckAnimation();
 
         if (status == King.KingRiskType.CheckMate) {
-            Log.d("roy93~", "CHECKMATE! " + whichPlayerTurn + " Wins! Game Over.");
+            ChessLog.d("CHECKMATE! " + whichPlayerTurn + " Wins! Game Over.");
             gameEnd = true;
             playCheckSound();
             showCheckAnimation(opponentKing);
             // Show game end dialog - current player wins
             boolean whiteWins = whichPlayerTurn == Chessman.PlayerColor.White;
-            ((ChessBoardActivity) ctx).showCustomGameEndDialog(
+            boardView.showCustomGameEndDialog(
                     whiteWins, false);
 
             if (isVsComputer) {
@@ -322,24 +414,24 @@ public class Chess {
                 statsManager.saveGameResult(difficultyLevel, result, duration);
             }
         } else if (status == King.KingRiskType.Stalemate) {
-            Log.d("roy93~", "checkOpponentKingStatus: STALEMATE detected!");
+            ChessLog.d("checkOpponentKingStatus: STALEMATE detected!");
             gameEnd = true;
             // Show stalemate dialog - draw (isStalemate = true)
             // Show stalemate dialog - draw (isStalemate = true)
-            ((ChessBoardActivity) ctx).showCustomGameEndDialog(false, true);
+            boardView.showCustomGameEndDialog(false, true);
 
             if (isVsComputer) {
                 long duration = System.currentTimeMillis() - gameStartTime;
                 statsManager.saveGameResult(difficultyLevel, 0, duration);
             }
         } else if (status == King.KingRiskType.Check) {
-            Log.d("roy93~", "checkOpponentKingStatus: CHECK detected!");
+            ChessLog.d("checkOpponentKingStatus: CHECK detected!");
             kingInCheck = opponentKing;
             playCheckSound();
             showCheckAnimation(opponentKing);
-            Toast.makeText(ctx, R.string.check, Toast.LENGTH_SHORT).show();
+            if (ctx != null) Toast.makeText(ctx, R.string.check, Toast.LENGTH_SHORT).show();
         } else {
-            Log.d("roy93~", "checkOpponentKingStatus: SAFE - game continues");
+            ChessLog.d("checkOpponentKingStatus: SAFE - game continues");
         }
     }
 
@@ -381,82 +473,58 @@ public class Chess {
     /**
      * Play check warning sound
      */
-    private void playCheckSound()    { playSound(soundIdMove1); }
-    private void playIllegalMoveSound() { playSound(soundIdMove2); }
-
-    /** OPT: Route all sounds through SoundPool */
-    public void playMoveSound(boolean isWhite) { playSound(isWhite ? soundIdMove1 : soundIdMove2); }
-
-    private void playSound(int soundId) {
-        if (soundReady && soundPool != null && soundId != 0) {
-            soundPool.play(soundId, 1f, 1f, 1, 0, 1f);
-        }
-    }
-
-    private void initSoundPool(Context ctx) {
-        AudioAttributes attrs = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
-        soundPool = new SoundPool.Builder()
-                .setMaxStreams(3)
-                .setAudioAttributes(attrs)
-                .build();
-        soundPool.setOnLoadCompleteListener((sp, sampleId, status) -> {
-            if (status == 0) soundReady = true;
-        });
-        soundIdMove1 = soundPool.load(ctx, R.raw.chess_1, 1);
-        soundIdMove2 = soundPool.load(ctx, R.raw.chess_2, 1);
-    }
+    private void playCheckSound()       { if (audio != null) audio.playCheck(); }
+    private void playIllegalMoveSound() { if (audio != null) audio.playIllegal(); }
+    public  void playMoveSound(boolean isWhite) { if (audio != null) audio.playMove(isWhite); }
 
     private King.KingRiskType validateKing(King k) {
-        Log.d("roy93~",
+        ChessLog.d(
                 "validateKing: checking " + k.color + " king at (" + k.getPoint().x + "," + k.getPoint().y + ")");
         k.generateMoves();
-        Log.d("roy93~", "validateKing: king has " + k.moves.size() + " potential moves");
+        ChessLog.d("validateKing: king has " + k.moves.size() + " potential moves");
 
         boolean inCheck = !k.isPointSafe();
-        Log.d("roy93~", "validateKing: inCheck = " + inCheck);
+        ChessLog.d("validateKing: inCheck = " + inCheck);
 
         // Check if king can move to any safe square (with simulation)
         boolean kingCanMove = false;
         for (Point p : k.moves) {
             boolean moveSafe = isKingMoveSafe(k, p);
-            Log.d("roy93~", "validateKing: king move to (" + p.x + "," + p.y + ") safe = " + moveSafe);
+            ChessLog.d("validateKing: king move to (" + p.x + "," + p.y + ") safe = " + moveSafe);
             if (moveSafe) {
                 kingCanMove = true;
                 break;
             }
         }
-        Log.d("roy93~", "validateKing: kingCanMove = " + kingCanMove);
+        ChessLog.d("validateKing: kingCanMove = " + kingCanMove);
 
         // Check if any other piece has legal moves
         boolean otherPiecesCanMove = hasAnyLegalMove(k.color);
-        Log.d("roy93~", "validateKing: otherPiecesCanMove = " + otherPiecesCanMove);
+        ChessLog.d("validateKing: otherPiecesCanMove = " + otherPiecesCanMove);
 
         if (inCheck) {
             // King is in check
-            Log.d("roy93~", "validateKing: King IS in check");
+            ChessLog.d("validateKing: King IS in check");
             if (kingCanMove) {
-                Log.d("roy93~", "validateKing: returning CHECK (king can escape)");
+                ChessLog.d("validateKing: returning CHECK (king can escape)");
                 return King.KingRiskType.Check; // King can escape
             }
             boolean canSave = canAnyPieceSaveKing(k);
-            Log.d("roy93~", "validateKing: canAnyPieceSaveKing = " + canSave);
+            ChessLog.d("validateKing: canAnyPieceSaveKing = " + canSave);
             if (canSave) {
-                Log.d("roy93~", "validateKing: returning CHECK (piece can save)");
+                ChessLog.d("validateKing: returning CHECK (piece can save)");
                 return King.KingRiskType.Check; // Another piece can save
             }
-            Log.d("roy93~", "validateKing: returning CHECKMATE");
+            ChessLog.d("validateKing: returning CHECKMATE");
             return King.KingRiskType.CheckMate;
         } else {
             // King is NOT in check
-            Log.d("roy93~", "validateKing: King is NOT in check");
+            ChessLog.d("validateKing: King is NOT in check");
             if (!kingCanMove && !otherPiecesCanMove) {
-                Log.d("roy93~", "validateKing: returning STALEMATE");
+                ChessLog.d("validateKing: returning STALEMATE");
                 return King.KingRiskType.Stalemate;
             }
-            Log.d("roy93~", "validateKing: returning SAFE");
+            ChessLog.d("validateKing: returning SAFE");
             return King.KingRiskType.Safe;
         }
     }
@@ -475,7 +543,7 @@ public class Chess {
 
         // Check if King is safe at new position
         boolean isSafe = k.isPointSafe();
-        Log.d("roy93~",
+        ChessLog.d(
                 "isKingMoveSafe: " + k.color + " King moving to (" + target.x + "," + target.y + ") safe=" + isSafe);
 
         // Undo simulation
@@ -491,7 +559,7 @@ public class Chess {
      */
     private boolean hasAnyLegalMove(Chessman.PlayerColor color) {
         King k = (color == Chessman.PlayerColor.White) ? whiteKing : blackKing;
-        Log.d("roy93~", "hasAnyLegalMove: checking for " + color);
+        ChessLog.d("hasAnyLegalMove: checking for " + color);
 
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
@@ -499,13 +567,13 @@ public class Chess {
                 if (piece != null && !piece.isDead && piece.color == color
                         && piece.type != Chessman.ChessmanType.King) {
                     piece.generateMoves();
-                    // Log.d("roy93~", "hasAnyLegalMove: piece " + piece.type + " at (" + x + "," +
+                    // ChessLog.d("hasAnyLegalMove: piece " + piece.type + " at (" + x + "," +
                     // y + ") has " + piece.moves.size() + " moves");
 
                     // Check if any move is legal (doesn't put own king in check)
                     for (Point target : piece.moves) {
                         if (isMoveLegal(piece, target, k)) {
-                            Log.d("roy93~", "hasAnyLegalMove: FOUND legal move! Piece " + piece.type + " at (" + x + ","
+                            ChessLog.d("hasAnyLegalMove: FOUND legal move! Piece " + piece.type + " at (" + x + ","
                                     + y + ") to (" + target.x + "," + target.y + ")");
                             return true;
                         }
@@ -513,7 +581,7 @@ public class Chess {
                 }
             }
         }
-        Log.d("roy93~", "hasAnyLegalMove: NO legal moves found for any piece!");
+        ChessLog.d("hasAnyLegalMove: NO legal moves found for any piece!");
         return false;
     }
 
@@ -524,6 +592,14 @@ public class Chess {
         Point originalPos = piece.getPoint();
         Chessman capturedPiece = chessmen[target.x][target.y];
 
+        // En passant: con tốt bị bắt nằm ở (target.x, originalPos.y), phải gỡ khi mô phỏng
+        boolean ep = isEnPassantPseudoMove(piece, originalPos, target, capturedPiece);
+        Chessman epVic = null;
+        if (ep) {
+            epVic = chessmen[target.x][originalPos.y];
+            chessmen[target.x][originalPos.y] = null;
+        }
+
         // Simulate the move
         chessmen[target.x][target.y] = piece;
         chessmen[originalPos.x][originalPos.y] = null;
@@ -531,15 +607,23 @@ public class Chess {
 
         // Check if our king is in check after this move
         boolean kingInCheck = !k.isPointSafe();
-        // Log.d("roy93~", "isMoveLegal: checking " + piece.type + " to (" + target.x +
-        // "," + target.y + ") -> kingInCheck=" + kingInCheck);
 
         // Undo the simulation
         chessmen[originalPos.x][originalPos.y] = piece;
         chessmen[target.x][target.y] = capturedPiece;
         piece.setPoint(originalPos);
+        if (ep) chessmen[target.x][originalPos.y] = epVic;
 
         return !kingInCheck;
+    }
+
+    /**
+     * True nếu (piece, target) là một nước bắt tốt qua đường (en passant) trên board thật:
+     * tốt đi chéo sang ô trống trùng enPassantTarget.
+     */
+    private boolean isEnPassantPseudoMove(Chessman piece, Point from, Point target, Chessman capturedAtTarget) {
+        return (piece instanceof Pawn) && target.x != from.x && capturedAtTarget == null
+                && enPassantTarget != null && target.equals(enPassantTarget);
     }
 
     /**
@@ -547,7 +631,7 @@ public class Chess {
      */
     private boolean canAnyPieceSaveKing(King k) {
         Chessman.PlayerColor kingColor = k.color;
-        Log.d("roy93~", "canAnyPieceSaveKing: checking for " + kingColor);
+        ChessLog.d("canAnyPieceSaveKing: checking for " + kingColor);
 
         // Try all pieces of the same color
         for (int x = 0; x < 8; x++) {
@@ -577,6 +661,14 @@ public class Chess {
         Point originalPos = piece.getPoint();
         Chessman capturedPiece = chessmen[target.x][target.y];
 
+        // En passant: gỡ con tốt bị bắt qua đường khi mô phỏng (vd bắt qua đường để giải chiếu)
+        boolean ep = isEnPassantPseudoMove(piece, originalPos, target, capturedPiece);
+        Chessman epVic = null;
+        if (ep) {
+            epVic = chessmen[target.x][originalPos.y];
+            chessmen[target.x][originalPos.y] = null;
+        }
+
         // Simulate the move
         chessmen[target.x][target.y] = piece;
         chessmen[originalPos.x][originalPos.y] = null;
@@ -589,6 +681,7 @@ public class Chess {
         chessmen[originalPos.x][originalPos.y] = piece;
         chessmen[target.x][target.y] = capturedPiece;
         piece.setPoint(originalPos);
+        if (ep) chessmen[target.x][originalPos.y] = epVic;
 
         return !stillInCheck;
     }
@@ -596,6 +689,9 @@ public class Chess {
     public void kill(Chessman m) {
         deadMen.add(m);
         m.isDead = true;
+
+        // Model-only mode (unit test): không có button/ctx → bỏ qua haptic + animation
+        if (m.button == null) return;
 
         // Haptic feedback for capture
         performCaptureHaptic();
@@ -621,7 +717,7 @@ public class Chess {
             whichPlayerTurn = Chessman.PlayerColor.Black;
         else
             whichPlayerTurn = Chessman.PlayerColor.White;
-        ((ChessBoardActivity) ctx).animateTurnChange(whichPlayerTurn);
+        boardView.animateTurnChange(whichPlayerTurn);
 
         if (isVsComputer && whichPlayerTurn == Chessman.PlayerColor.Black && !gameEnd) {
             triggerAITurn();
@@ -674,16 +770,16 @@ public class Chess {
     public void cancelAiHandler() {
         isDestroyed = true;
         isAiThinking = false;
-        aiHandler.removeCallbacksAndMessages(null);
+        if (aiHandler != null) aiHandler.removeCallbacksAndMessages(null);
         clearCheckAnimation();
         clearSelectionHighlight();
         // OPT: Release SoundPool resources
-        if (soundPool != null) { soundPool.release(); soundPool = null; soundReady = false; }
+        if (audio != null) { audio.release(); audio = null; }
     }
 
     public void promote(Chessman man) {
         manToPromote = man;
-        ((ChessBoardActivity) ctx).showPromotionActivity();
+        boardView.showPromotionActivity();
     }
 
     public void promotionResault(Chessman.ChessmanType toType) {
@@ -756,8 +852,8 @@ public class Chess {
                 .start();
     }
 
-    private void playPromotionSound()     { playSound(soundIdMove1); }
-    private void playTransformationSound() { playSound(soundIdMove2); }
+    private void playPromotionSound()      { if (audio != null) audio.playPromotion(); }
+    private void playTransformationSound() { if (audio != null) audio.playTransformation(); }
 
     private void addMenToBoard(FrameLayout boardLayout) {
         for (int i = 0; i < 8; i++)
@@ -812,7 +908,7 @@ public class Chess {
     }
 
     public void resetValidMoveButtons() {
-        Log.d("roy93~", "resetValidMoveButtons() Triggered: Clearing UI move dots and selection highlights");
+        ChessLog.d("resetValidMoveButtons() Triggered: Clearing UI move dots and selection highlights");
         // Clear selection when moves are reset
         clearSelectionHighlight();
 
@@ -846,7 +942,7 @@ public class Chess {
      * Clear selection highlight from previously selected piece
      */
     private void clearSelectionHighlight() {
-        Log.d("roy93~", "clearSelectionHighlight() Triggered");
+        ChessLog.d("clearSelectionHighlight() Triggered");
         if (selectionPulseAnimator != null) {
             selectionPulseAnimator.cancel();
             selectionPulseAnimator = null;
@@ -863,48 +959,17 @@ public class Chess {
     /**
      * Perform haptic feedback for tactile response
      */
+    // Haptic tách sang ChessHaptics — Chess chỉ delegate
     private void performHapticFeedback(View view, int feedbackType) {
-        if (view != null) {
-            view.performHapticFeedback(feedbackType,
-                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-        }
+        ChessHaptics.selection(view);
     }
 
-    /**
-     * Perform stronger haptic feedback for capture actions
-     */
     public void performCaptureHaptic() {
-        if (ctx != null) {
-            Vibrator vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
-            if (vibrator != null && vibrator.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    long[] timings = {0, 20, 30, 50};
-                    int[] amplitudes = {0, 100, 0, 255};
-                    vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1));
-                } else {
-                    vibrator.vibrate(80);
-                }
-            }
-        }
+        ChessHaptics.capture(ctx);
     }
 
-    /**
-     * Perform Double-pulse haptic feedback for Check condition
-     */
     public void performCheckHaptic() {
-        if (ctx != null) {
-            Vibrator vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
-            if (vibrator != null && vibrator.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    long[] timings = {0, 50, 50, 50, 50, 200};
-                    int[] amplitudes = {0, 255, 0, 150, 0, 255};
-                    vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1));
-                } else {
-                    long[] pattern = {0, 50, 50, 50, 50, 200};
-                    vibrator.vibrate(pattern, -1);
-                }
-            }
-        }
+        ChessHaptics.check(ctx);
     }
 
     /**
@@ -979,7 +1044,7 @@ public class Chess {
         }
 
         MoveRecord lastMove = moveHistory.pop();
-        Log.d("roy93~", "Undo Triggered: " + lastMove.movedPiece.type.name() + " back to [" + lastMove.fromX + "," + lastMove.fromY + "]");
+        ChessLog.d("Undo Triggered: " + lastMove.movedPiece.type.name() + " back to [" + lastMove.fromX + "," + lastMove.fromY + "]");
 
         // Clear any selection
         resetValidMoveButtons();
@@ -1024,31 +1089,56 @@ public class Chess {
             ((Pawn) movedPiece).firstMove = true;
         }
 
+        // Khôi phục cờ hasMoved của vua/xe nếu nước này là lần đi đầu của chúng
+        if (lastMove.movedPieceWasUnmoved) {
+            if (movedPiece instanceof King) ((King) movedPiece).hasMoved = false;
+            if (movedPiece instanceof Rook) ((Rook) movedPiece).hasMoved = false;
+        }
+
+        // Hoàn tác nhập thành: đưa xe về ô gốc
+        if (lastMove.isCastle && lastMove.castledRook != null) {
+            Chessman rook = lastMove.castledRook;
+            chessmen[lastMove.rookFromX][lastMove.rookFromY] = rook;
+            chessmen[lastMove.rookToX][lastMove.rookToY] = null;
+            rook.setPoint(new Point(lastMove.rookFromX, lastMove.rookFromY));
+            rook.moveButton(lastMove.rookFromX, lastMove.rookFromY);
+            if (rook instanceof Rook) ((Rook) rook).hasMoved = false;
+        }
+
+        // Khôi phục trạng thái en passant TRƯỚC nước đi này
+        enPassantTarget = lastMove.prevEnPassantTarget;
+        enPassantVictim = lastMove.prevEnPassantVictim;
+
         // Restore captured piece if any
         if (lastMove.capturedPiece != null) {
             Chessman restored = lastMove.capturedPiece;
-            chessmen[lastMove.toX][lastMove.toY] = restored;
-            restored.setPoint(new Point(lastMove.toX, lastMove.toY));
+            // En passant: con tốt bị bắt nằm ở (epVictimX, epVictimY), không phải ô đích
+            int rx = lastMove.isEnPassant ? lastMove.epVictimX : lastMove.toX;
+            int ry = lastMove.isEnPassant ? lastMove.epVictimY : lastMove.toY;
+            chessmen[rx][ry] = restored;
+            restored.setPoint(new Point(rx, ry));
             restored.isDead = false;
             deadMen.remove(restored);
 
-            // Recreate button and animate back in
-            restored.createButton();
-            restored.button.setScaleX(0f);
-            restored.button.setScaleY(0f);
-            restored.button.setAlpha(0f);
-            boardLayout.addView(restored.button);
+            // Recreate button and animate back in (model-only mode bỏ qua khi ctx null)
+            if (ctx != null) {
+                restored.createButton();
+                restored.button.setScaleX(0f);
+                restored.button.setScaleY(0f);
+                restored.button.setAlpha(0f);
+                boardLayout.addView(restored.button);
 
-            restored.button.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .alpha(1f)
-                    .setDuration(300)
-                    .setInterpolator(new OvershootInterpolator())
-                    .start();
+                restored.button.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .alpha(1f)
+                        .setDuration(300)
+                        .setInterpolator(new OvershootInterpolator())
+                        .start();
+            }
 
             // Remove from captured pieces display
-            ((ChessBoardActivity) ctx).removeCapturedPiece(restored);
+            boardView.removeCapturedPiece(restored);
         }
 
         // Switch turn back
@@ -1057,13 +1147,13 @@ public class Chess {
         else
             whichPlayerTurn = Chessman.PlayerColor.White;
 
-        ((ChessBoardActivity) ctx).animateTurnChange(whichPlayerTurn);
+        boardView.animateTurnChange(whichPlayerTurn);
 
         // Reset game end state if was checkmate
         gameEnd = false;
 
         // Update undo button visibility
-        ((ChessBoardActivity) ctx).updateUndoButton(!moveHistory.isEmpty());
+        boardView.updateUndoButton(!moveHistory.isEmpty());
 
         // Play undo sound
         playIllegalMoveSound();
@@ -1073,12 +1163,15 @@ public class Chess {
      * Reset game to initial state
      */
     public void resetGame() {
-        Log.d("roy93~", "=== GAME START / RESET ===");
+        ChessLog.d("=== GAME START / RESET ===");
         // Clear history
         moveHistory.clear();
         deadMen.clear();
         gameEnd = false;
         gameStartTime = System.currentTimeMillis();
+        // Reset trạng thái en passant (vua/xe mới tạo lại nên hasMoved=false sẵn)
+        enPassantTarget = null;
+        enPassantVictim = null;
 
         // Clear animations
         clearSelectionHighlight();
@@ -1104,8 +1197,8 @@ public class Chess {
         changeTurn();
 
         // Update UI
-        ((ChessBoardActivity) ctx).updateUndoButton(false);
-        ((ChessBoardActivity) ctx).clearCapturedPieces();
+        boardView.updateUndoButton(false);
+        boardView.clearCapturedPieces();
     }
 
     /**

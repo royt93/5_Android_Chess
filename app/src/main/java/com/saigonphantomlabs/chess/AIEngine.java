@@ -99,50 +99,57 @@ public class AIEngine {
     };
 
     public MoveRecord getBestMove(Chess board, Difficulty difficulty, Chessman.PlayerColor aiColor) {
-        Log.d(TAG, "getBestMove: Difficulty=" + difficulty + ", AI Color=" + aiColor);
+        ChessLog.d("getBestMove: Difficulty=" + difficulty + ", AI Color=" + aiColor);
         long startTime = System.currentTimeMillis();
 
-        // 1. OPENING BOOK CHECK
-        if (difficulty == Difficulty.HARD || difficulty == Difficulty.UNBEATABLE) {
-            MoveRecord bookMove = getOpeningBookMove(board, aiColor);
-            if (bookMove != null) {
-                Log.d(TAG, "getBestMove: Found book move " + bookMove.getNotation(board.ctx));
-                return bookMove;
+        // Tắt castling & en passant trong suốt quá trình search để generateMoves chỉ
+        // sinh nước "cổ điển" mà simulateMove/undoSimulateMove xử lý đúng (không corrupt minimax).
+        board.inAiSimulation = true;
+        try {
+            // 1. OPENING BOOK CHECK
+            if (difficulty == Difficulty.HARD || difficulty == Difficulty.UNBEATABLE) {
+                MoveRecord bookMove = getOpeningBookMove(board, aiColor);
+                if (bookMove != null) {
+                    ChessLog.d("getBestMove: Found book move " + bookMove.getNotation(board.ctx));
+                    return bookMove;
+                }
             }
+
+            List<MoveRecord> allMoves = generateAllLegalMoves(board, aiColor);
+            if (allMoves.isEmpty()) {
+                return null; // No moves available (Checkmate or Stalemate)
+            }
+
+            MoveRecord bestMove = null;
+
+            switch (difficulty) {
+                case EASY:
+                    // Random legal move
+                    bestMove = allMoves.get(random.nextInt(allMoves.size()));
+                    break;
+
+                case MEDIUM:
+                    // Depth 2
+                    bestMove = findBestMoveMinimax(board, aiColor, 2);
+                    break;
+
+                case HARD:
+                    // Depth 3 with positional evaluation
+                    bestMove = findBestMoveMinimax(board, aiColor, 3);
+                    break;
+
+                case UNBEATABLE:
+                    // Depth 4 with Alpha-Beta Pruning
+                    bestMove = findBestMoveMinimaxAlphaBeta(board, aiColor, 4);
+                    break;
+            }
+
+            long duration = System.currentTimeMillis() - startTime;
+            ChessLog.d("getBestMove took " + duration + "ms. Selected move: " + bestMove);
+            return bestMove;
+        } finally {
+            board.inAiSimulation = false;
         }
-
-        List<MoveRecord> allMoves = generateAllLegalMoves(board, aiColor);
-        if (allMoves.isEmpty()) {
-            return null; // No moves available (Checkmate or Stalemate)
-        }
-
-        MoveRecord bestMove = null;
-
-        switch (difficulty) {
-            case EASY:
-                // Random legal move
-                bestMove = allMoves.get(random.nextInt(allMoves.size()));
-                break;
-
-            case MEDIUM:
-                // Depth 2
-                bestMove = findBestMoveMinimax(board, aiColor, 2);
-                break;
-
-            case HARD:
-                // Depth 3 with positional evaluation
-                bestMove = findBestMoveMinimax(board, aiColor, 3);
-                break;
-
-            case UNBEATABLE:
-                // Depth 4 with Alpha-Beta Pruning
-                bestMove = findBestMoveMinimaxAlphaBeta(board, aiColor, 4);
-                break;
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        Log.d(TAG, "getBestMove took " + duration + "ms. Selected move: " + bestMove);
-        return bestMove;
     }
 
     public long getThinkDelay(Difficulty difficulty) {
@@ -211,6 +218,24 @@ public class AIEngine {
         return isSafe;
     }
 
+    // --- Move Ordering (MVV-LVA) ---
+    // Sắp xếp nước ăn quân lên đầu: ưu tiên ăn quân giá trị cao bằng quân giá trị thấp.
+    // Giúp alpha-beta cắt tỉa sớm hơn → AI mạnh & nhanh hơn rõ ở HARD/UNBEATABLE.
+    // Dùng stable sort nên các nước cùng điểm vẫn giữ thứ tự shuffle (đa dạng nước đi).
+    // package-private cho unit test (AIEngineOrderingTest)
+    int mvvLvaScore(MoveRecord m) {
+        if (m.capturedPiece == null) {
+            return 0; // nước không ăn quân
+        }
+        // Victim value cao, attacker value thấp → điểm cao
+        return getPieceValue(m.capturedPiece) * 10 - getPieceValue(m.movedPiece);
+    }
+
+    // package-private cho unit test (AIEngineOrderingTest)
+    void orderMoves(List<MoveRecord> moves) {
+        moves.sort((a, b) -> Integer.compare(mvvLvaScore(b), mvvLvaScore(a)));
+    }
+
     // --- Minimax Logic ---
 
     // Simple Minimax for Medium/Hard
@@ -219,6 +244,7 @@ public class AIEngine {
         MoveRecord bestMove = null;
         List<MoveRecord> legalMoves = generateAllLegalMoves(board, aiColor);
         Collections.shuffle(legalMoves); // Add randomness primarily for equal-value moves
+        orderMoves(legalMoves);          // Captures first (stable: equal moves keep shuffle order)
 
         for (MoveRecord move : legalMoves) {
             // Apply move simulation
@@ -246,9 +272,9 @@ public class AIEngine {
         int beta = Integer.MAX_VALUE;
 
         List<MoveRecord> legalMoves = generateAllLegalMoves(board, aiColor);
-        // Simple move ordering: captures first could improve pruning efficiency
-        // For now, simpler implementation.
+        // Move ordering: captures first (MVV-LVA) → pruning hiệu quả hơn nhiều.
         Collections.shuffle(legalMoves);
+        orderMoves(legalMoves);
 
         for (MoveRecord move : legalMoves) {
             simulateMove(board, move);
@@ -323,6 +349,7 @@ public class AIEngine {
             }
             return 0;
         }
+        orderMoves(legalMoves); // ăn quân trước → cắt tỉa alpha-beta sớm
 
         if (isMaximizing) {
             int maxEval = Integer.MIN_VALUE;

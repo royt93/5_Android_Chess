@@ -67,5 +67,16 @@ public class Pawn extends Chessman {
                 moves.add(right);
             }
         }
+
+        // 5. En passant (bắt tốt qua đường) — chỉ trong ván thật, tắt khi AI search.
+        // Ô đích chéo trùng với enPassantTarget (ô con tốt đối phương vừa "nhảy qua").
+        if (!parent.inAiSimulation && parent.enPassantTarget != null) {
+            if (left.isValid() && left.equals(parent.enPassantTarget) && !moves.contains(left)) {
+                moves.add(left);
+            }
+            if (right.isValid() && right.equals(parent.enPassantTarget) && !moves.contains(right)) {
+                moves.add(right);
+            }
+        }
     }
 }

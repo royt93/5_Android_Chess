@@ -1,6 +1,9 @@
 package com.saigonphantomlabs.chess;
 
 public class Rook extends Chessman {
+    // Dùng cho nhập thành: xe chưa từng di chuyển
+    public boolean hasMoved = false;
+
     public Rook(Point p, PlayerColor color, int minDimension, Chess parent) {
         this.parent = parent;
         setPoint(p);
