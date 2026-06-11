@@ -27,7 +27,9 @@ public class MoveRecord {
     public boolean movedPieceWasUnmoved = false;
     // Trạng thái en passant TRƯỚC nước đi này (để undo phục hồi)
     public Point prevEnPassantTarget = null;
-    public Chessman prevEnPassantVictim = null;
+    // Luật hoà: đồng hồ 50-nước TRƯỚC nước này + khoá thế CỦA nước này (để undo phục hồi/đếm)
+    public int prevHalfMoveClock = 0;
+    public String resultingPositionKey = null;
 
     public MoveRecord(int fromX, int fromY, int toX, int toY,
             Chessman movedPiece, Chessman capturedPiece,

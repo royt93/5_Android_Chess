@@ -1,5 +1,6 @@
 package com.saigonphantomlabs.chess;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -39,7 +40,6 @@ public class EnPassantExecutionTest {
 
         // Đối phương vừa tạo cơ hội bắt qua đường: ô bỏ qua d6 = (3,2)
         board.enPassantTarget = new Point(3, 2);
-        board.enPassantVictim = blackVictim;
         board.whichPlayerTurn = Chessman.PlayerColor.White;
     }
 
@@ -60,5 +60,27 @@ public class EnPassantExecutionTest {
         assertSame("Tốt bị bắt phải được khôi phục về d5", blackVictim, board.chessmen[3][3]);
         assertNull(board.chessmen[3][2]);
         assertFalse(blackVictim.isDead);
+    }
+
+    /** Đẩy tốt 2 ô phải mở cơ hội en passant (đặt enPassantTarget = ô bị bỏ qua). */
+    @Test
+    public void doublePush_setsTarget() {
+        Pawn p = new Pawn(new Point(4, 6), Chessman.PlayerColor.White, 8, board); // e2
+        p.firstMove = true;
+        board.chessmen[4][6] = p;
+        board.enPassantTarget = null;
+
+        board.doMove(new Point(4, 6), new Point(4, 4)); // e2-e4
+
+        assertEquals("Phải đặt en passant target tại e3 (4,5)", new Point(4, 5), board.enPassantTarget);
+    }
+
+    /** Nước KHÔNG phải đẩy 2 ô phải đóng cơ hội en passant (xoá target). */
+    @Test
+    public void nonDoublePush_clearsTarget() {
+        // setUp đã đặt enPassantTarget=(3,2). Đẩy tốt Trắng e5→e6 (1 ô) phải xoá target.
+        board.doMove(new Point(4, 3), new Point(4, 2));
+
+        assertNull("Nước 1 ô phải đóng cơ hội en passant", board.enPassantTarget);
     }
 }

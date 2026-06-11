@@ -79,4 +79,26 @@ public class CastlingExecutionTest {
         assertFalse(whiteKing.hasMoved);
         assertFalse(rook.hasMoved);
     }
+
+    /**
+     * Lưới an toàn ở tầng thực thi: nếu vua nhập thành VÀO ô bị chiếu, move() phải từ chối
+     * → bàn cờ không đổi (vua & xe đứng yên). Bảo vệ kể cả khi nước được gọi trực tiếp.
+     */
+    @Test
+    public void castleIntoCheck_notExecuted() {
+        Rook rook = new Rook(new Point(7, 7), Chessman.PlayerColor.White, 8, board);
+        board.chessmen[7][7] = rook;
+        // Xe đen ở g8 (6,0) khống chế cột g → ô đích g1 (6,7) bị tấn công
+        board.chessmen[6][0] = new Rook(new Point(6, 0), Chessman.PlayerColor.Black, 8, board);
+
+        board.doMove(new Point(4, 7), new Point(6, 7)); // thử O-O vào ô bị chiếu
+
+        // move() từ chối → mọi thứ giữ nguyên
+        assertSame(whiteKing, board.chessmen[4][7]);
+        assertSame(rook, board.chessmen[7][7]);
+        assertNull(board.chessmen[6][7]);
+        assertNull(board.chessmen[5][7]);
+        assertFalse(whiteKing.hasMoved);
+        assertFalse(rook.hasMoved);
+    }
 }

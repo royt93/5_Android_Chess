@@ -66,6 +66,35 @@
 
 > 📌 **Lưu ý môi trường**: SDK platform `android-37` trong máy bị hỏng → build production cần sửa SDK hoặc hạ về 36. APK debug đã cài trên Pixel là bản build SDK 36 (chỉ để test). `build.gradle` trong repo giữ nguyên SDK 37.
 
+### Wave 6 — Animation di chuyển + ghost trail (`Chessman.java`)
+- [x] **Animation move**: trượt rõ/chậm hơn (flight 200→340ms, ease-in-out, giảm xoay) + **ghost trail** (`spawnMoveTrail`, 3 afterimage mờ dần) — user xác nhận "đẹp". Leak-safe: `newDrawable()` + `AnimatorListener` gỡ ghost cả khi cancel.
+- [x] **Memory audit**: LeakCanary active báo **0 leak**; đính chính `Drawable.Callback` là WeakReference (API14+) nên không leak qua static cache.
+
+> Phạm vi: nằm ở `Chessman.java`, đã commit ở wave trước (tách riêng khỏi đợt cleanup Wave 7 bên dưới).
+
+### Wave 7 — Cleanup + tách sâu god-class + leak-hardening promotion
+- [x] **Cleanup**: xoá 10 import thừa + field dư `enPassantVictim`/`prevEnPassantVictim` (quân bị bắt qua đường suy ra trực tiếp từ `chessmen[to.x][from.y]`) + method dead `performCheckHaptic`. Guard `ctx != null` cho mọi Toast (headless-safe).
+- [x] **Tách sâu god-class**: thêm `ChessAnimator` (selection pulse + check flash) → `Chess` **1244→1171 dòng**. Tổng 5 lớp helper tách ra: `ChessBoardView`, `ChessLog`, `ChessAudio`, `ChessHaptics`, `ChessAnimator`.
+- [x] **`animatePromotion` leak-safe**: chuyển `withEndAction` → `AnimatorListener` (gỡ tốt cũ cả khi cancel) + guard `isDestroyed`/`boardLayout==null`. Cờ `cancelled` phân biệt cancel-thường (snap quân mới vào ngay, model đã phong cấp nên view bắt buộc hiện) với kết thúc tự nhiên (Phase 2 entrance).
+- [x] **26 unit test pass** (thêm castle-into-check, double-push-sets-target, non-double-clears-target). Verify thiết bị: selection highlight + move + O-O + undo OK, không crash.
+
+### Wave 8 — Phủ test 3 tầng (unit + widget/Robolectric + Espresso)
+- [x] **Unit/integration JVM (+33 test)**: `MoveGenerationTest` (6 quân: mở/chặn/ăn/biên), `CheckmateStalemateTest` (chiếu/chiếu hết/hết cờ/an toàn qua `RecordingChessBoardView`), `MoveExecutionTest` (từ chối nước hở vua, chặn chiếu, bắt quân, firstMove), `UndoTest` (thường/bắt/đẩy-2-ô), `AIEnginePlayTest` (getBestMove ăn quân treo, getThinkDelay, trả null khi hết nước, không mutate bàn), `FullGameIntegrationTest` (ván K+R thu nhỏ → chiếu hết + undo).
+- [x] **Widget test (Robolectric, JVM — không cần device, +11 test)**: `BoardThemeManager` & `GameStatsManager` (persistence SharedPreferences), `MoveRecord.getNotation`, **promotion + undo promotion** (cần `createButton`/`addView` thật). Ghim `@Config(sdk=34)` vì compileSdk 37 vượt mức Robolectric hỗ trợ.
+- [x] **Espresso (instrumented, +4 test)**: `MainActivity` (menu hiển thị + điều hướng PvP với extra `IS_VS_AI=false`, chặn intent bằng `intending`), `ChessBoardActivity` (bàn cờ hiển thị, nút Undo/Play-Again ẩn đầu ván). **Phải nâng espresso 3.6.1→3.7.0** vì 3.6.1 lỗi `InputManager.getInstance` trên Android 16.
+- [x] **Kết quả**: 70 test JVM+Robolectric **PASS** + 4 Espresso **PASS trên Pixel 7 Pro (Android 16)** = **74/74 xanh**. `build.gradle` thêm `testImplementation` robolectric + androidx.test, `androidTestImplementation` espresso (không vào APK).
+
+> 📌 Phát hiện trong lúc test (không phải bug): nút "Play Again"/Undo là `GONE` lúc đang chơi (đúng thiết kế). `undoLastMove` trên history rỗng gọi `Toast` không guard `ctx` → chỉ NPE ở test seam (app thật luôn có ctx), không sửa.
+
+### Wave 9 — Mở rộng test + luật hoà + dọn polish
+- [x] **Test bổ sung (+11, không sửa engine)**: `PinDiscoveredCheckTest` (ghim quân không rời tuyến / vẫn đi dọc tuyến / mở chiếu phát hiện qua `isPointSafe`), AI **UNBEATABLE alpha-beta** ăn Hậu treo + không mutate bàn.
+- [x] **Luật hoà mới (engine + undo + 7 test)**: `DrawRulesTest` — **50-move** (`halfMoveClock`, reset khi ăn quân/đẩy tốt) + **threefold** (`positionKey()` khoá thế: bố cục + bên đi + en passant + quyền nhập thành, đếm trong HashMap). Wire vào `checkOpponentKingStatus` → hoà (ưu tiên sau chiếu hết/hết cờ). Undo phục hồi clock + giảm đếm thế chính xác. `resetGame` xoá sạch.
+- [x] **Polish**: thêm `ChessAppGlideModule` (@GlideModule) → **dứt warning** `GeneratedAppGlideModule` lúc khởi động (đã xác nhận `Wrote GeneratedAppGlideModule` + log warning biến mất trên device).
+- [x] **Tách god-class tiếp**: trích cụm 7 method an toàn vua (`validateKing` + `isKingMoveSafe`/`hasAnyLegalMove`/`isMoveLegal`/`canAnyPieceSaveKing`/`wouldMoveSaveKing`/`isEnPassantPseudoMove`) sang **`KingSafetyEvaluator`** → `Chess.java` **1171→1057 dòng**. Tổng 7 lớp helper: `ChessBoardView`, `ChessLog`, `ChessAudio`, `ChessHaptics`, `ChessAnimator`, `KingSafetyEvaluator` (+ GlideModule).
+- [x] **Kết quả**: **81 test JVM+Robolectric PASS** (+11) + **4 Espresso PASS trên Pixel 7 Pro (Android 16)** với APK build code mới = **85/85 xanh**. Verify thiết bị: move/undo/illegal-reject/no-leak (LeakCanary 0 retained).
+
+> 📌 **AppContexts ~11 / Native heap ~112MB**: điều tra cho thấy do **AppLovin SDK + WebView** (ad), KHÔNG phải engine cờ — LeakCanary xác nhận 0 leak nên chấp nhận; giảm thêm = gỡ/đổi ad SDK, ngoài phạm vi. Java heap (engine) chỉ ~25MB, khỏe.
+
 ---
 
 ## 📋 Picked — chờ triển khai (wave sau)

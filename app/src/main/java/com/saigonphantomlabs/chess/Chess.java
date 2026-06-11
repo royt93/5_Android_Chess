@@ -1,31 +1,16 @@
 package com.saigonphantomlabs.chess;
 
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Color;
-import android.media.AudioAttributes;
-import android.media.SoundPool;
-import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.saigonphantomlabs.ChessBoardActivity;
-
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -57,10 +42,15 @@ public class Chess {
     // --- Special-move state (chỉ áp dụng cho ván thật) ---
     // true khi AIEngine đang search → tắt castling & en passant để minimax không bị corrupt
     public boolean inAiSimulation = false;
-    // Ô con tốt vừa "nhảy qua" (đích của nước bắt tốt qua đường); null nếu không có
+    // Ô con tốt vừa "nhảy qua" (đích của nước bắt tốt qua đường); null nếu không có.
+    // Con tốt bị bắt được suy ra trực tiếp từ vị trí khi thực thi, nên không cần lưu riêng.
     public Point enPassantTarget = null;
-    // Con tốt vừa đi 2 ô (sẽ bị bắt qua đường nếu đối phương phản công ngay)
-    public Chessman enPassantVictim = null;
+
+    // --- Luật hoà (draw) ---
+    // Đồng hồ 50 nước: số nửa-nước kể từ lần cuối ĂN QUÂN hoặc ĐẨY TỐT; >=100 → hoà.
+    public int halfMoveClock = 0;
+    // Đếm số lần mỗi thế cờ xuất hiện (lặp thế 3 lần / threefold → hoà).
+    private final java.util.HashMap<String, Integer> positionCounts = new java.util.HashMap<>();
 
     // AI Mode
     public boolean isVsComputer = false;
@@ -73,19 +63,16 @@ public class Chess {
     public King whiteKing = null;
     public King blackKing = null;
 
-    // Selection highlight animation
-    private Chessman selectedPiece = null;
+    // Animation highlight (chọn quân) + flash (chiếu) tách sang ChessAnimator
+    private final ChessAnimator animator = new ChessAnimator();
+    // Đánh giá an toàn vua (check/mate/stalemate + hợp lệ nước) tách sang KingSafetyEvaluator
+    private final KingSafetyEvaluator kingSafety = new KingSafetyEvaluator(this);
 
     // Stats
     private GameStatsManager statsManager;
-    private ObjectAnimator selectionPulseAnimator = null;
 
     // Move history for undo and display
     private Stack<MoveRecord> moveHistory = new Stack<>();
-
-    // Check state tracking
-    private ObjectAnimator checkFlashAnimator = null;
-    private King kingInCheck = null;
 
     /**
      * Test seam — constructor rỗng chỉ dùng cho unit test rule logic (sinh nước đi).
@@ -211,7 +198,6 @@ public class Chess {
             performHapticFeedback(man.button, HapticFeedbackConstants.VIRTUAL_KEY);
 
             // Set new selection and start highlight animation AFTER reset
-            selectedPiece = man;
             startSelectionPulse(man);
 
             chessmen[lastManPoint.x][lastManPoint.y].generateMoves();
@@ -258,7 +244,6 @@ public class Chess {
                 (movedPiece instanceof King && !((King) movedPiece).hasMoved)
                 || (movedPiece instanceof Rook && !((Rook) movedPiece).hasMoved);
         Point prevEpTarget = enPassantTarget;
-        Chessman prevEpVictim = enPassantVictim;
 
         // Reset highlights BEFORE starting animations to prevent property overwrites cancelling the sequence
         resetValidMoveButtons();
@@ -269,7 +254,6 @@ public class Chess {
             MoveRecord record = new MoveRecord(from.x, from.y, to.x, to.y,
                     movedPiece, isEnPassantMove ? epVictim : capturedPiece, null, wasFirstMove);
             record.prevEnPassantTarget = prevEpTarget;
-            record.prevEnPassantVictim = prevEpVictim;
             record.movedPieceWasUnmoved = movedWasUnmoved;
 
             // En passant: hiển thị quân bị bắt + animation chết
@@ -307,10 +291,8 @@ public class Chess {
             // Cập nhật en passant target cho nước kế tiếp (tốt vừa đi 2 ô)
             if (movedPiece.type == Chessman.ChessmanType.Pawn && Math.abs(to.y - from.y) == 2) {
                 enPassantTarget = new Point(from.x, (from.y + to.y) / 2);
-                enPassantVictim = movedPiece;
             } else {
                 enPassantTarget = null;
-                enPassantVictim = null;
             }
 
             moveHistory.push(record);
@@ -330,6 +312,15 @@ public class Chess {
                     promote(chessmen[to.x][to.y]);
                 }
             }
+
+            // --- Luật hoà: cập nhật đồng hồ 50 nước + đếm lặp thế (tính SAU promotion) ---
+            record.prevHalfMoveClock = halfMoveClock;
+            boolean resetClock = (movedPiece.type == Chessman.ChessmanType.Pawn)
+                    || capturedPiece != null || isEnPassantMove;
+            halfMoveClock = resetClock ? 0 : halfMoveClock + 1;
+            String posKey = positionKey();
+            record.resultingPositionKey = posKey;
+            positionCounts.merge(posKey, 1, Integer::sum);
 
             // Check opponent's king status after move
             ChessLog.d("doMove: checking opponent king status...");
@@ -380,7 +371,7 @@ public class Chess {
         chessmen[xt][yt] = tempMan;
         // Play illegal move sound
         playIllegalMoveSound();
-        Toast.makeText(ctx, R.string.illegal_move, Toast.LENGTH_SHORT).show();
+        if (ctx != null) Toast.makeText(ctx, R.string.illegal_move, Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -391,11 +382,24 @@ public class Chess {
         King opponentKing = (whichPlayerTurn == Chessman.PlayerColor.White) ? blackKing : whiteKing;
         ChessLog.d("checkOpponentKingStatus: checking " + opponentKing.color + " king");
 
-        King.KingRiskType status = validateKing(opponentKing);
+        King.KingRiskType status = kingSafety.validate(opponentKing);
         ChessLog.d("checkOpponentKingStatus: status = " + status);
 
         // Clear any previous check animation
         clearCheckAnimation();
+
+        // Hoà theo luật (50 nước / lặp thế 3 lần) — chỉ khi KHÔNG phải chiếu hết/hết cờ.
+        if (status != King.KingRiskType.CheckMate && status != King.KingRiskType.Stalemate
+                && isDrawByRule()) {
+            ChessLog.d("checkOpponentKingStatus: DRAW (50-move / threefold)");
+            gameEnd = true;
+            boardView.showCustomGameEndDialog(false, true); // hoà (dùng chung dialog stalemate)
+            if (isVsComputer && statsManager != null) {
+                long duration = System.currentTimeMillis() - gameStartTime;
+                statsManager.saveGameResult(difficultyLevel, 0, duration);
+            }
+            return;
+        }
 
         if (status == King.KingRiskType.CheckMate) {
             ChessLog.d("CHECKMATE! " + whichPlayerTurn + " Wins! Game Over.");
@@ -426,48 +430,22 @@ public class Chess {
             }
         } else if (status == King.KingRiskType.Check) {
             ChessLog.d("checkOpponentKingStatus: CHECK detected!");
-            kingInCheck = opponentKing;
             playCheckSound();
-            showCheckAnimation(opponentKing);
+            showCheckAnimation(opponentKing); // ChessAnimator tự lưu kingInCheck để reset sau
             if (ctx != null) Toast.makeText(ctx, R.string.check, Toast.LENGTH_SHORT).show();
         } else {
             ChessLog.d("checkOpponentKingStatus: SAFE - game continues");
         }
     }
 
-    /**
-     * Show flashing animation on king when in check
-     */
+    /** Flash khi vua bị chiếu — delegate sang ChessAnimator. */
     private void showCheckAnimation(King king) {
-        if (king == null || king.button == null)
-            return;
-
-        // Apply Red Glow Aura
-        king.button.setBackground(ctx.getResources().getDrawable(R.drawable.bg_piece_in_check, ctx.getTheme()));
-
-        // Alpha flash on king button — NO scale (button is in boardLayout, clip-sensitive)
-        PropertyValuesHolder pvhAlpha = PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0.15f, 1f);
-        checkFlashAnimator = ObjectAnimator.ofPropertyValuesHolder(king.button, pvhAlpha);
-        checkFlashAnimator.setDuration(400);
-        checkFlashAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        checkFlashAnimator.start();
-
-        performCheckHaptic();
+        animator.showCheck(ctx, king);
     }
 
-    /**
-     * Clear check animation
-     */
+    /** Xoá flash chiếu — delegate sang ChessAnimator. */
     private void clearCheckAnimation() {
-        if (checkFlashAnimator != null) {
-            checkFlashAnimator.cancel();
-            checkFlashAnimator = null;
-        }
-        if (kingInCheck != null && kingInCheck.button != null) {
-            kingInCheck.button.setAlpha(1f);
-            kingInCheck.button.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-        }
-        kingInCheck = null;
+        animator.clearCheck();
     }
 
     /**
@@ -477,214 +455,43 @@ public class Chess {
     private void playIllegalMoveSound() { if (audio != null) audio.playIllegal(); }
     public  void playMoveSound(boolean isWhite) { if (audio != null) audio.playMove(isWhite); }
 
-    private King.KingRiskType validateKing(King k) {
-        ChessLog.d(
-                "validateKing: checking " + k.color + " king at (" + k.getPoint().x + "," + k.getPoint().y + ")");
-        k.generateMoves();
-        ChessLog.d("validateKing: king has " + k.moves.size() + " potential moves");
-
-        boolean inCheck = !k.isPointSafe();
-        ChessLog.d("validateKing: inCheck = " + inCheck);
-
-        // Check if king can move to any safe square (with simulation)
-        boolean kingCanMove = false;
-        for (Point p : k.moves) {
-            boolean moveSafe = isKingMoveSafe(k, p);
-            ChessLog.d("validateKing: king move to (" + p.x + "," + p.y + ") safe = " + moveSafe);
-            if (moveSafe) {
-                kingCanMove = true;
-                break;
-            }
-        }
-        ChessLog.d("validateKing: kingCanMove = " + kingCanMove);
-
-        // Check if any other piece has legal moves
-        boolean otherPiecesCanMove = hasAnyLegalMove(k.color);
-        ChessLog.d("validateKing: otherPiecesCanMove = " + otherPiecesCanMove);
-
-        if (inCheck) {
-            // King is in check
-            ChessLog.d("validateKing: King IS in check");
-            if (kingCanMove) {
-                ChessLog.d("validateKing: returning CHECK (king can escape)");
-                return King.KingRiskType.Check; // King can escape
-            }
-            boolean canSave = canAnyPieceSaveKing(k);
-            ChessLog.d("validateKing: canAnyPieceSaveKing = " + canSave);
-            if (canSave) {
-                ChessLog.d("validateKing: returning CHECK (piece can save)");
-                return King.KingRiskType.Check; // Another piece can save
-            }
-            ChessLog.d("validateKing: returning CHECKMATE");
-            return King.KingRiskType.CheckMate;
-        } else {
-            // King is NOT in check
-            ChessLog.d("validateKing: King is NOT in check");
-            if (!kingCanMove && !otherPiecesCanMove) {
-                ChessLog.d("validateKing: returning STALEMATE");
-                return King.KingRiskType.Stalemate;
-            }
-            ChessLog.d("validateKing: returning SAFE");
-            return King.KingRiskType.Safe;
-        }
+    /** True nếu ván hoà theo luật: 50 nước không ăn quân/đẩy tốt, HOẶC lặp thế 3 lần. */
+    private boolean isDrawByRule() {
+        if (halfMoveClock >= 100) return true;             // luật 50 nước (100 nửa-nước)
+        Integer c = positionCounts.get(positionKey());
+        return c != null && c >= 3;                        // lặp thế (threefold)
     }
 
     /**
-     * Check if King moving to target point would be safe (simulates the move)
+     * Khoá thế cờ để phát hiện lặp thế: bố cục 64 ô + bên đi + ô en passant + quyền nhập
+     * thành (qua hasMoved của 2 vua). Hai thế "giống nhau" ⇔ cùng khoá.
      */
-    private boolean isKingMoveSafe(King k, Point target) {
-        Point originalPos = k.getPoint();
-        Chessman capturedPiece = chessmen[target.x][target.y];
-
-        // Simulate King's move
-        chessmen[target.x][target.y] = k;
-        chessmen[originalPos.x][originalPos.y] = null;
-        k.setPoint(target);
-
-        // Check if King is safe at new position
-        boolean isSafe = k.isPointSafe();
-        ChessLog.d(
-                "isKingMoveSafe: " + k.color + " King moving to (" + target.x + "," + target.y + ") safe=" + isSafe);
-
-        // Undo simulation
-        chessmen[originalPos.x][originalPos.y] = k;
-        chessmen[target.x][target.y] = capturedPiece;
-        k.setPoint(originalPos);
-
-        return isSafe;
-    }
-
-    /**
-     * Check if any piece of the given color has any legal moves
-     */
-    private boolean hasAnyLegalMove(Chessman.PlayerColor color) {
-        King k = (color == Chessman.PlayerColor.White) ? whiteKing : blackKing;
-        ChessLog.d("hasAnyLegalMove: checking for " + color);
-
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                Chessman piece = chessmen[x][y];
-                if (piece != null && !piece.isDead && piece.color == color
-                        && piece.type != Chessman.ChessmanType.King) {
-                    piece.generateMoves();
-                    // ChessLog.d("hasAnyLegalMove: piece " + piece.type + " at (" + x + "," +
-                    // y + ") has " + piece.moves.size() + " moves");
-
-                    // Check if any move is legal (doesn't put own king in check)
-                    for (Point target : piece.moves) {
-                        if (isMoveLegal(piece, target, k)) {
-                            ChessLog.d("hasAnyLegalMove: FOUND legal move! Piece " + piece.type + " at (" + x + ","
-                                    + y + ") to (" + target.x + "," + target.y + ")");
-                            return true;
-                        }
-                    }
+    private String positionKey() {
+        StringBuilder sb = new StringBuilder(72);
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                Chessman m = chessmen[x][y];
+                if (m == null || m.isDead) { sb.append('.'); continue; }
+                char c;
+                switch (m.type) {
+                    case King:   c = 'k'; break;
+                    case Queen:  c = 'q'; break;
+                    case Rook:   c = 'r'; break;
+                    case Bishop: c = 'b'; break;
+                    case Knight: c = 'n'; break;
+                    default:     c = 'p';
                 }
+                sb.append(m.color == Chessman.PlayerColor.White ? Character.toUpperCase(c) : c);
             }
         }
-        ChessLog.d("hasAnyLegalMove: NO legal moves found for any piece!");
-        return false;
+        sb.append(whichPlayerTurn == Chessman.PlayerColor.White ? 'w' : 'b');
+        sb.append(enPassantTarget == null ? "-" : ("" + enPassantTarget.x + enPassantTarget.y));
+        sb.append(whiteKing != null && !whiteKing.hasMoved ? 'K' : '-');
+        sb.append(blackKing != null && !blackKing.hasMoved ? 'k' : '-');
+        return sb.toString();
     }
 
-    /**
-     * Check if a move is legal (doesn't put own king in check)
-     */
-    private boolean isMoveLegal(Chessman piece, Point target, King k) {
-        Point originalPos = piece.getPoint();
-        Chessman capturedPiece = chessmen[target.x][target.y];
-
-        // En passant: con tốt bị bắt nằm ở (target.x, originalPos.y), phải gỡ khi mô phỏng
-        boolean ep = isEnPassantPseudoMove(piece, originalPos, target, capturedPiece);
-        Chessman epVic = null;
-        if (ep) {
-            epVic = chessmen[target.x][originalPos.y];
-            chessmen[target.x][originalPos.y] = null;
-        }
-
-        // Simulate the move
-        chessmen[target.x][target.y] = piece;
-        chessmen[originalPos.x][originalPos.y] = null;
-        piece.setPoint(target);
-
-        // Check if our king is in check after this move
-        boolean kingInCheck = !k.isPointSafe();
-
-        // Undo the simulation
-        chessmen[originalPos.x][originalPos.y] = piece;
-        chessmen[target.x][target.y] = capturedPiece;
-        piece.setPoint(originalPos);
-        if (ep) chessmen[target.x][originalPos.y] = epVic;
-
-        return !kingInCheck;
-    }
-
-    /**
-     * True nếu (piece, target) là một nước bắt tốt qua đường (en passant) trên board thật:
-     * tốt đi chéo sang ô trống trùng enPassantTarget.
-     */
-    private boolean isEnPassantPseudoMove(Chessman piece, Point from, Point target, Chessman capturedAtTarget) {
-        return (piece instanceof Pawn) && target.x != from.x && capturedAtTarget == null
-                && enPassantTarget != null && target.equals(enPassantTarget);
-    }
-
-    /**
-     * Check if any piece of the same color can make a move that removes the check
-     */
-    private boolean canAnyPieceSaveKing(King k) {
-        Chessman.PlayerColor kingColor = k.color;
-        ChessLog.d("canAnyPieceSaveKing: checking for " + kingColor);
-
-        // Try all pieces of the same color
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                Chessman piece = chessmen[x][y];
-                if (piece != null && !piece.isDead && piece.color == kingColor
-                        && piece.type != Chessman.ChessmanType.King) {
-                    // Generate moves for this piece
-                    piece.generateMoves();
-
-                    // Try each move and see if it removes the check
-                    for (Point targetMove : piece.moves) {
-                        if (wouldMoveSaveKing(piece, targetMove, k)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Simulate a move and check if it would save the king from check
-     */
-    private boolean wouldMoveSaveKing(Chessman piece, Point target, King k) {
-        Point originalPos = piece.getPoint();
-        Chessman capturedPiece = chessmen[target.x][target.y];
-
-        // En passant: gỡ con tốt bị bắt qua đường khi mô phỏng (vd bắt qua đường để giải chiếu)
-        boolean ep = isEnPassantPseudoMove(piece, originalPos, target, capturedPiece);
-        Chessman epVic = null;
-        if (ep) {
-            epVic = chessmen[target.x][originalPos.y];
-            chessmen[target.x][originalPos.y] = null;
-        }
-
-        // Simulate the move
-        chessmen[target.x][target.y] = piece;
-        chessmen[originalPos.x][originalPos.y] = null;
-        piece.setPoint(target);
-
-        // Check if king is still in check
-        boolean stillInCheck = !k.isPointSafe();
-
-        // Undo the simulation
-        chessmen[originalPos.x][originalPos.y] = piece;
-        chessmen[target.x][target.y] = capturedPiece;
-        piece.setPoint(originalPos);
-        if (ep) chessmen[target.x][originalPos.y] = epVic;
-
-        return !stillInCheck;
-    }
+    // [Refactor] validateKing + 6 helper mô phỏng an toàn vua đã chuyển sang KingSafetyEvaluator.
 
     public void kill(Chessman m) {
         deadMen.add(m);
@@ -815,6 +622,12 @@ public class Chess {
         playPromotionSound();
 
         // Phase 1: Pawn transformation animation (disappear with magical effect)
+        // LEAK-SAFE: dùng listener (onAnimationEnd chạy cả khi HOÀN TẤT lẫn CANCEL) thay
+        // withEndAction → tốt cũ luôn được gỡ; guard isDestroyed để không thêm view trên
+        // Activity đã huỷ. Cờ cancelled phân biệt: cancel-thường → snap quân mới vào ngay
+        // (model đã phong cấp nên view BẮT BUỘC hiện, không được để quân biến mất); kết thúc
+        // tự nhiên → chạy Phase 2 entrance animation.
+        final boolean[] cancelled = {false};
         oldPawn.button.animate()
                 .scaleX(0.2f)
                 .scaleY(0.2f)
@@ -822,32 +635,49 @@ public class Chess {
                 .alpha(0.3f)
                 .setDuration(400)
                 .setInterpolator(new AccelerateInterpolator())
-                .withEndAction(() -> {
-                    // Remove old pawn
-                    ((ViewGroup) oldPawn.button.getParent()).removeView(oldPawn.button);
+                .setListener(new android.animation.AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationCancel(android.animation.Animator a) {
+                        cancelled[0] = true;
+                    }
 
-                    // Phase 2: New piece appears with dramatic entrance
-                    newPiece.button.setScaleX(0.1f);
-                    newPiece.button.setScaleY(0.1f);
-                    newPiece.button.setAlpha(0f);
-                    newPiece.button.setRotation(-180f);
+                    @Override
+                    public void onAnimationEnd(android.animation.Animator a) {
+                        // Remove old pawn (guard parent null)
+                        if (oldPawn.button.getParent() != null) {
+                            ((ViewGroup) oldPawn.button.getParent()).removeView(oldPawn.button);
+                        }
+                        if (isDestroyed || boardLayout == null) return; // không thêm view nếu đã huỷ
 
-                    // Add new piece to board
-                    boardLayout.addView(newPiece.button);
+                        // Add new piece to board (guard chống thêm trùng nếu listener gọi 2 lần)
+                        if (newPiece.button.getParent() == null) {
+                            boardLayout.addView(newPiece.button);
+                        }
+                        playTransformationSound();
 
-                    // Play transformation completion sound
-                    playTransformationSound();
+                        if (cancelled[0]) {
+                            // Cancel-thường: bỏ qua entrance, snap thẳng về trạng thái hiển thị cuối
+                            newPiece.resetButtonState();
+                            return;
+                        }
 
-                    // Dramatic entrance: grow from tiny to 1.0, never exceeds 1.0
-                    newPiece.button.animate()
-                            .scaleX(1.0f)
-                            .scaleY(1.0f)
-                            .rotation(0f)
-                            .alpha(1.0f)
-                            .setDuration(500)
-                            .setInterpolator(new OvershootInterpolator(1.5f))
-                            .withEndAction(() -> newPiece.resetButtonState())
-                            .start();
+                        // Phase 2: New piece appears with dramatic entrance
+                        newPiece.button.setScaleX(0.1f);
+                        newPiece.button.setScaleY(0.1f);
+                        newPiece.button.setAlpha(0f);
+                        newPiece.button.setRotation(-180f);
+
+                        // Dramatic entrance: grow from tiny to 1.0, never exceeds 1.0
+                        newPiece.button.animate()
+                                .scaleX(1.0f)
+                                .scaleY(1.0f)
+                                .rotation(0f)
+                                .alpha(1.0f)
+                                .setDuration(500)
+                                .setInterpolator(new OvershootInterpolator(1.5f))
+                                .withEndAction(() -> newPiece.resetButtonState())
+                                .start();
+                    }
                 })
                 .start();
     }
@@ -921,39 +751,15 @@ public class Chess {
         validMoveButtons.clear();
     }
 
-    /**
-     * Start a pulsing animation on the selected piece
-     */
+    /** Pulse quân được chọn — delegate sang ChessAnimator. */
     private void startSelectionPulse(Chessman man) {
-        if (man == null || man.button == null)
-            return;
-
-        man.button.setBackground(ctx.getResources().getDrawable(R.drawable.bg_piece_selected, ctx.getTheme()));
-
-        // Alpha pulse — NO scale (piece button in boardLayout, must not overflow)
-        PropertyValuesHolder alphaPhv = PropertyValuesHolder.ofFloat(View.ALPHA, 1.0f, 0.45f, 1.0f);
-        selectionPulseAnimator = ObjectAnimator.ofPropertyValuesHolder(man.button, alphaPhv);
-        selectionPulseAnimator.setDuration(500);
-        selectionPulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        selectionPulseAnimator.start();
+        animator.startSelection(ctx, man);
     }
 
-    /**
-     * Clear selection highlight from previously selected piece
-     */
+    /** Xoá highlight quân được chọn — delegate sang ChessAnimator. */
     private void clearSelectionHighlight() {
         ChessLog.d("clearSelectionHighlight() Triggered");
-        if (selectionPulseAnimator != null) {
-            selectionPulseAnimator.cancel();
-            selectionPulseAnimator = null;
-        }
-        if (selectedPiece != null && selectedPiece.button != null) {
-            // Reset to normal state
-            selectedPiece.button.setScaleX(1.0f);
-            selectedPiece.button.setScaleY(1.0f);
-            selectedPiece.button.setBackground(null);
-        }
-        selectedPiece = null;
+        animator.clearSelection();
     }
 
     /**
@@ -966,10 +772,6 @@ public class Chess {
 
     public void performCaptureHaptic() {
         ChessHaptics.capture(ctx);
-    }
-
-    public void performCheckHaptic() {
-        ChessHaptics.check(ctx);
     }
 
     /**
@@ -1107,7 +909,16 @@ public class Chess {
 
         // Khôi phục trạng thái en passant TRƯỚC nước đi này
         enPassantTarget = lastMove.prevEnPassantTarget;
-        enPassantVictim = lastMove.prevEnPassantVictim;
+
+        // Khôi phục luật hoà: trả đồng hồ 50 nước + gỡ 1 lần đếm thế của nước này
+        halfMoveClock = lastMove.prevHalfMoveClock;
+        if (lastMove.resultingPositionKey != null) {
+            Integer c = positionCounts.get(lastMove.resultingPositionKey);
+            if (c != null) {
+                if (c <= 1) positionCounts.remove(lastMove.resultingPositionKey);
+                else positionCounts.put(lastMove.resultingPositionKey, c - 1);
+            }
+        }
 
         // Restore captured piece if any
         if (lastMove.capturedPiece != null) {
@@ -1171,7 +982,9 @@ public class Chess {
         gameStartTime = System.currentTimeMillis();
         // Reset trạng thái en passant (vua/xe mới tạo lại nên hasMoved=false sẵn)
         enPassantTarget = null;
-        enPassantVictim = null;
+        // Reset luật hoà
+        halfMoveClock = 0;
+        positionCounts.clear();
 
         // Clear animations
         clearSelectionHighlight();

@@ -25,6 +25,8 @@ android {
     // Unit test JVM: cho các API android bị stub (vd Log.d) trả default thay vì ném exception
     testOptions {
         unitTests.returnDefaultValues = true
+        // Robolectric cần truy cập tài nguyên Android (SharedPreferences, resources) trong JVM test
+        unitTests.includeAndroidResources = true
     }
     buildFeatures {
         buildConfig = true
@@ -163,4 +165,17 @@ dependencies {
 
     // Unit tests (JVM) — kiểm thử rule logic engine cờ
     testImplementation 'junit:junit:4.13.2'
+    // Robolectric — widget/UI test chạy thuần JVM (không cần device): SharedPreferences,
+    // resources, Activity shadow. Chỉ ở testImplementation nên KHÔNG vào APK.
+    testImplementation 'org.robolectric:robolectric:4.14.1'
+    testImplementation 'androidx.test:core:1.6.1'
+    testImplementation 'androidx.test.ext:junit:1.2.1'
+
+    // Instrumented tests (Espresso) — UI end-to-end trên emulator/thiết bị (androidTest).
+    // KHÔNG vào APK release; cần device/emulator để chạy connectedAndroidTest.
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test:rules:1.6.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.7.0'
 }
