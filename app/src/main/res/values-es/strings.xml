@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 Moves</string>
     <string name="stats_captured_white_label">♙ Blancas</string>
     <string name="stats_captured_black_label">♟ Negras</string>
+    <!-- VIP -->
+    <string name="vip_title">Membresía VIP</string>
+    <string name="vip_active">VIP activo</string>
+    <string name="vip_free_user">Usuario gratuito</string>
+    <string name="vip_until">Hasta %1$s</string>
+    <string name="vip_activated_at">Activado: %1$s</string>
+    <string name="vip_expires_at">Caduca: %1$s</string>
+    <string name="vip_remaining">%1$dd %2$02dh %3$02dm %4$02ds</string>
+    <string name="vip_redeem_label">Introduce el código VIP</string>
+    <string name="vip_redeem_hint">p. ej. XXXX_30</string>
+    <string name="vip_redeem_button">Activar</string>
+    <string name="vip_watch_ad_3d">Ver anuncio → 3 días VIP</string>
+    <string name="vip_buy_30d_locked">Comprar VIP 30 días — próximamente</string>
+    <string name="vip_buy_90d_locked">Comprar VIP 90 días — próximamente</string>
+    <string name="vip_buy_1y_locked">Comprar VIP 1 año — próximamente</string>
+    <string name="vip_buy_lifetime_locked">Comprar VIP de por vida — próximamente</string>
+    <string name="vip_restore_locked">Restaurar compra — próximamente</string>
+    <string name="vip_revoke_all_button">Revocar VIP</string>
+    <string name="vip_revoke_confirm_title">Confirmar revocación</string>
+    <string name="vip_revoke_confirm_message">¿Seguro que quieres revocar el VIP y volver a la cuenta gratuita?</string>
+    <string name="vip_entry_first_install">🎁 Regalo de nueva instalación</string>
+    <string name="vip_entry_redeemed">VIP %1$d días</string>
+    <string name="vip_active_card_title">VIP activo</string>
+    <string name="vip_key_invalid">Código VIP no válido</string>
+    <string name="vip_activated_toast">VIP activado por %1$d días</string>
+    <string name="vip_reward_failed">Anuncio no disponible, inténtalo de nuevo más tarde</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">Quedan %1$d días</string>
+    <string name="vip_already_longer">Ya tienes un periodo VIP más largo</string>
+    <string name="privacy_options">Opciones de privacidad</string>
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="confirm">Confirmar</string>
 </resources>

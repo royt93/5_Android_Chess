@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 手数</string>
     <string name="stats_captured_white_label">♙ 白の捕獲</string>
     <string name="stats_captured_black_label">♟ 黒の捕獲</string>
+    <!-- VIP -->
+    <string name="vip_title">VIPメンバーシップ</string>
+    <string name="vip_active">VIP有効</string>
+    <string name="vip_free_user">無料ユーザー</string>
+    <string name="vip_until">%1$s まで</string>
+    <string name="vip_activated_at">有効化: %1$s</string>
+    <string name="vip_expires_at">期限: %1$s</string>
+    <string name="vip_remaining">%1$d日 %2$02d時間 %3$02d分 %4$02d秒</string>
+    <string name="vip_redeem_label">VIPコードを入力</string>
+    <string name="vip_redeem_hint">例: XXXX_30</string>
+    <string name="vip_redeem_button">有効化</string>
+    <string name="vip_watch_ad_3d">広告を見る → VIP3日間</string>
+    <string name="vip_buy_30d_locked">VIP30日を購入 — 近日公開</string>
+    <string name="vip_buy_90d_locked">VIP90日を購入 — 近日公開</string>
+    <string name="vip_buy_1y_locked">VIP1年を購入 — 近日公開</string>
+    <string name="vip_buy_lifetime_locked">VIP永久版を購入 — 近日公開</string>
+    <string name="vip_restore_locked">購入を復元 — 近日公開</string>
+    <string name="vip_revoke_all_button">VIPを取り消す</string>
+    <string name="vip_revoke_confirm_title">取り消しの確認</string>
+    <string name="vip_revoke_confirm_message">VIPを取り消して無料アカウントに戻しますか？</string>
+    <string name="vip_entry_first_install">🎁 新規インストール特典</string>
+    <string name="vip_entry_redeemed">VIP %1$d日間</string>
+    <string name="vip_active_card_title">有効なVIP</string>
+    <string name="vip_key_invalid">VIPコードが無効です</string>
+    <string name="vip_activated_toast">VIPを%1$d日間有効化しました</string>
+    <string name="vip_reward_failed">広告を利用できません。後でもう一度お試しください</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">残り%1$d日</string>
+    <string name="vip_already_longer">すでにより長いVIP期間があります</string>
+    <string name="privacy_options">プライバシー設定</string>
+    <string name="privacy_policy">プライバシーポリシー</string>
+    <string name="confirm">確認</string>
 </resources>

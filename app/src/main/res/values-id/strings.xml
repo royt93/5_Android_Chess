@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 Langkah</string>
     <string name="stats_captured_white_label">♙ Putih</string>
     <string name="stats_captured_black_label">♟ Hitam</string>
+    <!-- VIP -->
+    <string name="vip_title">Keanggotaan VIP</string>
+    <string name="vip_active">VIP aktif</string>
+    <string name="vip_free_user">Pengguna gratis</string>
+    <string name="vip_until">Hingga %1$s</string>
+    <string name="vip_activated_at">Diaktifkan: %1$s</string>
+    <string name="vip_expires_at">Berakhir: %1$s</string>
+    <string name="vip_remaining">%1$d hr %2$02d j %3$02d mnt %4$02d dtk</string>
+    <string name="vip_redeem_label">Masukkan kode VIP</string>
+    <string name="vip_redeem_hint">mis. XXXX_30</string>
+    <string name="vip_redeem_button">Aktifkan</string>
+    <string name="vip_watch_ad_3d">Tonton iklan → VIP 3 hari</string>
+    <string name="vip_buy_30d_locked">Beli VIP 30 hari — segera hadir</string>
+    <string name="vip_buy_90d_locked">Beli VIP 90 hari — segera hadir</string>
+    <string name="vip_buy_1y_locked">Beli VIP 1 tahun — segera hadir</string>
+    <string name="vip_buy_lifetime_locked">Beli VIP seumur hidup — segera hadir</string>
+    <string name="vip_restore_locked">Pulihkan pembelian — segera hadir</string>
+    <string name="vip_revoke_all_button">Cabut VIP</string>
+    <string name="vip_revoke_confirm_title">Konfirmasi pencabutan</string>
+    <string name="vip_revoke_confirm_message">Yakin ingin mencabut VIP dan kembali ke akun gratis?</string>
+    <string name="vip_entry_first_install">🎁 Hadiah pemasangan baru</string>
+    <string name="vip_entry_redeemed">VIP %1$d hari</string>
+    <string name="vip_active_card_title">VIP aktif</string>
+    <string name="vip_key_invalid">Kode VIP tidak valid</string>
+    <string name="vip_activated_toast">VIP diaktifkan selama %1$d hari</string>
+    <string name="vip_reward_failed">Iklan tidak tersedia, coba lagi nanti</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">Sisa %1$d hari</string>
+    <string name="vip_already_longer">Anda sudah memiliki masa VIP yang lebih lama</string>
+    <string name="privacy_options">Opsi privasi</string>
+    <string name="privacy_policy">Kebijakan Privasi</string>
+    <string name="confirm">Konfirmasi</string>
 </resources>

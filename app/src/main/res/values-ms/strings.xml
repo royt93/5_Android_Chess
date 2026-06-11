@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 Langkah</string>
     <string name="stats_captured_white_label">♙ Putih</string>
     <string name="stats_captured_black_label">♟ Hitam</string>
+    <!-- VIP -->
+    <string name="vip_title">Keahlian VIP</string>
+    <string name="vip_active">VIP aktif</string>
+    <string name="vip_free_user">Pengguna percuma</string>
+    <string name="vip_until">Sehingga %1$s</string>
+    <string name="vip_activated_at">Diaktifkan: %1$s</string>
+    <string name="vip_expires_at">Tamat: %1$s</string>
+    <string name="vip_remaining">%1$d hr %2$02d j %3$02d min %4$02d saat</string>
+    <string name="vip_redeem_label">Masukkan kod VIP</string>
+    <string name="vip_redeem_hint">cth. XXXX_30</string>
+    <string name="vip_redeem_button">Aktifkan</string>
+    <string name="vip_watch_ad_3d">Tonton iklan → VIP 3 hari</string>
+    <string name="vip_buy_30d_locked">Beli VIP 30 hari — akan datang</string>
+    <string name="vip_buy_90d_locked">Beli VIP 90 hari — akan datang</string>
+    <string name="vip_buy_1y_locked">Beli VIP 1 tahun — akan datang</string>
+    <string name="vip_buy_lifetime_locked">Beli VIP seumur hidup — akan datang</string>
+    <string name="vip_restore_locked">Pulihkan pembelian — akan datang</string>
+    <string name="vip_revoke_all_button">Batalkan VIP</string>
+    <string name="vip_revoke_confirm_title">Sahkan pembatalan</string>
+    <string name="vip_revoke_confirm_message">Adakah anda pasti mahu membatalkan VIP dan kembali ke akaun percuma?</string>
+    <string name="vip_entry_first_install">🎁 Hadiah pemasangan baharu</string>
+    <string name="vip_entry_redeemed">VIP %1$d hari</string>
+    <string name="vip_active_card_title">VIP aktif</string>
+    <string name="vip_key_invalid">Kod VIP tidak sah</string>
+    <string name="vip_activated_toast">VIP diaktifkan selama %1$d hari</string>
+    <string name="vip_reward_failed">Iklan tidak tersedia, sila cuba lagi nanti</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">Tinggal %1$d hari</string>
+    <string name="vip_already_longer">Anda sudah mempunyai tempoh VIP yang lebih lama</string>
+    <string name="privacy_options">Pilihan privasi</string>
+    <string name="privacy_policy">Dasar Privasi</string>
+    <string name="confirm">Sahkan</string>
 </resources>

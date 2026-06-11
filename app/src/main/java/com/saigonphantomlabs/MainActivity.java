@@ -19,8 +19,11 @@ import com.saigonphantomlabs.BaseActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.google.android.material.chip.Chip;
 import com.saigonphantomlabs.chess.BuildConfig;
 import com.saigonphantomlabs.chess.R;
+import com.saigonphantomlabs.feature.vip.VipActivity;
+import com.roy.sdkadbmob.AdManager;
 import com.roy.sdkadbmob.UIUtils;
 
 @SuppressLint("CustomSplashScreen")
@@ -36,6 +39,8 @@ public class MainActivity extends BaseActivity {
     private TextView tvVersion;
     private LinearLayout btnLanguage;
     private TextView tvCurrentLanguage;
+    private LinearLayout btnVip;
+    private Chip chipVipBadge;
 
     // Infinite animators — all cancelled in onDestroy
     private AnimatorSet heartbeatAnim;
@@ -118,6 +123,26 @@ public class MainActivity extends BaseActivity {
                 new com.saigonphantomlabs.language.LanguageBottomSheet().show(getSupportFragmentManager(), "LanguageBottomSheet");
             }
         });
+
+        btnVip = findViewById(R.id.btnVip);
+        chipVipBadge = findViewById(R.id.chipVipBadge);
+        btnVip.setOnClickListener(new SafeClickListener() {
+            @Override public void onSafeClick(View view) {
+                startActivity(new Intent(MainActivity.this, VipActivity.class));
+            }
+        });
+    }
+
+    private void bindVipBadge() {
+        if (chipVipBadge != null) {
+            chipVipBadge.setVisibility(AdManager.INSTANCE.isVipByKeyActive() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindVipBadge();   // refresh khi back từ VipActivity
     }
 
     private void animateEntryViews() {

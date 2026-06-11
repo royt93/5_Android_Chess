@@ -19,6 +19,7 @@ import com.roy.sdkadbmob.UIUtils;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends BaseActivity {
@@ -73,6 +74,20 @@ public class SplashActivity extends BaseActivity {
         startCornerGlowPulse(cornerTL, cornerBR);
         startProgressPulse(progressBar);
 
+        // UMP consent (GDPR/EEA) PHẢI resolved trước khi load App Open/Banner/Interstitial.
+        // Lib tự lo personalized vs non-personalized theo IAB TCF; Non-EEA → skip dialog.
+        // Sau khi consent xong (accept hoặc deny) mới chạy splash warmup → navigate.
+        AdManager.INSTANCE.requestConsentInfoUpdate(this, false, new Function1<Boolean, Unit>() {
+            @Override
+            public Unit invoke(Boolean canRequestAds) {
+                runSplashAfterConsent();
+                return Unit.INSTANCE;
+            }
+        });
+    }
+
+    private void runSplashAfterConsent() {
+        if (isFinishing() || isNavigating) return;
         AdManager.INSTANCE.initSplashScreen(this, new Function0<Unit>() {
             @Override
             public Unit invoke() {

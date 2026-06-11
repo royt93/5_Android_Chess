@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/game_bg_deep"
+    tools:context="com.saigonphantomlabs.feature.vip.VipActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Top app bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cancel"
+                android:src="@drawable/ic_arrow_back" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="@string/vip_title"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/contentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- [1] Status header / Hero card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardStatusHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:id="@+id/headerBg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_vip_status_header_free"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="24dp">
+
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:id="@+id/shimmerCrown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/ivCrown"
+                                android:layout_width="56dp"
+                                android:layout_height="56dp"
+                                android:contentDescription="@string/vip_title"
+                                android:src="@drawable/ic_workspace_premium"
+                                app:tint="@color/white" />
+                        </com.facebook.shimmer.ShimmerFrameLayout>
+
+                        <TextView
+                            android:id="@+id/tvStatusTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:textColor="@color/white"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            tools:text="VIP Active" />
+
+                        <TextView
+                            android:id="@+id/tvStatusSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="#E6FFFFFF"
+                            android:textSize="14sp"
+                            tools:text="Until 01/07/2026" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- [2] Activation date row -->
+                <TextView
+                    android:id="@+id/tvActivatedAt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/vip_text_secondary"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    tools:text="Activated: 01/06/2026 10:00"
+                    tools:visibility="visible" />
+
+                <!-- [3] Expiry date row -->
+                <TextView
+                    android:id="@+id/tvExpiresAt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/vip_text_secondary"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    tools:text="Expires: 01/07/2026 10:00"
+                    tools:visibility="visible" />
+
+                <!-- [4] Progress bar (elapsed) -->
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressVip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone"
+                    app:indicatorColor="@color/vip_gold"
+                    app:trackColor="#33FFFFFF"
+                    app:trackCornerRadius="4dp"
+                    app:trackThickness="8dp"
+                    tools:visibility="visible" />
+
+                <!-- [5] Countdown text -->
+                <TextView
+                    android:id="@+id/tvCountdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textColor="@color/vip_gold"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:text="12d 03h 24m 15s"
+                    tools:visibility="visible" />
+
+                <!-- [12] Active VIP card (single entry) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardActiveVip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/vip_card_bg"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/vip_card_stroke"
+                    app:strokeWidth="1dp"
+                    tools:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tvEntryLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/vip_gold"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="🎁 New install gift" />
+
+                        <TextView
+                            android:id="@+id/tvEntryRemaining"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/vip_text_secondary"
+                            android:textSize="13sp"
+                            tools:text="Expires: 01/07/2026" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRevoke"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:text="@string/vip_revoke_all_button"
+                            android:textColor="@color/game_red_danger" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- [6] Enter VIP key -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilKey"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:hint="@string/vip_redeem_label"
+                    app:endIconMode="clear_text"
+                    app:startIconDrawable="@drawable/ic_confirmation_number">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etKey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textVisiblePassword"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActivate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/vip_redeem_button" />
+
+                <!-- [7] Watch ad → 3 days VIP -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnWatchAd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/vip_gold"
+                    android:text="@string/vip_watch_ad_3d"
+                    android:textColor="@color/vip_on_gold"
+                    app:icon="@drawable/ic_play_circle"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/vip_on_gold" />
+
+                <!-- [8-11] Buy VIP (disabled, IAP coming soon) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBuy30d"
+                    style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:enabled="false"
+                    android:text="@string/vip_buy_30d_locked"
+                    app:icon="@drawable/ic_card_giftcard" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBuy90d"
+                    style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:enabled="false"
+                    android:text="@string/vip_buy_90d_locked"
+                    app:icon="@drawable/ic_card_giftcard" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBuy1y"
+                    style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:enabled="false"
+                    android:text="@string/vip_buy_1y_locked"
+                    app:icon="@drawable/ic_card_giftcard" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBuyLifetime"
+                    style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:enabled="false"
+                    android:text="@string/vip_buy_lifetime_locked"
+                    app:icon="@drawable/ic_card_giftcard" />
+
+                <!-- [13] Restore purchase (disabled) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRestore"
+                    style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:enabled="false"
+                    android:text="@string/vip_restore_locked"
+                    app:icon="@drawable/ic_restore" />
+
+                <!-- Revoke all VIP -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRevokeAll"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/vip_revoke_all_button"
+                    android:textColor="@color/game_red_danger" />
+
+                <!-- Privacy footer: policy URL + GDPR re-consent (EEA) -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvPrivacy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="@string/privacy_policy"
+                        android:textColor="@color/game_text_muted"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="·"
+                        android:textColor="@color/game_text_muted"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvPrivacyOptions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="@string/privacy_options"
+                        android:textColor="@color/game_text_muted"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- [anim #5] Confetti overlay -->
+    <nl.dionsegijn.konfetti.xml.KonfettiView
+        android:id="@+id/viewKonfetti"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false" />
+</FrameLayout>

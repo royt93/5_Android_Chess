@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 이동</string>
     <string name="stats_captured_white_label">♙ 백</string>
     <string name="stats_captured_black_label">♟ 흑</string>
+    <!-- VIP -->
+    <string name="vip_title">VIP 멤버십</string>
+    <string name="vip_active">VIP 활성화됨</string>
+    <string name="vip_free_user">무료 사용자</string>
+    <string name="vip_until">%1$s까지</string>
+    <string name="vip_activated_at">활성화: %1$s</string>
+    <string name="vip_expires_at">만료: %1$s</string>
+    <string name="vip_remaining">%1$d일 %2$02d시간 %3$02d분 %4$02d초</string>
+    <string name="vip_redeem_label">VIP 코드 입력</string>
+    <string name="vip_redeem_hint">예: XXXX_30</string>
+    <string name="vip_redeem_button">활성화</string>
+    <string name="vip_watch_ad_3d">광고 보기 → VIP 3일</string>
+    <string name="vip_buy_30d_locked">30일 VIP 구매 — 출시 예정</string>
+    <string name="vip_buy_90d_locked">90일 VIP 구매 — 출시 예정</string>
+    <string name="vip_buy_1y_locked">1년 VIP 구매 — 출시 예정</string>
+    <string name="vip_buy_lifetime_locked">평생 VIP 구매 — 출시 예정</string>
+    <string name="vip_restore_locked">구매 복원 — 출시 예정</string>
+    <string name="vip_revoke_all_button">VIP 해지</string>
+    <string name="vip_revoke_confirm_title">해지 확인</string>
+    <string name="vip_revoke_confirm_message">VIP를 해지하고 무료 계정으로 돌아가시겠습니까?</string>
+    <string name="vip_entry_first_install">🎁 신규 설치 선물</string>
+    <string name="vip_entry_redeemed">VIP %1$d일</string>
+    <string name="vip_active_card_title">활성 VIP</string>
+    <string name="vip_key_invalid">잘못된 VIP 코드</string>
+    <string name="vip_activated_toast">VIP가 %1$d일 동안 활성화되었습니다</string>
+    <string name="vip_reward_failed">광고를 사용할 수 없습니다. 나중에 다시 시도해 주세요</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">%1$d일 남음</string>
+    <string name="vip_already_longer">이미 더 긴 VIP 기간이 있습니다</string>
+    <string name="privacy_options">개인정보 옵션</string>
+    <string name="privacy_policy">개인정보처리방침</string>
+    <string name="confirm">확인</string>
 </resources>

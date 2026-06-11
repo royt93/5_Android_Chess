@@ -34,4 +34,16 @@
     <color name="game_magenta_glow">#60FF00FF</color>
     
     <color name="game_text_muted">#AACCFF</color>
+
+    <!-- VIP -->
+    <color name="vip_gold">#FFD60A</color>
+    <color name="vip_gold_deep">#D4AF37</color>
+    <color name="vip_on_gold">#1A1400</color>
+    <color name="vip_header_active_start">#FFC107</color>
+    <color name="vip_header_active_end">#FF8F00</color>
+    <color name="vip_header_free_start">#37474F</color>
+    <color name="vip_header_free_end">#1C262B</color>
+    <color name="vip_card_bg">#16213E</color>
+    <color name="vip_card_stroke">#33FFD60A</color>
+    <color name="vip_text_secondary">#B8C4D8</color>
 </resources>

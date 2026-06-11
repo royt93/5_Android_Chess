@@ -109,4 +109,40 @@
     <string name="stats_moves_label">🎯 Nước Đi</string>
     <string name="stats_captured_white_label">♙ Trắng Ăn</string>
     <string name="stats_captured_black_label">♟ Đen Ăn</string>
+
+    <!-- VIP -->
+    <string name="vip_title">Thành viên VIP</string>
+    <string name="vip_active">VIP đang kích hoạt</string>
+    <string name="vip_free_user">Người dùng miễn phí</string>
+    <string name="vip_until">Đến %1$s</string>
+    <string name="vip_activated_at">Kích hoạt: %1$s</string>
+    <string name="vip_expires_at">Hết hạn: %1$s</string>
+    <string name="vip_remaining">%1$dd %2$02dh %3$02dm %4$02ds</string>
+    <string name="vip_redeem_label">Nhập mã VIP</string>
+    <string name="vip_redeem_hint">VD: XXXX_30</string>
+    <string name="vip_redeem_button">Kích hoạt</string>
+    <string name="vip_watch_ad_3d">Xem quảng cáo → 3 ngày VIP</string>
+    <string name="vip_buy_30d_locked">Mua VIP 30 ngày — sắp ra mắt</string>
+    <string name="vip_buy_90d_locked">Mua VIP 90 ngày — sắp ra mắt</string>
+    <string name="vip_buy_1y_locked">Mua VIP 1 năm — sắp ra mắt</string>
+    <string name="vip_buy_lifetime_locked">Mua VIP trọn đời — sắp ra mắt</string>
+    <string name="vip_restore_locked">Khôi phục mua hàng — sắp ra mắt</string>
+    <string name="vip_revoke_all_button">Thu hồi VIP</string>
+    <string name="vip_revoke_confirm_title">Xác nhận thu hồi</string>
+    <string name="vip_revoke_confirm_message">Bạn có chắc muốn thu hồi VIP và quay về tài khoản Free?</string>
+    <string name="vip_entry_first_install">🎁 Quà tặng cài đặt mới</string>
+    <string name="vip_entry_redeemed">VIP %1$d ngày</string>
+    <string name="vip_active_card_title">VIP đang hoạt động</string>
+    <string name="vip_key_invalid">Mã VIP không hợp lệ</string>
+    <string name="vip_activated_toast">Đã kích hoạt VIP %1$d ngày</string>
+    <string name="vip_reward_failed">Quảng cáo chưa sẵn sàng, vui lòng thử lại sau</string>
+    <string name="vip_menu">VIP</string>
+
+    <string name="vip_days_left">Còn %1$d ngày</string>
+    <string name="vip_already_longer">Bạn đang có thời hạn VIP dài hơn</string>
+    <string name="privacy_options">Tùy chọn quyền riêng tư</string>
+
+    <!-- Common -->
+    <string name="privacy_policy">Chính sách bảo mật</string>
+    <string name="confirm">Xác nhận</string>
 </resources>

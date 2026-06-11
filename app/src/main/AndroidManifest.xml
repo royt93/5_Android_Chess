@@ -30,6 +30,9 @@
             android:theme="@style/Theme.Chess" />
         <activity android:name="com.saigonphantomlabs.PawnPromotionActivity" />
         <activity
+            android:name="com.saigonphantomlabs.feature.vip.VipActivity"
+            android:theme="@style/Theme.Chess" />
+        <activity
             android:name="com.saigonphantomlabs.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Chess" />

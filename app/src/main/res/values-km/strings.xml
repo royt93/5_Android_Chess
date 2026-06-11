@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 ដើរ</string>
     <string name="stats_captured_white_label">♙ ស</string>
     <string name="stats_captured_black_label">♟ ខ្មៅ</string>
+    <!-- VIP -->
+    <string name="vip_title">សមាជិកភាព VIP</string>
+    <string name="vip_active">VIP កំពុងដំណើរការ</string>
+    <string name="vip_free_user">អ្នកប្រើប្រាស់ឥតគិតថ្លៃ</string>
+    <string name="vip_until">រហូតដល់ %1$s</string>
+    <string name="vip_activated_at">បានធ្វើឱ្យសកម្ម៖ %1$s</string>
+    <string name="vip_expires_at">ផុតកំណត់៖ %1$s</string>
+    <string name="vip_remaining">%1$d ថ្ងៃ %2$02d ម៉ោង %3$02d នាទី %4$02d វិ</string>
+    <string name="vip_redeem_label">បញ្ចូលកូដ VIP</string>
+    <string name="vip_redeem_hint">ឧ. XXXX_30</string>
+    <string name="vip_redeem_button">ធ្វើឱ្យសកម្ម</string>
+    <string name="vip_watch_ad_3d">មើលការផ្សាយពាណិជ្ជកម្ម → VIP ៣ ថ្ងៃ</string>
+    <string name="vip_buy_30d_locked">ទិញ VIP ៣០ ថ្ងៃ — ឆាប់ៗនេះ</string>
+    <string name="vip_buy_90d_locked">ទិញ VIP ៩០ ថ្ងៃ — ឆាប់ៗនេះ</string>
+    <string name="vip_buy_1y_locked">ទិញ VIP ១ ឆ្នាំ — ឆាប់ៗនេះ</string>
+    <string name="vip_buy_lifetime_locked">ទិញ VIP ពេញមួយជីវិត — ឆាប់ៗនេះ</string>
+    <string name="vip_restore_locked">ស្ដារការទិញ — ឆាប់ៗនេះ</string>
+    <string name="vip_revoke_all_button">ដកហូត VIP</string>
+    <string name="vip_revoke_confirm_title">បញ្ជាក់ការដកហូត</string>
+    <string name="vip_revoke_confirm_message">តើអ្នកប្រាកដថាចង់ដកហូត VIP ហើយត្រឡប់ទៅគណនីឥតគិតថ្លៃវិញឬ?</string>
+    <string name="vip_entry_first_install">🎁 អំណោយដំឡើងថ្មី</string>
+    <string name="vip_entry_redeemed">VIP %1$d ថ្ងៃ</string>
+    <string name="vip_active_card_title">VIP សកម្ម</string>
+    <string name="vip_key_invalid">កូដ VIP មិនត្រឹមត្រូវ</string>
+    <string name="vip_activated_toast">បានធ្វើឱ្យ VIP សកម្មរយៈពេល %1$d ថ្ងៃ</string>
+    <string name="vip_reward_failed">ការផ្សាយពាណិជ្ជកម្មមិនអាចប្រើបាន សូមព្យាយាមម្ដងទៀតពេលក្រោយ</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">នៅសល់ %1$d ថ្ងៃ</string>
+    <string name="vip_already_longer">អ្នកមានរយៈពេល VIP យូរជាងនេះរួចហើយ</string>
+    <string name="privacy_options">ជម្រើសឯកជនភាព</string>
+    <string name="privacy_policy">គោលការណ៍ឯកជនភាព</string>
+    <string name="confirm">បញ្ជាក់</string>
 </resources>

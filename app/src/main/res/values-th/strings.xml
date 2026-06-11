@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 ตาเดิน</string>
     <string name="stats_captured_white_label">♙ ขาว</string>
     <string name="stats_captured_black_label">♟ ดำ</string>
+    <!-- VIP -->
+    <string name="vip_title">สมาชิก VIP</string>
+    <string name="vip_active">VIP เปิดใช้งาน</string>
+    <string name="vip_free_user">ผู้ใช้ฟรี</string>
+    <string name="vip_until">ถึง %1$s</string>
+    <string name="vip_activated_at">เปิดใช้งาน: %1$s</string>
+    <string name="vip_expires_at">หมดอายุ: %1$s</string>
+    <string name="vip_remaining">%1$d วัน %2$02d ชม. %3$02d น. %4$02d วิ</string>
+    <string name="vip_redeem_label">ป้อนรหัส VIP</string>
+    <string name="vip_redeem_hint">เช่น XXXX_30</string>
+    <string name="vip_redeem_button">เปิดใช้งาน</string>
+    <string name="vip_watch_ad_3d">ดูโฆษณา → VIP 3 วัน</string>
+    <string name="vip_buy_30d_locked">ซื้อ VIP 30 วัน — เร็วๆ นี้</string>
+    <string name="vip_buy_90d_locked">ซื้อ VIP 90 วัน — เร็วๆ นี้</string>
+    <string name="vip_buy_1y_locked">ซื้อ VIP 1 ปี — เร็วๆ นี้</string>
+    <string name="vip_buy_lifetime_locked">ซื้อ VIP ตลอดชีพ — เร็วๆ นี้</string>
+    <string name="vip_restore_locked">กู้คืนการซื้อ — เร็วๆ นี้</string>
+    <string name="vip_revoke_all_button">เพิกถอน VIP</string>
+    <string name="vip_revoke_confirm_title">ยืนยันการเพิกถอน</string>
+    <string name="vip_revoke_confirm_message">คุณแน่ใจหรือไม่ว่าต้องการเพิกถอน VIP และกลับสู่บัญชีฟรี?</string>
+    <string name="vip_entry_first_install">🎁 ของขวัญติดตั้งใหม่</string>
+    <string name="vip_entry_redeemed">VIP %1$d วัน</string>
+    <string name="vip_active_card_title">VIP ที่ใช้งาน</string>
+    <string name="vip_key_invalid">รหัส VIP ไม่ถูกต้อง</string>
+    <string name="vip_activated_toast">เปิดใช้งาน VIP แล้ว %1$d วัน</string>
+    <string name="vip_reward_failed">ไม่มีโฆษณา โปรดลองอีกครั้งภายหลัง</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">เหลือ %1$d วัน</string>
+    <string name="vip_already_longer">คุณมีระยะเวลา VIP ที่นานกว่าอยู่แล้ว</string>
+    <string name="privacy_options">ตัวเลือกความเป็นส่วนตัว</string>
+    <string name="privacy_policy">นโยบายความเป็นส่วนตัว</string>
+    <string name="confirm">ยืนยัน</string>
 </resources>

@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 ຍ່າງ</string>
     <string name="stats_captured_white_label">♙ ຂາວ</string>
     <string name="stats_captured_black_label">♟ ດຳ</string>
+    <!-- VIP -->
+    <string name="vip_title">ສະມາຊິກ VIP</string>
+    <string name="vip_active">VIP ເປີດໃຊ້ງານ</string>
+    <string name="vip_free_user">ຜູ້ໃຊ້ຟຣີ</string>
+    <string name="vip_until">ຮອດ %1$s</string>
+    <string name="vip_activated_at">ເປີດໃຊ້ງານ: %1$s</string>
+    <string name="vip_expires_at">ໝົດກຳນົດ: %1$s</string>
+    <string name="vip_remaining">%1$d ມື້ %2$02d ຊມ %3$02d ນທ %4$02d ວິ</string>
+    <string name="vip_redeem_label">ປ້ອນລະຫັດ VIP</string>
+    <string name="vip_redeem_hint">ຕົວຢ່າງ: XXXX_30</string>
+    <string name="vip_redeem_button">ເປີດໃຊ້ງານ</string>
+    <string name="vip_watch_ad_3d">ເບິ່ງໂຄສະນາ → VIP 3 ມື້</string>
+    <string name="vip_buy_30d_locked">ຊື້ VIP 30 ມື້ — ໄວໆ ນີ້</string>
+    <string name="vip_buy_90d_locked">ຊື້ VIP 90 ມື້ — ໄວໆ ນີ້</string>
+    <string name="vip_buy_1y_locked">ຊື້ VIP 1 ປີ — ໄວໆ ນີ້</string>
+    <string name="vip_buy_lifetime_locked">ຊື້ VIP ຕະຫຼອດຊີວິດ — ໄວໆ ນີ້</string>
+    <string name="vip_restore_locked">ກູ້ຄືນການຊື້ — ໄວໆ ນີ້</string>
+    <string name="vip_revoke_all_button">ຍົກເລີກ VIP</string>
+    <string name="vip_revoke_confirm_title">ຢືນຢັນການຍົກເລີກ</string>
+    <string name="vip_revoke_confirm_message">ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການຍົກເລີກ VIP ແລະກັບຄືນສູ່ບັນຊີຟຣີ?</string>
+    <string name="vip_entry_first_install">🎁 ຂອງຂວັນຕິດຕັ້ງໃໝ່</string>
+    <string name="vip_entry_redeemed">VIP %1$d ມື້</string>
+    <string name="vip_active_card_title">VIP ທີ່ເປີດໃຊ້ງານ</string>
+    <string name="vip_key_invalid">ລະຫັດ VIP ບໍ່ຖືກຕ້ອງ</string>
+    <string name="vip_activated_toast">ເປີດໃຊ້ງານ VIP ເປັນເວລາ %1$d ມື້</string>
+    <string name="vip_reward_failed">ບໍ່ມີໂຄສະນາ ກະລຸນາລອງໃໝ່ໃນພາຍຫຼັງ</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">ຍັງເຫຼືອ %1$d ມື້</string>
+    <string name="vip_already_longer">ທ່ານມີໄລຍະ VIP ທີ່ດົນກວ່ານີ້ຢູ່ແລ້ວ</string>
+    <string name="privacy_options">ຕົວເລືອກຄວາມເປັນສ່ວນຕົວ</string>
+    <string name="privacy_policy">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ</string>
+    <string name="confirm">ຢືນຢັນ</string>
 </resources>

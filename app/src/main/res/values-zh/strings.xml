@@ -109,4 +109,36 @@
     <string name="stats_moves_label">🎯 步数</string>
     <string name="stats_captured_white_label">♙ 白方吃掉</string>
     <string name="stats_captured_black_label">♟ 黑方吃掉</string>
+    <!-- VIP -->
+    <string name="vip_title">VIP 会员</string>
+    <string name="vip_active">VIP 已激活</string>
+    <string name="vip_free_user">免费用户</string>
+    <string name="vip_until">至 %1$s</string>
+    <string name="vip_activated_at">激活时间：%1$s</string>
+    <string name="vip_expires_at">到期：%1$s</string>
+    <string name="vip_remaining">%1$d天 %2$02d时 %3$02d分 %4$02d秒</string>
+    <string name="vip_redeem_label">输入 VIP 码</string>
+    <string name="vip_redeem_hint">例如 XXXX_30</string>
+    <string name="vip_redeem_button">激活</string>
+    <string name="vip_watch_ad_3d">观看广告 → 3 天 VIP</string>
+    <string name="vip_buy_30d_locked">购买 30 天 VIP — 即将推出</string>
+    <string name="vip_buy_90d_locked">购买 90 天 VIP — 即将推出</string>
+    <string name="vip_buy_1y_locked">购买 1 年 VIP — 即将推出</string>
+    <string name="vip_buy_lifetime_locked">购买永久 VIP — 即将推出</string>
+    <string name="vip_restore_locked">恢复购买 — 即将推出</string>
+    <string name="vip_revoke_all_button">撤销 VIP</string>
+    <string name="vip_revoke_confirm_title">确认撤销</string>
+    <string name="vip_revoke_confirm_message">确定要撤销 VIP 并返回免费账户吗？</string>
+    <string name="vip_entry_first_install">🎁 新安装礼物</string>
+    <string name="vip_entry_redeemed">VIP %1$d 天</string>
+    <string name="vip_active_card_title">有效 VIP</string>
+    <string name="vip_key_invalid">无效的 VIP 码</string>
+    <string name="vip_activated_toast">已激活 VIP %1$d 天</string>
+    <string name="vip_reward_failed">广告不可用，请稍后再试</string>
+    <string name="vip_menu">VIP</string>
+    <string name="vip_days_left">剩余 %1$d 天</string>
+    <string name="vip_already_longer">您已拥有更长的 VIP 期限</string>
+    <string name="privacy_options">隐私选项</string>
+    <string name="privacy_policy">隐私政策</string>
+    <string name="confirm">确认</string>
 </resources>

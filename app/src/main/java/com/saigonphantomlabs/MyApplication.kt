@@ -14,8 +14,10 @@ import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.google.android.gms.ads.MobileAds
 import com.saigonphantomlabs.chess.BuildConfig
+import com.saigonphantomlabs.common.consts.AdKeys
 import com.roy.sdkadbmob.AdManager
 import com.roy.sdkadbmob.AdSafetyConfig
+import com.roy.sdkadbmob.AdSafetyLimits
 import com.roy.sdkadbmob.AdSdkConfig
 import java.lang.ref.WeakReference
 
@@ -39,9 +41,17 @@ class MyApplication : Application() {
             admobBannerId          = BuildConfig.ADMOB_BANNER_ID,
             admobInterstitialId    = BuildConfig.ADMOB_INTERSTITIAL_ID,
             admobAppOpenId         = BuildConfig.ADMOB_APP_OPEN_ID,
+            admobRewardedId        = BuildConfig.ADMOB_REWARDED_ID,
             applovinBannerId       = BuildConfig.APPLOVIN_BANNER_ID,
             applovinInterstitialId = BuildConfig.APPLOVIN_INTERSTITIAL_ID,
-            applovinAppOpenId      = BuildConfig.APPLOVIN_APP_OPEN_ID
+            applovinAppOpenId      = BuildConfig.APPLOVIN_APP_OPEN_ID,
+            applovinRewardedId     = BuildConfig.APPLOVIN_REWARDED_ID,
+            applovinSdkKey         = BuildConfig.APPLOVIN_SDK_KEY,
+            // VIP-by-key secret = key 30 ngày (Base64-decode trong AdKeys). Lib so input
+            // user với field này; cũng là trigger auto-trial 1 ngày (built-in SDK ≥1.1.4).
+            vipKeySecret           = AdKeys.VIP_SECRET,
+            // Game preset cho production; debug nới lỏng throttle để QC test ad nhanh.
+            safety                 = if (BuildConfig.DEBUG) AdSafetyLimits.TEST else AdSafetyLimits.GAME
         )
 
         // Gắn Config ở Main Thread trước để SplashActivity không crash khi đọc isEnableAdmob

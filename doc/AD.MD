@@ -1,49 +1,193 @@
-# Kế Hoạch Thay Thế/Nâng Cấp Quảng Cáo Sang SDK `_260321AdmobWrapper`
+# Kế Hoạch Upgrade Quảng Cáo `AdmobApplovinWrapper` 1.1.1 → 1.1.5 + VIP Feature
 
-## 1. Trạng Thái Hiện Tại (Trước Migration)
-Project Android Chess hiện đang sử dụng wrapper quảng cáo tự build (`com.saigonphantomlabs.sdkadbmob`). 
-Các loại quảng cáo và touchpoint hiện tại:
-- **App Open Ad:** Được load và tự handle delay timeout tại `SplashActivity`.
-- **Banner Ad:** Nằm trong layout `a_chess_board.xml` và được gọi `loadBanner` từ `ChessBoardActivity`.
-- **Interstitial Ad:** Được gọi `loadInterstitial` và `showInterstitial` tại `ChessBoardActivity` khi user nhấn các nút (Restart, Undo) hoặc lúc end game.
-- **Reward Ad:** Theo code hiện hành, **KHÔNG CÓ TỒN TẠI** điểm chạm dùng chức năng nhận reward.
+> Nguồn: `doc/AD_PROMPT_AOS.MD` (template). Quyết định đã chốt: SDK **1.1.5**, VIP host = **VipActivity**, scope = **Full**.
+> ⚠️ Đây là **UPGRADE** (project đã chạy wrapper 1.1.1), KHÔNG phải migrate from-scratch.
 
-Các IDs quảng cáo cấu hình tại `app/build.gradle` chỉ có của nền tảng AdMob (Banner, Interstitial, App Open).
+---
 
-## 2. Kế Hoạch Nâng Cấp (Sau Migration với SDK `_260321AdmobWrapper v1.1.1`)
-Mục tiêu là tuân thủ chặt rule "không tự tiện thêm touchpoint mới", cải thiện độ ổn định và tự động tích hợp 7 lớp bảo vệ Safety của Wrapper mà không gây bug, leak memory.
+## ⏸️ TRẠNG THÁI PAUSE — 2026-06-11 (resume ~2026-06-14)
 
-### Các Thông Tin Cần Bổ Sung Để Build Thành Công:
-Dựa vào document của `_260321AdmobWrapper`, cấu hình `AdSdkConfig` bắt buộc cần các Keys/IDs của mạng AppLovin MAX. Vì project này hiện chưa có AppLovin IDs, **tôi cần bạn cung cấp thêm:**
-- `APPLOVIN_SDK_KEY`
-- `APPLOVIN_BANNER_ID`
-- `APPLOVIN_INTERSTITIAL_ID`
-- `APPLOVIN_APP_OPEN_ID`
-*(Nếu không có, cần xác nhận sử dụng String empty `""` và đặt `IS_ENABLE_ADMOB = true`)*
+**CHƯA COMMIT** (user yêu cầu không commit). Mọi thay đổi đang ở working tree.
 
-### Lộ Trình Thực Hiện (Step-by-step):
-**Bước 1: Cleanup codebase**
-- Xóa đứt điểm package `com.saigonphantomlabs.sdkadbmob` để dọn dẹp memory leak.
-- Refactor file `build.gradle`, thêm repository `jitpack.io` (root) và implementation Wrapper (`com.github.royt93:AdmobWrapper:1.1.1`).
-- Bổ sung các properties cho SDK Applovin vào file AndroidManifest và BuildConfig.
+### Đã hoàn thành & verify
+- Code: upgrade SDK 1.1.5, consent UMP, rewarded, VIP screen (13 UI + 5 anim), i18n 14 ngôn ngữ, banner autoManageLifecycle.
+- Unit/widget tests: **129 test PASS** (gồm 46 VIP test). `assembleDebug`/`assembleRelease` xanh.
+- **Đã test thật trên Pixel 7 Pro** (wireless adb `192.168.21.185:42797`, app đã cài bản debug có fix):
+  - ✅ Splash → consent (UMP/GMS) → App Open (AppLovin) show→dismiss→MainActivity.
+  - ✅ Nút VIP ở MainActivity → mở VipActivity (+138ms, không crash).
+  - ✅ VipActivity free-state render đúng (hero "Free User", acquire-controls, buy disabled). Xem `/tmp/vip_free.png`.
+  - ✅ Rewarded AppLovin (ID `0cf28eca430409d9`) load + **Shown** + **Earned** runtime thật.
+  - ✅ Không FATAL/crash/leak trong logcat.
 
-**Bước 2: Application Init (`MyApplication.kt`)**
-- Thực hiện setup khởi tạo `AdSdkConfig`, gọi `AdManager.setConfig()`, và `AdManager.earlyInit()` đảm bảo theo tiêu chuẩn Document của SDK. Thay thế hàm khởi tạo cũ của class `AdMobManager`.
+### 🔴 BUG phát hiện qua device test + ĐÃ FIX (chờ re-verify trên device)
+**Single-secret bug**: lib `activateVipByKey` chỉ chấp nhận key == `adConfig.vipKeySecret` (= key 30 ngày). Code cũ gọi `activateVipByKey(VIP_3D_KEY, 3)` cho rewarded/typed-3day → key ≠ secret → **return false → VIP KHÔNG được grant** (logcat: Earned nhưng vẫn "Free User").
+- **Fix đã apply** (`VipActivity.kt`): `applyVip(days)` LUÔN grant bằng `AdKeys.VIP_SECRET` + `days`; `days` do `VipKeys.lookupDays()` validate cục bộ. `grantViaRewarded()` → `applyVip(3)`.
+- **Fix phụ** (`a_vip_management.xml`): `etKey` inputType `textCapCharacters` → `textVisiblePassword` (key mixed-case, tránh auto-hoa + autocorrect làm sai key).
+- **Regression test đã thêm** (`VipActivityActiveStateTest`): `redeem3dKeyViaField` + `redeem30dKeyViaField` → PASS (fail với code cũ). Đã rebuild + cài lại lên device.
 
-**Bước 3: Tích hợp Splash & App Open Ad**
-- Tại `SplashActivity`, xóa code timeout handle cũ. Update lên hàm `AdManager.initSplashScreen(this)`. SDK mới sẽ tự lo xử lý timeout 8s hay 10s cực kì an toàn bằng session minimum của AdSafety. 
+### ▶️ ĐIỂM RESUME (việc cần làm tiếp)
+1. **Re-verify fix trên device** (đang dở khi pause): xác nhận grant VIP thành công sau fix.
+   - Cách deterministic: mở VipActivity → gõ key 30 ngày `9fA0q7eN!27cLx04@21993Y2u0I7#Q0` (gõ TAY trên máy cho chuẩn — `adb input text` làm hỏng ký tự `!` và case) → Activate → phải thấy active-state (countdown/progress/card) + confetti.
+   - Hoặc Watch ad → xem hết → grant 3 ngày (lưu ý nhiễu App Open, xem mục 2).
+2. **Cân nhắc blacklist `VipActivity` khỏi App Open** (như `ChessBoardActivity`): logcat cho thấy App Open AppLovin cố show đè lên rewarded + show lại trên VipActivity sau khi xem rewarded ("Display failed: another fullscreen ad already showing" — handled, nhưng UX chưa đẹp). Sửa ở `MyApplication.registerCustomAppOpenLifecycle()` thêm `"VipActivity"` vào blacklist. CHƯA làm — quyết định khi resume.
+3. **km (Khmer) + lo (Lào)**: nhờ native review trước publish (dịch best-effort).
+4. **Espresso integration** (`VipActivityEspressoTest`): chạy `./gradlew connectedDebugAndroidTest` trên device (mới compile-pass, chưa chạy runtime).
+5. Khi xong hết + user duyệt → mới commit.
 
-**Bước 4: Tích hợp Banner Ad**
-- Tại `ChessBoardActivity`, cập nhật hàm get Adview: `adView = AdManager.loadBanner(...)`.
-- **Quan trọng:** Gắn đủ 3 Lifecycle event (`onResume`, `onPause`, `onDestroy`) gọi qua AdManager để chống leak và impression ảo.
+---
 
-**Bước 5: Tích hợp Interstitial Ad**
-- Cập nhật chạm gọi `AdManager.loadInterstitial(this)` thay cho code cũ.
-- Tại listener Button Undo/Restart, gọi `AdManager.showInterstitial(this)`. Ở đây cơ chế Throttle 60s và Hourly Cap tự động của wrapper sẽ bảo vệ App khỏi spam impressions. Tốt hơn cấu hình cũ.
+## 0. Trạng thái hiện tại (audit)
 
-**Bước 6: Verification & Double Check**
-- Thực hiện build `assembleDebug` đảm bảo code compile thành công.
-- Double check memory leak và logic touchpoint. Verify Ad policies (Session minimum, Ads/hour) được tuân thủ nghiêm túc.
+| # | Câu hỏi | Trả lời |
+|---|---|---|
+| 1 | Đã apply wrapper chưa? | ✅ Có — `AdmobWrapper:1.1.1`, package `com.roy.sdkadbmob.*`. Không còn SDK cũ. |
+| 2 | `Application.onCreate` init gì? | `MyApplication.kt:35` `setupAd()` → `setConfig` + `earlyInit` + init thủ công AppLovin/AdMob + **custom App Open lifecycle** (blacklist `SplashActivity`/`ChessBoardActivity`). |
+| 3 | Splash có consent + App Open warmup? | App Open warmup ✅ (`initSplashScreen`, `SplashActivity.java:76`). **Consent UMP ❌ chưa có.** |
+| 4 | Activity nào load banner/interstitial? | `ChessBoardActivity` — banner `:151`, interstitial load `:155`, show `:255`/`:527`, banner lifecycle `:567/573/613`. |
+| 5 | Đã có VIP screen? | ❌ Chưa. Chưa có rewarded. → **Tạo mới VipActivity.** |
 
---- 
-> **Lưu ý cuối cùng:** Do Reward Ad không có ở source này nên tôi sẽ SKIP Reward Ad hoàn toàn theo đúng nguyên tắc Không Chèn Trái Phép. Phía trên là plan chi tiết tuân chuẩn Document. Khi bạn sẵn sàng cung cấp AppLovin ID, hãy báo để tiến hành triển khai!
+**Ngầm định kiến trúc**: Activities = Java; `MyApplication`/`BaseActivity` = Kotlin; Material `1.13.0`; **KHÔNG có Navigation Component** → VIP host bằng `VipActivity` (Kotlin, extends `BaseActivity`), nội bộ có thể inflate `FVipManagement` view-logic.
+
+---
+
+## 1. Touchpoint table
+
+| Slot | File hiện tại | Trigger | API mới | Trạng thái |
+|---|---|---|---|---|
+| Banner | `ChessBoardActivity` | `onCreate` | `AdManager.loadBanner` | Giữ nguyên (đã có) |
+| Interstitial | `ChessBoardActivity` | Undo / Restart / end-game | `AdManager.showInterstitial` | Giữ nguyên trigger (đã có) |
+| App Open (splash) | `SplashActivity` | warmup trước khi vào Main | `AdManager.initSplashScreen` | Giữ nguyên (đã có) |
+| App Open (resume) | `MyApplication` | `ProcessLifecycleOwner` ON_START | custom observer (blacklist board) | Giữ nguyên (đã có) |
+| **Rewarded** | **VipActivity** | nút "Xem QC → 3 ngày VIP" | `loadRewarded` + `showRewarded`, fallback `showInterstitial` | **MỚI** |
+| **VIP-by-key** | **VipActivity** | nhập key | `activateVipByKey` / `showVipByKeyDialog` | **MỚI** |
+| **Consent** | **SplashActivity** | `onCreate` | `requestConsentInfoUpdate` | **MỚI** |
+
+---
+
+## 2. Step-by-step plan
+
+### Bước 1 — Bump dependency + BuildConfig
+- `app/build.gradle:155`: `com.github.royt93:AdmobWrapper:1.1.1` → **`com.github.royt93:AdmobApplovinWrapper:1.1.5`**.
+- Import `com.roy.sdkadbmob.*` **GIỮ NGUYÊN** (artifact đổi tên, package không đổi).
+- Thêm `buildConfigField` cho **cả `debug` lẫn `release`**:
+  - `APPLOVIN_REWARDED_ID` — *(cần user cấp)*
+  - `ADMOB_REWARDED_ID` — *(cần user cấp; debug có thể dùng test ID Google `ca-app-pub-3940256099942544/5224354917`)*
+  - `PRIVACY_POLICY_URL` — *(cần user cấp)*
+
+### Bước 2 — `MyApplication.kt` (App init + config mở rộng)
+- Bổ sung vào `AdSdkConfig`: `admobRewardedId`, `applovinRewardedId`, `applovinSdkKey = BuildConfig.APPLOVIN_SDK_KEY`, `vipKeySecret = AdKeys.VIP_SECRET` (Base64-decode key 30 ngày).
+- **GIỮ custom App Open lifecycle** (blacklist board) — KHÔNG thay bằng `registerAppOpenAdLifecycle`/`initialize()` của SDK vì sẽ mất rule skip `ChessBoardActivity`.
+- Tùy chọn: gắn `AdSafetyLimits` debug-friendly (`if (BuildConfig.DEBUG)`).
+
+### Bước 3 — Consent UMP (`SplashActivity.java`)
+- `onCreate`: gọi `AdManager.requestConsentInfoUpdate(this, ...)` **trước** `initSplashScreen`; block App Open/Banner/Interstitial tới khi consent resolved (lib tự lo personalized).
+- Ghi nhận 3 scenario (không cần chạy thực): Non-EEA skip; EEA accept; EEA deny.
+
+### Bước 4 — VIP infra (Kotlin, package mới `com.saigonphantomlabs.feature.vip`)
+- `VipKeys.kt` — Base64 của key 30 ngày + 3 ngày → `lookupDays()`.
+- `VipPrefs.kt` — lưu `grantedAtMs` + `userRedeemedOnce` (lib chưa expose grantedAt).
+- `AdKeys.kt` (`common/const`) — `VIP_SECRET` (Base64) + `PRIVACY_POLICY_URL` từ BuildConfig.
+
+### Bước 5 — `VipActivity` (UI mandatory: 13 component + 5 animation)
+- Layout `a_vip_management.xml` (Material 3), ViewBinding.
+- 13 component theo template 10.3: hero card, activation/expiry row, **progress bar elapsed-semantic** (rỗng→đầy), countdown `CountDownTimer`, nhập key, nút "Xem QC→3 ngày VIP" (rewarded + fallback interstitial), 4 nút buy disabled, single active VIP card (grace 🎁 vs redeemed), restore disabled, revoke-all, privacy footer.
+- 5 animation: pulse / slide-in / crown shimmer / count-up / confetti + haptic.
+- Memory rules 10.5: `CountDownTimer.cancel()`, animator `.cancel()`, `_binding=null` ở `onDestroy`, callback check `isFinishing`/`binding==null`.
+
+### Bước 6 — `MainActivity` entry + badge
+- Chip "VIP" vàng (visible khi `isVipByKeyActive()`), refresh ở `onResume`.
+- Nút/menu mở `VipActivity` (Intent).
+
+### Bước 7 — strings vi + en (template 10.7) + drawable icons.
+
+---
+
+## 3. So sánh trước / sau
+
+| Khía cạnh | Trước (1.1.1) | Sau (1.1.5) |
+|---|---|---|
+| Provider | AppLovin MAX (AdMob fallback) | Như cũ |
+| Architecture | provider-based | Như cũ + rewarded/VIP providers |
+| App Open | splash warmup + custom resume | Giữ nguyên (blacklist board) |
+| Consent | ❌ không | ✅ UMP ở Splash |
+| Frequency cap | AdSafety mặc định | + debug-friendly limits (optional) |
+| VIP | ❌ không có | ✅ auto-trial 1 ngày + key + rewarded |
+| Rewarded | ❌ | ✅ trong VipActivity |
+| Memory leak risk | banner manual lifecycle (ok) | + VIP screen tuân memory rules 10.5 |
+| Lifecycle | custom App Open observer | Giữ nguyên |
+
+---
+
+## 4. Thông tin & quyết định (ĐÃ CHỐT)
+
+| Field | Giá trị |
+|---|---|
+| `APPLOVIN_REWARDED_ID` | `0cf28eca430409d9` (debug + release) ✅ |
+| `ADMOB_REWARDED_ID` | test ID `ca-app-pub-3940256099942544/5224354917` (cả debug + release — AppLovin active nên admob không chạy runtime) ✅ |
+| `PRIVACY_POLICY_URL` | `https://loitp.notion.site/Term-Privacy-Policy-Disclaimer-319b1cd8783942fa8923d2a3c9bce60f` ✅ |
+| VIP key 30 ngày | `9fA0q7eN!27cLx04@21993Y2u0I7#Q0` → Base64 hardcode |
+| VIP key 3 ngày | `eQ7@93L0f!2Y2707xN04021993u0I#2aK` → Base64 hardcode |
+
+**Quyết định triển khai:**
+- SDK: **1.1.5** · VIP host: **VipActivity** (Kotlin, extends BaseActivity) · scope: **Full**.
+- Animation: **thêm konfetti-xml 2.0.5 + shimmer 0.5.0** (user chấp nhận tradeoff size cho UX đẹp).
+- Banner lifecycle: **đổi sang `autoManageLifecycle=true`** (bỏ 3 override `bannerResume/Pause/Destroy` ở ChessBoardActivity).
+- App Open custom lifecycle (blacklist board): **GIỮ NGUYÊN**.
+- Buy VIP (30d/90d/1y/lifetime) + Restore Purchase: **disabled** ("sắp ra mắt", chờ IAP).
+
+AppLovin SDK key + banner/inter/appopen + AdMob banner/inter/appopen: **đã có sẵn** trong `app/build.gradle`.
+
+---
+
+## 5. Build phải xanh
+- `./gradlew :app:assembleDebug`
+- `./gradlew :app:assembleRelease`
+
+---
+
+## 6. KẾT QUẢ TRIỂN KHAI (đã hoàn thành)
+
+### Migrate Result
+- **Build**: assembleDebug = ✅ PASS · assembleRelease (R8 full + shrinkResources) = ✅ PASS
+- **Slots**: Banner ✅ (autoManageLifecycle) · Interstitial ✅ giữ trigger · App Open ✅ giữ custom lifecycle · **Rewarded ✅ mới** · **Consent UMP ✅ mới** · **VIP-by-key ✅ mới**
+- **APK size**: debug 20M · **release 13M** (konfetti+shimmer R8 nuốt gọn, không cần thêm proguard)
+- **Policy (5/5 PASS)**: banner dock bottom không che nút · App Open không show splash thuần (warmup→navigate) + skip board · interstitial trông cậy AdSafetyLimits.GAME (release) / TEST (debug) · rewarded chỉ trigger khi user bấm · không fake close button
+- **Memory review (OK)**: VipActivity dispose đủ (CountDownTimer.cancel, animators.cancel, shimmer.stop, _binding=null, callback guard `_binding==null`) · ChessBoard banner SDK auto-manage · MyApplication dùng WeakReference
+- **VIP UI**: 13/13 components + 5/5 animations (pulse/slide-in/shimmer/count-up bump/confetti+haptic)
+- **Files changed**: build.gradle, MyApplication.kt, SplashActivity.java, ChessBoardActivity.java, MainActivity.java, AndroidManifest, colors/strings(vi+en), a_main.xml + **8 file mới** (AdKeys/VipKeys/VipPrefs/VipActivity.kt, a_vip_management.xml, 8 drawable)
+
+### Files mới
+```
+common/consts/AdKeys.kt · feature/vip/{VipKeys,VipPrefs,VipActivity}.kt
+res/layout/a_vip_management.xml
+res/drawable/{ic_workspace_premium,ic_confirmation_number,ic_card_giftcard,
+              ic_restore,ic_play_circle,ic_arrow_back,
+              bg_vip_status_header_active,bg_vip_status_header_free}.xml
+```
+
+### 6.1 — Audit fixes (round 2)
+- 🔴 **Fixed VIP-reduction bug**: ẩn acquire-controls (nhập key + xem QC) khi `isVipByKeyActive()` + `applyVip()` extend-guard chặn activate làm rút ngắn thời hạn (lib ghi đè `expiry=now+days`, không cộng dồn). Trước fix: VIP 30 ngày bấm "xem QC" → còn 3 ngày.
+- 🟡 **GDPR re-consent**: thêm entry "Privacy options" ở footer VIP → `AdManager.showConsentFormIfAvailable()` (EEA mới show, non-EEA no-op).
+- 🟢 `tvEntryRemaining` đổi sang "Còn %d ngày" (bỏ trùng expiry row); first-tick countdown không bump (hết giật); pulse chỉ chạy khi watch-ad visible.
+
+### 6.2 — i18n đầy đủ + Tests (round 3)
+- 🌐 **Dịch native 14 ngôn ngữ**: thêm VIP strings (28 vip_* + privacy_policy/privacy_options/confirm) cho **en (base) + vi + de/es/fr/id/ja/km/ko/lo/ms/pt/th/tr/zh**. `vip_remaining` countdown localize đơn vị d/h/m/s theo từng ngôn ngữ (CJK: 日/時/分/秒, th/km/lo theo chữ bản địa). `assembleRelease` (lintVitalRelease) PASS → không thiếu translation / sai format-arg.
+  - ⚠️ Khuyến nghị native review riêng cho **km (Khmer)** + **lo (Lào)** trước khi publish (best-effort, ngữ pháp phức tạp).
+- 🧪 **Tests (44 VIP unit/widget PASS · full suite 127 PASS, 0 fail)**:
+  - Tách `VipMath.kt` (pure) → unit-test trực tiếp JVM.
+  - `VipMathTest` (21): elapsedProgress (atGrant/atExpiry/mid/clamp/zero-total/clock-skew), remaining decompose, daysLeftCeil, isExtension extend-guard.
+  - `VipKeysTest` (8, Robolectric): decode 30d/3d, lookupDays valid/trim/invalid/empty/case-sensitive.
+  - `VipPrefsTest` (5, Robolectric): grantedAt save/get/clear, userRedeemed.
+  - `AdKeysTest` (3, Robolectric): VIP_SECRET decode + single-secret contract + privacy URL https.
+  - `VipActivityRobolectricTest` (3, widget): **free-state** UI, invalid-key toast (ShadowToast), free-user label.
+  - `VipActivityActiveStateTest` (4, widget): **active-state** (seed VIP qua activateVipByKey) — countdown/progress/card hiện + acquire-controls ẩn + revoke enabled; grace 🎁 label; redeemed "%d days" label; **revoke dialog flow** → quay về free-state.
+  - `VipActivityEspressoTest` (androidTest, 3): integration — compile PASS; chạy bằng `./gradlew connectedDebugAndroidTest` trên device/emulator.
+  - AdManager singleton cô lập qua `@Before`/`@After` clear (chống leak chéo giữa test class).
+
+### Lưu ý vận hành
+- VIP key (30d/3d) Base64-obfuscated trong `VipKeys.kt`/`AdKeys.kt` — grep plain key trong source = 0 match.
+- AdMob rewarded đang dùng test ID; khi bật `IS_ENABLE_ADMOB=true` để chạy AdMob production phải đổi sang rewarded ID thật.
+- Auto-trial VIP 1 ngày là built-in SDK (chỉ chạy ở **release** build, debug skip) — không re-implement ở app code.
+- Grace entry detect bằng proxy `isVipByKeyActive() && !VipPrefs.userRedeemedAtLeastOnce()` (lib chưa expose `isAddVIPMemberFirstInitSuccess()` ra public API).
+</content>
+</invoke>

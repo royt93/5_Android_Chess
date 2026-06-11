@@ -148,10 +148,12 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
         startAmbientAnimations();
 
+        // autoManageLifecycle=true → SDK tự lo resume/pause/destroy banner (không override thủ công).
         adView = AdManager.INSTANCE.loadBanner(this,
                 (ViewGroup) findViewById(R.id.banner_container),
                 (TextView) findViewById(R.id.tvLabelAd),
-                com.google.android.gms.ads.AdSize.BANNER);
+                com.google.android.gms.ads.AdSize.BANNER,
+                true);
         AdManager.INSTANCE.loadInterstitial(this);
 
         // Board is made square by ConstraintLayout dimensionRatio="1:1" in XML.
@@ -561,17 +563,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        AdManager.INSTANCE.bannerResume(adView);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        AdManager.INSTANCE.bannerPause(adView);
-    }
+    // Banner lifecycle (resume/pause/destroy) do SDK tự quản qua autoManageLifecycle=true
+    // (default của loadBanner từ 1.1.3+) — KHÔNG override onResume/onPause thủ công nữa.
 
     /**
      * OPT: Release 3D-piece bitmap cache under memory pressure
@@ -610,7 +603,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
         if (chess != null) chess.cancelAiHandler();
         if (Storage.getChess() == chess) Storage.clearChess();
-        AdManager.INSTANCE.bannerDestroy(adView);
+        // Banner destroy do SDK auto-manage (autoManageLifecycle=true). adView giữ làm field
+        // chỉ để tham chiếu; SDK tự detach + destroy trong ActivityLifecycleCallbacks.
         super.onDestroy();
     }
 
