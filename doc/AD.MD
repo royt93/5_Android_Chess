@@ -24,6 +24,11 @@
 - Phụ: label "VIP %d days" dùng `Math.round` (hết lệch "2 days" vs "3 days left").
 - Tests: **150 PASS** (0 fail); `assembleRelease` xanh.
 
+**Update 2026-06-12 (round feedback 3 — 2 bug)**:
+- Bug 1: nút "Revoke VIP" (`btnRevokeAll`) giờ `visibility=GONE` khi free (trước chỉ `isEnabled=false` → nút đỏ trông như enable). Verify device: revoke → free-state ẩn nút. Test thêm assertion visibility (free=GONE, active=VISIBLE).
+- Bug 2 (crash `OutOfMemoryError` ở `KonfettiView.onDraw` → `PartyEmitter.createParticle`): `celebrate()` không `reset()` trước `start()` → `KonfettiView.start` cộng dồn `PartySystem` (không thay thế) → gọi celebrate nhiều lần tích lũy particle. FIX: `viewKonfetti.reset()` trước mỗi `start` + sau `onDestroy`; thêm `timeToLive=1500ms`, giảm burst (max 120→60, duration 100→80ms). ⚠️ Lưu ý: heap đầy 256MB nên có thể còn leak bitmap khác (xem `memory_leak.md`/leakcanary) — konfetti chỉ là giọt nước tràn ly; fix này loại konfetti khỏi nguyên nhân.
+- Tests: **150 PASS**; `assembleRelease` xanh.
+
 ### Đã hoàn thành & verify
 - Code: upgrade SDK 1.1.5, consent UMP, rewarded, VIP screen (13 UI + 5 anim), i18n 14 ngôn ngữ, banner autoManageLifecycle.
 - Unit/widget tests: **129 test PASS** (gồm 46 VIP test). `assembleDebug`/`assembleRelease` xanh.

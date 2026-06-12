@@ -68,6 +68,7 @@ class VipActivityActiveStateTest {
             assertEquals(View.GONE, a.findViewById<View>(R.id.btnWatchAd).visibility)
             assertEquals(View.GONE, a.findViewById<View>(R.id.tilKey).visibility)
             assertEquals(View.GONE, a.findViewById<View>(R.id.btnActivate).visibility)
+            assertEquals(View.VISIBLE, a.findViewById<View>(R.id.btnRevokeAll).visibility)
             assertTrue(a.findViewById<View>(R.id.btnRevokeAll).isEnabled)
             assertEquals(
                 a.getString(R.string.vip_active),

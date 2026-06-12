@@ -41,6 +41,8 @@ class VipActivityRobolectricTest {
             assertEquals(View.GONE, a.findViewById<View>(R.id.cardActiveVip).visibility)
             assertEquals(View.GONE, a.findViewById<View>(R.id.progressVip).visibility)
             assertEquals(View.GONE, a.findViewById<View>(R.id.tvCountdown).visibility)
+            // Revoke chỉ hiện khi thật sự có VIP → free-state phải GONE (không phải chỉ disabled)
+            assertEquals(View.GONE, a.findViewById<View>(R.id.btnRevokeAll).visibility)
             assertFalse(a.findViewById<View>(R.id.btnRevokeAll).isEnabled)
         }
     }

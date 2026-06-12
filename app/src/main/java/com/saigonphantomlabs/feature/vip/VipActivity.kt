@@ -156,6 +156,8 @@ class VipActivity : BaseActivity() {
             setAcquireControlsVisible(false)
 
             b.btnRevoke.isEnabled = true
+            // Chỉ hiện "Revoke VIP" khi THẬT SỰ có VIP (tránh nút đỏ disabled trông như enable).
+            b.btnRevokeAll.visibility = View.VISIBLE
             b.btnRevokeAll.isEnabled = true
 
             startCountdown()
@@ -170,6 +172,7 @@ class VipActivity : BaseActivity() {
             b.cardActiveVip.visibility = View.GONE
             setAcquireControlsVisible(true)
             b.btnRevoke.isEnabled = false
+            b.btnRevokeAll.visibility = View.GONE
             b.btnRevokeAll.isEnabled = false
         }
     }
@@ -429,16 +432,21 @@ class VipActivity : BaseActivity() {
 
     /** anim #5: confetti + haptic khi activate thành công. */
     private fun celebrate() {
+        val b = _binding ?: return
+        // reset() TRƯỚC start: xóa các PartySystem cũ → tránh tích lũy particle gây OOM
+        // (KonfettiView.start cộng dồn hệ thống, không tự thay thế).
+        b.viewKonfetti.reset()
         val party = Party(
             speed = 0f,
-            maxSpeed = 30f,
+            maxSpeed = 22f,
             damping = 0.9f,
             spread = 360,
             colors = listOf(0xFCE18A.toInt(), 0xFF726D.toInt(), 0xF4306D.toInt(), 0xB48DEF.toInt()),
             position = Position.Relative(0.5, 0.3),
-            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(120),
+            timeToLive = 1500L,   // particle tự hết hạn → KonfettiView dừng vẽ (không leak/loop)
+            emitter = Emitter(duration = 80, TimeUnit.MILLISECONDS).max(60),
         )
-        binding.viewKonfetti.start(party)
+        b.viewKonfetti.start(party)
         performHaptic()
     }
 
@@ -463,6 +471,7 @@ class VipActivity : BaseActivity() {
         activateAnimator?.cancel(); activateAnimator = null
         countUpAnimator?.cancel(); countUpAnimator?.removeAllUpdateListeners(); countUpAnimator = null
         _binding?.shimmerCrown?.stopShimmer()
+        _binding?.viewKonfetti?.reset()   // dừng vòng vẽ + giải phóng particle (chống OOM/leak)
         _binding = null
         super.onDestroy()
     }
