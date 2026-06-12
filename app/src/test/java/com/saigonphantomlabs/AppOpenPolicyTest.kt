@@ -81,4 +81,29 @@ class AppOpenPolicyTest {
     @Test fun blacklist_size_isThree() {
         assertEquals(3, MyApplication.APP_OPEN_BLACKLIST.size)
     }
+
+    // ── isForeignActivity: ad-network / external → skip App Open ──────
+    @Test fun foreign_applovinFullscreen_isTrue() {
+        assertTrue(MyApplication.isForeignActivity("com.applovin.adview.AppLovinFullscreenActivity"))
+    }
+
+    @Test fun foreign_admobAdActivity_isTrue() {
+        assertTrue(MyApplication.isForeignActivity("com.google.android.gms.ads.AdActivity"))
+    }
+
+    @Test fun foreign_playStore_isTrue() {
+        assertTrue(MyApplication.isForeignActivity("com.android.vending.AssetBrowserActivity"))
+    }
+
+    @Test fun foreign_ownAppActivity_isFalse() {
+        assertFalse(MyApplication.isForeignActivity("com.saigonphantomlabs.MainActivity"))
+    }
+
+    @Test fun foreign_ownVipActivity_isFalse() {
+        assertFalse(MyApplication.isForeignActivity("com.saigonphantomlabs.feature.vip.VipActivity"))
+    }
+
+    @Test fun foreign_null_isTrue_failSafe() {
+        assertTrue(MyApplication.isForeignActivity(null))
+    }
 }

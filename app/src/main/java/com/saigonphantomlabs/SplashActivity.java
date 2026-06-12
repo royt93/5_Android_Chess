@@ -77,24 +77,41 @@ public class SplashActivity extends BaseActivity {
         // UMP consent (GDPR/EEA) PHẢI resolved trước khi load App Open/Banner/Interstitial.
         // Lib tự lo personalized vs non-personalized theo IAB TCF; Non-EEA → skip dialog.
         // Sau khi consent xong (accept hoặc deny) mới chạy splash warmup → navigate.
-        AdManager.INSTANCE.requestConsentInfoUpdate(this, false, new Function1<Boolean, Unit>() {
-            @Override
-            public Unit invoke(Boolean canRequestAds) {
-                runSplashAfterConsent();
-                return Unit.INSTANCE;
-            }
-        });
+        //
+        // ⚠️ MEMORY LEAK FIX: dùng static-nested callback + WeakReference thay anonymous inner class.
+        // Lib giữ callback `initSplashScreen` trong static `splashTimeoutRunnable` và KHÔNG clear →
+        // anonymous inner class (ngầm giữ SplashActivity.this) làm leak cả Activity (~918KB/lần mở app).
+        // Static nested + WeakReference cắt chuỗi: lib giữ static → chỉ còn WeakRef → Activity GC được.
+        AdManager.INSTANCE.requestConsentInfoUpdate(this, false, new ConsentCallback(this));
     }
 
     private void runSplashAfterConsent() {
         if (isFinishing() || isNavigating) return;
-        AdManager.INSTANCE.initSplashScreen(this, new Function0<Unit>() {
-            @Override
-            public Unit invoke() {
-                runOnUiThread(SplashActivity.this::navigateToMainActivity);
-                return Unit.INSTANCE;
+        AdManager.INSTANCE.initSplashScreen(this, new SplashNavCallback(this));
+    }
+
+    /** Callback consent — static + WeakReference để không leak SplashActivity qua static của lib. */
+    private static final class ConsentCallback implements Function1<Boolean, Unit> {
+        private final java.lang.ref.WeakReference<SplashActivity> ref;
+        ConsentCallback(SplashActivity a) { this.ref = new java.lang.ref.WeakReference<>(a); }
+        @Override public Unit invoke(Boolean canRequestAds) {
+            SplashActivity a = ref.get();
+            if (a != null && !a.isFinishing()) a.runSplashAfterConsent();
+            return Unit.INSTANCE;
+        }
+    }
+
+    /** Callback splash→navigate — static + WeakReference (lib giữ qua splashTimeoutRunnable static). */
+    private static final class SplashNavCallback implements Function0<Unit> {
+        private final java.lang.ref.WeakReference<SplashActivity> ref;
+        SplashNavCallback(SplashActivity a) { this.ref = new java.lang.ref.WeakReference<>(a); }
+        @Override public Unit invoke() {
+            SplashActivity a = ref.get();
+            if (a != null && !a.isFinishing() && !a.isDestroyed()) {
+                a.runOnUiThread(a::navigateToMainActivity);
             }
-        });
+            return Unit.INSTANCE;
+        }
     }
 
     // Logo breathing: scale DOWN only (never above 1.0 — no clipping)

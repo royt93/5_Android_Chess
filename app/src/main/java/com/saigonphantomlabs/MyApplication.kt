@@ -49,6 +49,19 @@ class MyApplication : Application() {
         @JvmStatic
         fun shouldSkipAppOpen(activityName: String?): Boolean =
             activityName == null || activityName in APP_OPEN_BLACKLIST
+
+        /** Prefix package của app — phân biệt activity của app với activity ad-network/ngoài. */
+        const val APP_PACKAGE_PREFIX = "com.saigonphantomlabs"
+
+        /**
+         * True nếu activity KHÔNG thuộc app (vd `com.applovin.adview.AppLovinFullscreenActivity`,
+         * AdMob `AdActivity`, hoặc activity ngoài). App Open resume KHÔNG được show khi đang ở
+         * màn ad-network — sẽ đè lên ad fullscreen đang chạy (loading-overlay nhấp nháy, "NOT READY",
+         * "stale callback") và có thể phá callback rewarded. Fail-safe: null → coi như foreign → skip.
+         */
+        @JvmStatic
+        fun isForeignActivity(fullClassName: String?): Boolean =
+            fullClassName == null || !fullClassName.startsWith(APP_PACKAGE_PREFIX)
     }
 
     /**
@@ -165,6 +178,13 @@ class MyApplication : Application() {
 
                 val activity = currentActivity?.get() ?: return
                 val activityName = activity.javaClass.simpleName
+
+                // ✅ Policy: skip khi đang ở activity của ad-network/ngoài (AppLovinFullscreenActivity,
+                //    AdActivity…) — App Open không được show đè lên ad fullscreen đang chạy.
+                if (isForeignActivity(activity.javaClass.name)) {
+                    Log.d("roy93~", "AppOpen ⏭️ skipped — non-app (ad/external) activity: $activityName")
+                    return
+                }
 
                 // ✅ Policy: skip on blacklisted activities (Splash / ChessBoard / Vip).
                 //    See [APP_OPEN_BLACKLIST] / [shouldSkipAppOpen] for rationale.

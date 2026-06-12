@@ -148,12 +148,15 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
         startAmbientAnimations();
 
-        // autoManageLifecycle=true → SDK tự lo resume/pause/destroy banner (không override thủ công).
+        // autoManageLifecycle=FALSE → tự quản resume/pause/destroy thủ công (onResume/onPause/onDestroy).
+        // Lý do: auto-manage để banner tự refresh ngầm cả khi đã rời màn cờ (sang Menu/VIP) →
+        // invalid impression (policy) + tốn request/memory. Quản tay đảm bảo banner CHỈ refresh
+        // khi màn cờ đang hiển thị.
         adView = AdManager.INSTANCE.loadBanner(this,
                 (ViewGroup) findViewById(R.id.banner_container),
                 (TextView) findViewById(R.id.tvLabelAd),
                 com.google.android.gms.ads.AdSize.BANNER,
-                true);
+                false);
         AdManager.INSTANCE.loadInterstitial(this);
 
         // Board is made square by ConstraintLayout dimensionRatio="1:1" in XML.
@@ -563,8 +566,19 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         }
     }
 
-    // Banner lifecycle (resume/pause/destroy) do SDK tự quản qua autoManageLifecycle=true
-    // (default của loadBanner từ 1.1.3+) — KHÔNG override onResume/onPause thủ công nữa.
+    // Banner lifecycle thủ công — banner CHỈ refresh khi màn cờ đang hiển thị (autoManageLifecycle=false).
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adView != null) AdManager.INSTANCE.bannerResume(adView);
+    }
+
+    @Override
+    protected void onPause() {
+        // Dừng auto-refresh khi rời màn cờ (sang Menu/VIP/ad…) → hết invalid impression off-screen.
+        if (adView != null) AdManager.INSTANCE.bannerPause(adView);
+        super.onPause();
+    }
 
     /**
      * OPT: Release 3D-piece bitmap cache under memory pressure
@@ -603,8 +617,11 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
         if (chess != null) chess.cancelAiHandler();
         if (Storage.getChess() == chess) Storage.clearChess();
-        // Banner destroy do SDK auto-manage (autoManageLifecycle=true). adView giữ làm field
-        // chỉ để tham chiếu; SDK tự detach + destroy trong ActivityLifecycleCallbacks.
+        // Destroy banner thủ công → giải phóng MaxAdView + dừng refresh timer (chống leak/OOM).
+        if (adView != null) {
+            AdManager.INSTANCE.bannerDestroy(adView);
+            adView = null;
+        }
         super.onDestroy();
     }
 

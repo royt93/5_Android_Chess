@@ -69,9 +69,17 @@
       "Bash(grep -i \"AppLovinProvider\\\\$\")",
       "Bash(javap -p -c 'com/roy/sdkadbmob/AppLovinProvider$loadRewarded$2.class')",
       "Bash(awk '/public void onUserRewarded/,/^$/' /tmp/lr2.txt)",
-      "Bash(awk '/public void onAdHidden/,/^$/' /tmp/lr2.txt)"
+      "Bash(awk '/public void onAdHidden/,/^$/' /tmp/lr2.txt)",
+      "Bash(javap -p com/roy/sdkadbmob/AdManager.class)",
+      "Skill(update-config)",
+      "Read(//Users/loitran/AndroidStudioProjects/@mckimquyen/**)",
+      "Bash(python3 -)",
+      "Bash(grep -E \"device$\")",
+      "Bash(grep -vE \"List|^$\")"
     ],
     "deny": [],
-    "ask": []
-  }
+    "ask": [],
+    "defaultMode": "bypassPermissions"
+  },
+  "skipDangerousModePermissionPrompt": true
 }
