@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">Aktivierung fehlgeschlagen</string>
     <string name="hint">Tipp</string>
     <string name="hint_none">Kein Tipp verfügbar</string>
+    <string name="moves_title">Züge</string>
+    <string name="share_pgn">PGN teilen</string>
+    <string name="moves_empty">Noch keine Züge</string>
+    <string name="time_control_title">Zeitkontrolle</string>
+    <string name="time_off">Keine Uhr</string>
+    <string name="time_blitz">Blitz · 5 Min</string>
+    <string name="time_rapid">Schnell · 10 Min</string>
 </resources>

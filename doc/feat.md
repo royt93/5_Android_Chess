@@ -109,11 +109,18 @@
 
 **Wave A — tái dùng engine, value cao:**
 1. ✅ **Gợi ý nước đi (Hint)** — `Chess.computeBestHint()` (AIEngine HARD depth 3) → highlight ô from/to (`bg_hint_square` gold), off-thread mirror AI; gate: VIP gợi ý ngay / non-VIP xem rewarded (không có ad vẫn gợi ý); auto-clear 4s + khi tương tác; nút gold "Gợi ý" + `ic_hint`; string 15 locale. **2 unit test PASS** (`HintTest` — bắt hậu treo + nước hợp lệ). **Verify device Pixel: Nb1→c3 highlight đúng, 78ms, 0 crash.**
-2. 🟡 **Lịch sử nước đi + xuất/share PGN** — `MoveRecord.getNotation` + list UI + share intent. *(tiếp theo)*
+2. ✅ **Lịch sử nước đi + xuất/share PGN** — `PgnExporter` (thuần, testable): SAN từng nước (pawn/piece/capture/O-O/O-O-O/promotion/en passant), movetext đánh số, **PGN 7-tag** + share intent. Dialog "Nước đi" (`showBasicDialog`) hiện list SAN + nút **Chia sẻ PGN** → share sheet; nút moves icon-only. **12 unit test PASS** (`PgnExporterTest`). **Verify device:** "1. e4" hiển thị + share sheet ra PGN chuẩn.
+   - 🔧 **Fix bug UI (regression Hint):** hàng action button (theme/restart/undo/hint/moves) tràn ngang → nút Hint bị clip. Fix: bọc `HorizontalScrollView` (căn giữa khi vừa, cuộn khi tràn — không clip) + restart/undo/moves **icon-only** → 5 nút vừa khít màn Pixel 7 Pro. Verify device.
 
 **Wave B — gameplay:**
-3. **Đồng hồ cờ** (Blitz/Rapid/Classic) — timer mỗi bên, hết giờ thua.
-4. **Lưu & tiếp tục ván** — serialize board state + undo stack (SharedPreferences/file).
+3. ✅ **Đồng hồ cờ** (Blitz 5'/Rapid 10'/Không giờ) — `ChessClock` thuần (tick/switch/increment/flag/format, **8 unit test**); dialog time-control (Material, ép theme tối `ThemeOverlay.Chess.Dialog`) ở game start (PvP+PvE) → `TIME_CONTROL_MS` extra; 2 đồng hồ pill (đen trên/trắng dưới) đồng bộ lượt; tick 200ms `SystemClock`; flag-fall → `endGameByTimeout` + end dialog; pause/resume theo lifecycle, reset khi chơi lại. **Verify device:** Blitz → trắng đếm 5:00→4:4x, đen 5:00; dialog tối. *(v1: increment=0, clock reset khi xoay màn.)*
+4. **Lưu & tiếp tục ván** — serialize board state + undo stack (SharedPreferences/file). *(tiếp theo)*
+
+**🎨 Hệ DIALOG CHUNG (glass game style — nhất quán cả app):**
+- ✅ `DialogUtils.showChoiceDialog` — dialog chọn 1-trong-N **glass** chung (icon halo/ring + title gold-glow + list card accent/emoji/subtitle/arrow + stagger anim) qua `dialog_glass_choice.xml`. Migrate **time-control** (trước `MaterialAlertDialog.setItems` — không nhất quán) → glass. Verify device: dialog xinh, khớp difficulty.
+- ✅ Migrate **VIP success/failed/revoke** (trước `MaterialAlertDialogBuilder` ×3) → `showBasicDialog` (glass message). Sửa test revoke (click `btn_positive` custom).
+- ⚪ `showDifficultyDialog` vẫn impl riêng (visual Y HỆT glass choice) — fold vào `showChoiceDialog` sau (pure refactor, 0 đổi visual).
+- Build: **186 test PASS**; `assembleDebug` xanh.
 
 **Wave C — content / retention:**
 5. **Câu đố cờ** (Puzzles mate-in-N) — bộ FEN nhúng, engine validate.

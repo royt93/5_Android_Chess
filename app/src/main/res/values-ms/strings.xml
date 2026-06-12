@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">Pengaktifan gagal</string>
     <string name="hint">Pembayang</string>
     <string name="hint_none">Tiada pembayang</string>
+    <string name="moves_title">Langkah</string>
+    <string name="share_pgn">Kongsi PGN</string>
+    <string name="moves_empty">Belum ada langkah</string>
+    <string name="time_control_title">Kawalan masa</string>
+    <string name="time_off">Tiada jam</string>
+    <string name="time_blitz">Blitz · 5 min</string>
+    <string name="time_rapid">Pantas · 10 min</string>
 </resources>

@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">활성화 실패</string>
     <string name="hint">힌트</string>
     <string name="hint_none">힌트 없음</string>
+    <string name="moves_title">기보</string>
+    <string name="share_pgn">PGN 공유</string>
+    <string name="moves_empty">아직 기보가 없습니다</string>
+    <string name="time_control_title">시간 제어</string>
+    <string name="time_off">시계 없음</string>
+    <string name="time_blitz">블리츠 · 5분</string>
+    <string name="time_rapid">래피드 · 10분</string>
 </resources>

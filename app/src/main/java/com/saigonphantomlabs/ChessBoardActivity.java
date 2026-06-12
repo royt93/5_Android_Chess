@@ -52,11 +52,37 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
     private LinearLayout capturedBlackPiecesContainer;
     private LinearLayout capturedWhitePiecesContainer;
-    private AppCompatButton btnUndo;
-    private AppCompatButton btnRestart;
+    private android.widget.ImageButton btnUndo;
+    private android.widget.ImageButton btnRestart;
     private AppCompatButton btnHint;
+    private android.widget.ImageButton btnMoves;
     private final android.os.Handler hintHandler =
             new android.os.Handler(android.os.Looper.getMainLooper());
+
+    // Chess clock (đồng hồ cờ) — null nếu không bật giờ
+    private com.saigonphantomlabs.chess.ChessClock chessClock;
+    private TextView tvWhiteClock, tvBlackClock;
+    private long lastClockTickMs;
+    private boolean clockRunning;
+    private final android.os.Handler clockHandler =
+            new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable clockTick = new Runnable() {
+        @Override public void run() {
+            if (!clockRunning || chess == null || chessClock == null) return;
+            if (chess.isGameEnd()) { clockRunning = false; return; }
+            long now = android.os.SystemClock.elapsedRealtime();
+            chessClock.setWhiteActive(chess.whichPlayerTurn == Chessman.PlayerColor.White);
+            chessClock.tick(now - lastClockTickMs);
+            lastClockTickMs = now;
+            updateClockDisplays();
+            com.saigonphantomlabs.chess.ChessClock.Flag flag = chessClock.flagged();
+            if (flag != com.saigonphantomlabs.chess.ChessClock.Flag.NONE) {
+                onFlagFall(flag);
+                return;
+            }
+            clockHandler.postDelayed(this, 200L);
+        }
+    };
     private ImageView boardImage;            // The board PNG / Canvas-drawn board
     private BoardThemeManager.Theme currentTheme;  // Active board color theme
 
@@ -133,6 +159,12 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         btnHint = findViewById(R.id.btnHint);
         if (btnHint != null) btnHint.setOnClickListener(v -> onHintClicked());
 
+        btnMoves = findViewById(R.id.btnMoves);
+        if (btnMoves != null) btnMoves.setOnClickListener(v -> onMovesClicked());
+
+        tvWhiteClock = findViewById(R.id.tvWhiteClock);
+        tvBlackClock = findViewById(R.id.tvBlackClock);
+
         // Board theme button (if present in layout)
         boardImage = findViewById(R.id.boardImage);
         View btnTheme = findViewById(R.id.btnBoardTheme);
@@ -200,6 +232,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                             chess = Storage.getChess();
                             chess.changeLayout(ChessBoardActivity.this, boardSize, boardLayout);
                         }
+                        setupClock();
                         // Register touch handler
                         ImageView bImg = boardImage != null ? boardImage : (ImageView) findViewById(R.id.boardImage);
                         if (bImg != null) bImg.setOnTouchListener(ChessBoardActivity.this::onTouch);
@@ -309,10 +342,94 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         });
     }
 
+    /** Mở dialog lịch sử nước đi + nút Share PGN. */
+    private void onMovesClicked() {
+        if (chess == null) return;
+        java.util.List<com.saigonphantomlabs.chess.MoveRecord> moves = chess.getMoveHistory();
+        CharSequence body = moves.isEmpty()
+                ? getString(R.string.moves_empty)
+                : com.saigonphantomlabs.chess.PgnExporter.buildMoveTextMultiline(moves);
+        DialogUtils.showBasicDialog(this,
+                getString(R.string.moves_title),
+                body,
+                getString(R.string.share_pgn),   // positive → share
+                getString(R.string.close),       // negative → đóng
+                R.drawable.ic_moves,
+                () -> sharePgn(moves),
+                null);
+    }
+
+    private void sharePgn(java.util.List<com.saigonphantomlabs.chess.MoveRecord> moves) {
+        String date = new java.text.SimpleDateFormat("yyyy.MM.dd", java.util.Locale.US)
+                .format(new java.util.Date());
+        String pgn = com.saigonphantomlabs.chess.PgnExporter.buildPgn(moves, "White", "Black", date, "*");
+        try {
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_SUBJECT, "Quick Chess PGN");
+            share.putExtra(Intent.EXTRA_TEXT, pgn);
+            startActivity(Intent.createChooser(share, getString(R.string.share_pgn)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ───────────────────────── CHESS CLOCK ─────────────────────────
+
+    private void setupClock() {
+        long ms = getIntent().getLongExtra("TIME_CONTROL_MS", 0L);
+        if (ms <= 0) return;
+        if (chessClock == null) chessClock = new com.saigonphantomlabs.chess.ChessClock(ms, 0);
+        if (tvWhiteClock != null) tvWhiteClock.setVisibility(View.VISIBLE);
+        if (tvBlackClock != null) tvBlackClock.setVisibility(View.VISIBLE);
+        updateClockDisplays();
+        startClock();
+    }
+
+    private void updateClockDisplays() {
+        if (chessClock == null) return;
+        if (tvWhiteClock != null)
+            tvWhiteClock.setText(com.saigonphantomlabs.chess.ChessClock.format(chessClock.getWhiteMs()));
+        if (tvBlackClock != null)
+            tvBlackClock.setText(com.saigonphantomlabs.chess.ChessClock.format(chessClock.getBlackMs()));
+    }
+
+    private void startClock() {
+        if (chessClock == null || chess == null || chess.isGameEnd() || clockRunning) return;
+        clockRunning = true;
+        lastClockTickMs = android.os.SystemClock.elapsedRealtime();
+        clockHandler.post(clockTick);
+    }
+
+    private void stopClock() {
+        clockRunning = false;
+        clockHandler.removeCallbacks(clockTick);
+    }
+
+    private void onFlagFall(com.saigonphantomlabs.chess.ChessClock.Flag flag) {
+        stopClock();
+        if (chess != null) chess.endGameByTimeout();
+        updateClockDisplays();
+        // Bên hết giờ thua → bên kia thắng
+        boolean whiteWins = (flag == com.saigonphantomlabs.chess.ChessClock.Flag.BLACK);
+        showCustomGameEndDialog(whiteWins, false);
+    }
+
     private void showRestartConfirmDialog() {
         DialogUtils.showRestartDialog(this, () -> {
             if (chess != null) chess.resetGame();
+            resetClock();
         });
+    }
+
+    /** Reset đồng hồ về thời gian ban đầu khi chơi lại (no-op nếu không bật giờ). */
+    private void resetClock() {
+        if (chessClock == null) return;
+        long ms = getIntent().getLongExtra("TIME_CONTROL_MS", 0L);
+        stopClock();
+        chessClock = new com.saigonphantomlabs.chess.ChessClock(ms, 0);
+        updateClockDisplays();
+        startClock();
     }
 
     /**
@@ -424,7 +541,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         animateButton(btnRestart, showRestart);
     }
 
-    private void animateButton(AppCompatButton btn, boolean show) {
+    private void animateButton(View btn, boolean show) {
         if (btn == null) return;
         if (show && btn.getVisibility() != View.VISIBLE) {
             btn.setVisibility(View.VISIBLE);
@@ -566,6 +683,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         if (btnPlayAgain != null) btnPlayAgain.setOnClickListener(v -> {
             dialog.dismiss();
             chess.resetGame();
+            resetClock();
         });
         if (btnExit != null) btnExit.setOnClickListener(v -> {
             dialog.dismiss();
@@ -612,12 +730,14 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     protected void onResume() {
         super.onResume();
         if (adView != null) AdManager.INSTANCE.bannerResume(adView);
+        startClock();   // tiếp tục đếm giờ (reset mốc → không tính thời gian bị pause)
     }
 
     @Override
     protected void onPause() {
         // Dừng auto-refresh khi rời màn cờ (sang Menu/VIP/ad…) → hết invalid impression off-screen.
         if (adView != null) AdManager.INSTANCE.bannerPause(adView);
+        stopClock();    // tạm dừng đồng hồ khi rời màn (công bằng)
         super.onPause();
     }
 
@@ -657,6 +777,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         }
 
         hintHandler.removeCallbacksAndMessages(null);
+        stopClock();
         if (chess != null) { chess.clearHint(); chess.cancelAiHandler(); }
         if (Storage.getChess() == chess) Storage.clearChess();
         // Destroy banner thủ công → giải phóng MaxAdView + dừng refresh timer (chống leak/OOM).

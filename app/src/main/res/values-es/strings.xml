@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">Error de activación</string>
     <string name="hint">Pista</string>
     <string name="hint_none">No hay pista disponible</string>
+    <string name="moves_title">Jugadas</string>
+    <string name="share_pgn">Compartir PGN</string>
+    <string name="moves_empty">Aún no hay jugadas</string>
+    <string name="time_control_title">Control de tiempo</string>
+    <string name="time_off">Sin reloj</string>
+    <string name="time_blitz">Blitz · 5 min</string>
+    <string name="time_rapid">Rápido · 10 min</string>
 </resources>

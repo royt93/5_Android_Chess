@@ -152,4 +152,11 @@
     <string name="vip_dialog_failed_title">Kích hoạt thất bại</string>
     <string name="hint">Gợi ý</string>
     <string name="hint_none">Không có gợi ý</string>
+    <string name="moves_title">Nước đi</string>
+    <string name="share_pgn">Chia sẻ PGN</string>
+    <string name="moves_empty">Chưa có nước đi nào</string>
+    <string name="time_control_title">Kiểm soát thời gian</string>
+    <string name="time_off">Không giờ</string>
+    <string name="time_blitz">Cờ chớp · 5 phút</string>
+    <string name="time_rapid">Cờ nhanh · 10 phút</string>
 </resources>

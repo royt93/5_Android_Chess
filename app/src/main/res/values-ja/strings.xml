@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">有効化に失敗しました</string>
     <string name="hint">ヒント</string>
     <string name="hint_none">ヒントがありません</string>
+    <string name="moves_title">手</string>
+    <string name="share_pgn">PGNを共有</string>
+    <string name="moves_empty">まだ手がありません</string>
+    <string name="time_control_title">持ち時間</string>
+    <string name="time_off">時計なし</string>
+    <string name="time_blitz">ブリッツ · 5分</string>
+    <string name="time_rapid">ラピッド · 10分</string>
 </resources>

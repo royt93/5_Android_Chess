@@ -106,6 +106,22 @@
                     android:shadowColor="@color/game_cyan_glow"
                     android:shadowDx="0" android:shadowDy="0" android:shadowRadius="20" />
             </LinearLayout>
+            <!-- Đồng hồ đen (chess clock) — ẩn khi không bật giờ -->
+            <TextView
+                android:id="@+id/tvBlackClock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_pill_turn_black"
+                android:fontFamily="@font/exo2"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="5:00" />
         </FrameLayout>
 
         <!--
@@ -178,6 +194,22 @@
                     android:shadowColor="@color/game_gold_glow"
                     android:shadowDx="0" android:shadowDy="0" android:shadowRadius="20" />
             </LinearLayout>
+            <!-- Đồng hồ trắng (chess clock) — ẩn khi không bật giờ -->
+            <TextView
+                android:id="@+id/tvWhiteClock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_pill_turn_white"
+                android:fontFamily="@font/exo2"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/game_bg_deep"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="5:00" />
         </FrameLayout>
 
         <!-- Captured White row -->
@@ -199,81 +231,96 @@
                 android:paddingHorizontal="8dp" />
         </HorizontalScrollView>
 
-        <!-- Action Buttons — clipChildren=false for button scale animations -->
-        <LinearLayout
-            android:id="@+id/buttonContainer"
-            android:layout_width="wrap_content"
+        <!-- Action Buttons trong HorizontalScrollView: căn giữa khi vừa màn, cuộn ngang khi
+             nhiều nút (theme/restart/undo/hint) — KHÔNG bao giờ clip nút (fix wrap-width). -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:orientation="horizontal"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            android:overScrollMode="never"
             android:clipChildren="false"
             android:clipToPadding="false">
 
-            <!-- Board theme picker — same style as btnUndo for visual consistency -->
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnBoardTheme"
+            <LinearLayout
+                android:id="@+id/buttonContainer"
                 android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:text="@string/theme_select"
-                android:textColor="@color/white"
-                android:fontFamily="@font/exo2"
-                android:background="@drawable/bg_btn_pve"
-                android:paddingHorizontal="20dp"
-                android:textAllCaps="false"
-                android:shadowColor="@color/game_cyan_glow"
-                android:shadowDx="0" android:shadowDy="0" android:shadowRadius="12"
-                android:layout_marginEnd="8dp" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnRestart"
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:layout_marginEnd="12dp"
-                android:text="@string/play_again"
-                android:textColor="@color/game_text_muted"
-                android:fontFamily="@font/exo2"
-                android:visibility="gone"
-                android:background="@drawable/bg_btn_secondary"
-                android:drawableStart="@drawable/ic_restart"
-                android:drawablePadding="8dp"
-                android:drawableTint="@color/game_text_muted"
-                android:paddingHorizontal="20dp"
-                android:textAllCaps="false"/>
+                <!-- Board theme picker — same style as btnUndo for visual consistency -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnBoardTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:text="@string/theme_select"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/exo2"
+                    android:background="@drawable/bg_btn_pve"
+                    android:paddingHorizontal="12dp"
+                    android:textAllCaps="false"
+                    android:shadowColor="@color/game_cyan_glow"
+                    android:shadowDx="0" android:shadowDy="0" android:shadowRadius="12"
+                    android:layout_marginEnd="8dp" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnUndo"
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:text="@string/undo"
-                android:textColor="@color/white"
-                android:fontFamily="@font/exo2"
-                android:visibility="gone"
-                android:background="@drawable/bg_btn_pve"
-                android:drawableStart="@drawable/ic_undo"
-                android:drawablePadding="8dp"
-                android:drawableTint="@color/white"
-                android:paddingHorizontal="20dp"
-                android:textAllCaps="false"
-                android:shadowColor="@color/game_cyan_glow"
-                android:shadowDx="0" android:shadowDy="0" android:shadowRadius="12"/>
+                <!-- Restart icon-only (ImageButton → icon CĂN GIỮA chuẩn; bg đồng nhất nhóm icon) -->
+                <ImageButton
+                    android:id="@+id/btnRestart"
+                    android:layout_width="48dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/play_again"
+                    android:visibility="gone"
+                    android:background="@drawable/bg_btn_secondary"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_restart"
+                    android:tint="@color/white" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnHint"
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:layout_marginStart="8dp"
-                android:text="@string/hint"
-                android:textColor="@color/vip_on_gold"
-                android:fontFamily="@font/exo2"
-                android:background="@drawable/bg_btn_pve"
-                android:backgroundTint="@color/vip_gold"
-                android:drawableStart="@drawable/ic_hint"
-                android:drawablePadding="8dp"
-                android:drawableTint="@color/vip_on_gold"
-                android:paddingHorizontal="20dp"
-                android:textAllCaps="false" />
-        </LinearLayout>
+                <!-- Undo icon-only -->
+                <ImageButton
+                    android:id="@+id/btnUndo"
+                    android:layout_width="48dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/undo"
+                    android:visibility="gone"
+                    android:background="@drawable/bg_btn_secondary"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_undo"
+                    android:tint="@color/white" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:text="@string/hint"
+                    android:textColor="@color/vip_on_gold"
+                    android:fontFamily="@font/exo2"
+                    android:background="@drawable/bg_btn_pve"
+                    android:backgroundTint="@color/vip_gold"
+                    android:drawableStart="@drawable/ic_hint"
+                    android:drawablePadding="6dp"
+                    android:drawableTint="@color/vip_on_gold"
+                    android:paddingHorizontal="12dp"
+                    android:textAllCaps="false" />
+
+                <!-- Moves/PGN icon-only -->
+                <ImageButton
+                    android:id="@+id/btnMoves"
+                    android:layout_width="48dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/moves_title"
+                    android:background="@drawable/bg_btn_secondary"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_moves"
+                    android:tint="@color/white" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <!-- Ad Banner -->
         <include

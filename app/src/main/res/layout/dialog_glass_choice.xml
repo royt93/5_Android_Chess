@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Common Choice Dialog — Cyberpunk Glassmorphism (dùng chung cho difficulty, time control…).
+  Cùng style với dialog_glass_generic: glass bg + top bar + icon halo/ring + title + divider.
+  Khác: thay message+2nút bằng LIST option (build động trong DialogUtils.showChoiceDialog) + nút Cancel.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:background="@drawable/bg_dialog_glass"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/bg_dialog_top_bar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="8dp">
+
+        <!-- Icon halo + ring -->
+        <FrameLayout
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp">
+            <View
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_dialog_icon_halo" />
+            <View
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_dialog_icon_ring" />
+            <ImageView
+                android:id="@+id/dialog_icon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_warning_ember"
+                app:tint="@color/game_gold_primary" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/dialog_title"
+            style="@style/GameText.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:shadowColor="@color/game_gold_glow"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="16"
+            android:text="Title" />
+
+        <View
+            android:layout_width="48dp"
+            android:layout_height="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="#60D4AF37" />
+
+        <!-- Option rows được build động ở DialogUtils.showChoiceDialog -->
+        <LinearLayout
+            android:id="@+id/choiceContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="8dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1AFFFFFF" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancel"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:fontFamily="@font/exo2"
+        android:letterSpacing="0.05"
+        android:text="@string/cancel"
+        android:textColor="#99FFFFFF"
+        android:textSize="13sp"
+        app:cornerRadius="0dp"
+        app:rippleColor="#20FFFFFF" />
+
+</LinearLayout>

@@ -12,10 +12,10 @@ import android.os.Vibrator
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.Toast
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.UserMessagingPlatform
 import com.saigonphantomlabs.BaseActivity
+import com.saigonphantomlabs.DialogUtils
 import com.saigonphantomlabs.chess.R
 import com.saigonphantomlabs.chess.databinding.AVipManagementBinding
 import com.saigonphantomlabs.common.consts.AdKeys
@@ -325,26 +325,33 @@ class VipActivity : BaseActivity() {
         applyVip(3, R.string.vip_reward_failed)
     }
 
-    /** Dialog Material You báo kích hoạt VIP thành công (kèm confetti + haptic). */
+    /** Dialog báo kích hoạt VIP thành công (glass game style chung + confetti + haptic). */
     private fun showVipSuccessDialog(days: Int) {
         if (_binding == null || isFinishing) return
         celebrate()      // anim #5 confetti + haptic
-        MaterialAlertDialogBuilder(this)
-            .setIcon(R.drawable.ic_workspace_premium)
-            .setTitle(R.string.vip_dialog_success_title)
-            .setMessage(getString(R.string.vip_dialog_success_msg, days))
-            .setPositiveButton(android.R.string.ok, null)
-            .show()
+        DialogUtils.showBasicDialog(
+            this,
+            getString(R.string.vip_dialog_success_title),
+            getString(R.string.vip_dialog_success_msg, days),
+            getString(android.R.string.ok),
+            null,
+            R.drawable.ic_workspace_premium,
+            null, null,
+        )
     }
 
-    /** Dialog Material You báo kích hoạt thất bại ([messageRes] = lý do cụ thể). */
+    /** Dialog báo kích hoạt thất bại ([messageRes] = lý do cụ thể) — glass style chung. */
     private fun showVipFailedDialog(messageRes: Int) {
         if (_binding == null || isFinishing) return
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.vip_dialog_failed_title)
-            .setMessage(messageRes)
-            .setPositiveButton(android.R.string.ok, null)
-            .show()
+        DialogUtils.showBasicDialog(
+            this,
+            getString(R.string.vip_dialog_failed_title),
+            getString(messageRes),
+            getString(android.R.string.ok),
+            null,
+            R.drawable.ic_warning_ember,
+            null, null,
+        )
     }
 
     /**
@@ -365,16 +372,20 @@ class VipActivity : BaseActivity() {
     }
 
     private fun confirmRevoke() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.vip_revoke_confirm_title)
-            .setMessage(R.string.vip_revoke_confirm_message)
-            .setNegativeButton(R.string.cancel, null)
-            .setPositiveButton(R.string.confirm) { _, _ ->
+        DialogUtils.showBasicDialog(
+            this,
+            getString(R.string.vip_revoke_confirm_title),
+            getString(R.string.vip_revoke_confirm_message),
+            getString(R.string.confirm),   // positive
+            getString(R.string.cancel),    // negative
+            R.drawable.ic_warning_ember,
+            Runnable {
                 AdManager.clearVipByKey()
                 vipPrefs.clearGrantedAtMs()
                 bindUi()
-            }
-            .show()
+            },
+            null,
+        )
     }
 
     private fun openPrivacyPolicy() {

@@ -148,6 +148,22 @@ class VipActivityActiveStateTest {
         }
     }
 
+    /** Redeem key → success dialog phải là GLASS chung (showBasicDialog có dialog_title), không MaterialAlertDialog. */
+    @Test fun redeem_showsGlassSuccessDialog() {
+        Robolectric.buildActivity(VipActivity::class.java).setup().use { c ->
+            val a = c.get()
+            a.findViewById<EditText>(R.id.etKey).setText(VipKeys.VIP_30D_KEY)
+            a.findViewById<View>(R.id.btnActivate).performClick()
+            shadowOf(Looper.getMainLooper()).idle()
+            val dialog = ShadowDialog.getLatestDialog()
+            assertNotNull(dialog)
+            // Glass dialog: có dialog_title hiển thị tiêu đề success
+            val title = dialog.findViewById<TextView>(R.id.dialog_title)
+            assertNotNull(title)
+            assertEquals(a.getString(R.string.vip_dialog_success_title), title.text.toString())
+        }
+    }
+
     @Test fun revoke_confirmDialog_returnsToFreeState() {
         activate30d()
         Robolectric.buildActivity(VipActivity::class.java).setup().use { c ->
@@ -159,8 +175,9 @@ class VipActivityActiveStateTest {
 
             val dialog = ShadowDialog.getLatestDialog()
             assertNotNull(dialog)
-            (dialog as androidx.appcompat.app.AlertDialog)
-                .getButton(DialogInterface.BUTTON_POSITIVE).performClick()
+            // Glass dialog chung (showBasicDialog) dùng nút custom btn_positive (không phải
+            // BUTTON_POSITIVE chuẩn). Click confirm để revoke.
+            dialog.findViewById<View>(com.saigonphantomlabs.chess.R.id.btn_positive).performClick()
             shadowOf(Looper.getMainLooper()).idle()
 
             // Sau revoke → quay về free-state

@@ -307,6 +307,146 @@ public class DialogUtils {
         void onSelected(String difficulty);
     }
 
+    // ───────────────────────── COMMON CHOICE DIALOG (glass game style) ─────────────────────────
+
+    /** 1 lựa chọn trong dialog chọn (style glass game chung — difficulty, time control…). */
+    public static class ChoiceOption {
+        public final CharSequence title;
+        public final CharSequence subtitle; // nullable
+        public final String emoji;          // nullable
+        public final int accentColor;
+        public ChoiceOption(CharSequence title, CharSequence subtitle, String emoji, int accentColor) {
+            this.title = title; this.subtitle = subtitle; this.emoji = emoji; this.accentColor = accentColor;
+        }
+    }
+
+    /**
+     * Dialog chọn 1-trong-N theo style glass game CHUNG (icon halo/ring + title + list card +
+     * stagger anim). {@code onPick} nhận index option được chọn. Dùng cho cả app cho nhất quán.
+     */
+    public static void showChoiceDialog(Context context, CharSequence title, int iconRes,
+            ChoiceOption[] options, java.util.function.IntConsumer onPick) {
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_glass_choice, null);
+        AlertDialog dialog = new AlertDialog.Builder(context).setView(dialogView).create();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+        ((TextView) dialogView.findViewById(R.id.dialog_title)).setText(title);
+        ImageView icon = dialogView.findViewById(R.id.dialog_icon);
+        if (iconRes != 0) icon.setImageResource(iconRes); else icon.setVisibility(View.GONE);
+        dialogView.findViewById(R.id.btnCancel).setOnClickListener(v -> dialog.dismiss());
+
+        LinearLayout container = dialogView.findViewById(R.id.choiceContainer);
+        for (int i = 0; i < options.length; i++) {
+            final int idx = i;
+            View row = buildChoiceRow(context, options[i], () -> {
+                dialog.dismiss();
+                if (onPick != null) onPick.accept(idx);
+            });
+            row.setAlpha(0f);
+            row.setTranslationX(120f);
+            container.addView(row);
+        }
+
+        final java.util.List<Handler> handlers = new java.util.ArrayList<>();
+        for (int i = 0; i < container.getChildCount(); i++) {
+            final View rowView = container.getChildAt(i);
+            Handler h = new Handler(Looper.getMainLooper());
+            handlers.add(h);
+            h.postDelayed(() -> rowView.animate().alpha(1f).translationX(0f)
+                    .setDuration(350).setInterpolator(new OvershootInterpolator(1.2f)).start(),
+                    80 + i * 80L);
+        }
+        Animation enterAnim = AnimationUtils.loadAnimation(context, R.anim.dialog_enter_anim);
+        dialogView.startAnimation(enterAnim);
+        dialog.show();
+        disableDialogClipping(dialog);
+        dialog.setOnDismissListener(d -> {
+            for (Handler h : handlers) h.removeCallbacksAndMessages(null);
+        });
+    }
+
+    /** Build 1 row option (accent bar + emoji + title cinzel + subtitle exo2 + arrow + scale press). */
+    private static View buildChoiceRow(Context context, ChoiceOption opt, Runnable onClick) {
+        float d = context.getResources().getDisplayMetrics().density;
+        int color = opt.accentColor;
+
+        LinearLayout row = new LinearLayout(context);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        row.setClickable(true);
+        row.setFocusable(true);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, (int) (64 * d));
+        lp.setMargins(0, 0, 0, (int) (12 * d));
+        row.setLayoutParams(lp);
+        row.setPadding((int) (16 * d), (int) (10 * d), (int) (16 * d), (int) (10 * d));
+
+        GradientDrawable body = new GradientDrawable();
+        body.setShape(GradientDrawable.RECTANGLE);
+        body.setCornerRadius(16 * d);
+        body.setColor(Color.parseColor("#22" + String.format("%06X", color & 0xFFFFFF)));
+        body.setStroke((int) (1 * d), color & 0x99FFFFFF);
+        row.setBackground(body);
+
+        View bar = new View(context);
+        LinearLayout.LayoutParams barLp = new LinearLayout.LayoutParams((int) (4 * d), ViewGroup.LayoutParams.MATCH_PARENT);
+        barLp.setMargins(0, 0, (int) (14 * d), 0);
+        bar.setLayoutParams(barLp);
+        GradientDrawable barBg = new GradientDrawable();
+        barBg.setShape(GradientDrawable.RECTANGLE);
+        barBg.setCornerRadius(4 * d);
+        barBg.setColor(color);
+        bar.setBackground(barBg);
+        row.addView(bar);
+
+        if (opt.emoji != null && !opt.emoji.isEmpty()) {
+            TextView emoji = new TextView(context);
+            emoji.setText(opt.emoji);
+            emoji.setTextSize(20f);
+            LinearLayout.LayoutParams eLp = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            eLp.setMargins(0, 0, (int) (14 * d), 0);
+            emoji.setLayoutParams(eLp);
+            row.addView(emoji);
+        }
+
+        LinearLayout col = new LinearLayout(context);
+        col.setOrientation(LinearLayout.VERTICAL);
+        col.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        TextView title = new TextView(context);
+        title.setText(opt.title);
+        title.setTextColor(color);
+        title.setTextSize(15f);
+        title.setShadowLayer(16f, 0, 0, color & 0x80FFFFFF);
+        try { title.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(context, R.font.cinzel_bold)); }
+        catch (Exception e) { title.setTypeface(android.graphics.Typeface.DEFAULT_BOLD); }
+        col.addView(title);
+        if (opt.subtitle != null && opt.subtitle.length() > 0) {
+            TextView desc = new TextView(context);
+            desc.setText(opt.subtitle);
+            desc.setTextColor(ContextCompat.getColor(context, R.color.game_text_muted));
+            desc.setTextSize(12f);
+            try { desc.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(context, R.font.exo2_regular)); }
+            catch (Exception ignored) { }
+            col.addView(desc);
+        }
+        row.addView(col);
+
+        TextView arrow = new TextView(context);
+        arrow.setText("▶");
+        arrow.setTextColor(color & 0x80FFFFFF);
+        arrow.setTextSize(14f);
+        row.addView(arrow);
+
+        row.setOnClickListener(v -> v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(80)
+                .withEndAction(() -> {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(120).start();
+                    if (onClick != null) onClick.run();
+                }).start());
+        return row;
+    }
+
     /**
      * Show Stats Dialog
      */

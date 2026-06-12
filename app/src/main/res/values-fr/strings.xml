@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">Échec de l\'activation</string>
     <string name="hint">Indice</string>
     <string name="hint_none">Aucun indice disponible</string>
+    <string name="moves_title">Coups</string>
+    <string name="share_pgn">Partager le PGN</string>
+    <string name="moves_empty">Aucun coup pour l\'instant</string>
+    <string name="time_control_title">Cadence</string>
+    <string name="time_off">Sans pendule</string>
+    <string name="time_blitz">Blitz · 5 min</string>
+    <string name="time_rapid">Rapide · 10 min</string>
 </resources>

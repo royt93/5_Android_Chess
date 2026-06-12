@@ -50,6 +50,15 @@ public class Chess {
         return gameEnd;
     }
 
+    /** Kết thúc ván do hết giờ (flag-fall) — chặn mọi nước tiếp + dừng AI (KHÔNG set isDestroyed). */
+    public void endGameByTimeout() {
+        gameEnd = true;
+        isAiThinking = false;
+        if (aiHandler != null) aiHandler.removeCallbacksAndMessages(null);
+        clearHint();
+        resetValidMoveButtons();
+    }
+
     public boolean isHintThinking() {
         return isHintThinking;
     }

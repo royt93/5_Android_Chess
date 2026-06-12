@@ -168,4 +168,11 @@ Checkmate the opponent\'s King.<br/><br/>
     <string name="vip_dialog_failed_title">Activation failed</string>
     <string name="hint">Hint</string>
     <string name="hint_none">No hint available</string>
+    <string name="moves_title">Moves</string>
+    <string name="share_pgn">Share PGN</string>
+    <string name="moves_empty">No moves yet</string>
+    <string name="time_control_title">Time control</string>
+    <string name="time_off">No clock</string>
+    <string name="time_blitz">Blitz · 5 min</string>
+    <string name="time_rapid">Rapid · 10 min</string>
 </resources>

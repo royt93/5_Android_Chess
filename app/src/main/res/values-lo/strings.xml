@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">ການເປີດໃຊ້ລົ້ມເຫລວ</string>
     <string name="hint">ຄຳແນະນຳ</string>
     <string name="hint_none">ບໍ່ມີຄຳແນະນຳ</string>
+    <string name="moves_title">ການເຄື່ອນ</string>
+    <string name="share_pgn">ແບ່ງປັນ PGN</string>
+    <string name="moves_empty">ຍັງບໍ່ມີການເຄື່ອນ</string>
+    <string name="time_control_title">ຄວບຄຸມເວລາ</string>
+    <string name="time_off">ບໍ່ມີໂມງ</string>
+    <string name="time_blitz">Blitz · 5 ນາທີ</string>
+    <string name="time_rapid">Rapid · 10 ນາທີ</string>
 </resources>

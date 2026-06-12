@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">ការធ្វើឱ្យសកម្មបរាជ័យ</string>
     <string name="hint">គន្លឹះ</string>
     <string name="hint_none">គ្មានគន្លឹះ</string>
+    <string name="moves_title">ការផ្លាស់ទី</string>
+    <string name="share_pgn">ចែករំលែក PGN</string>
+    <string name="moves_empty">មិនទាន់មានការផ្លាស់ទី</string>
+    <string name="time_control_title">ការគ្រប់គ្រងពេលវេលា</string>
+    <string name="time_off">គ្មាននាឡិកា</string>
+    <string name="time_blitz">Blitz · 5 នាទី</string>
+    <string name="time_rapid">Rapid · 10 នាទី</string>
 </resources>

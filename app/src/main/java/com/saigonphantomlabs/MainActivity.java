@@ -103,7 +103,7 @@ public class MainActivity extends BaseActivity {
                 .into(ivBkg);
 
         btnPlayPvP.setOnClickListener(new SafeClickListener() {
-            @Override public void onSafeClick(View view) { startGame(false, null); }
+            @Override public void onSafeClick(View view) { showTimeControlDialog(ms -> startGame(false, null, ms)); }
         });
         btnPlayPvE.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) { showDifficultySelectionDialog(); }
@@ -382,16 +382,33 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void startGame(boolean isVsAi, String difficulty) {
+    private void startGame(boolean isVsAi, String difficulty, long timeControlMs) {
         Intent intent = new Intent(MainActivity.this, ChessBoardActivity.class);
         intent.putExtra("IS_VS_AI", isVsAi);
         if (difficulty != null) intent.putExtra("AI_DIFFICULTY", difficulty);
+        intent.putExtra("TIME_CONTROL_MS", timeControlMs);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private void showDifficultySelectionDialog() {
-        DialogUtils.showDifficultyDialog(this, difficulty -> startGame(true, difficulty));
+        DialogUtils.showDifficultyDialog(this,
+                difficulty -> showTimeControlDialog(ms -> startGame(true, difficulty, ms)));
+    }
+
+    /** Chọn kiểm soát thời gian (glass game style chung) → callback ms (0 = không giờ). */
+    private void showTimeControlDialog(java.util.function.LongConsumer onSelected) {
+        final long[] values = {0L, 5 * 60_000L, 10 * 60_000L};
+        DialogUtils.ChoiceOption[] opts = {
+                new DialogUtils.ChoiceOption(getString(R.string.time_off), null, "♾️",
+                        androidx.core.content.ContextCompat.getColor(this, R.color.game_text_muted)),
+                new DialogUtils.ChoiceOption(getString(R.string.time_blitz), null, "⚡",
+                        androidx.core.content.ContextCompat.getColor(this, R.color.game_gold_primary)),
+                new DialogUtils.ChoiceOption(getString(R.string.time_rapid), null, "⏱️",
+                        androidx.core.content.ContextCompat.getColor(this, R.color.game_neon_cyan)),
+        };
+        DialogUtils.showChoiceDialog(this, getString(R.string.time_control_title), R.drawable.ic_clock,
+                opts, i -> onSelected.accept(values[i]));
     }
 
     private void showStatsDialog() {

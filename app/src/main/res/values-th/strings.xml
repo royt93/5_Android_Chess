@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">เปิดใช้งานไม่สำเร็จ</string>
     <string name="hint">คำใบ้</string>
     <string name="hint_none">ไม่มีคำใบ้</string>
+    <string name="moves_title">การเดิน</string>
+    <string name="share_pgn">แชร์ PGN</string>
+    <string name="moves_empty">ยังไม่มีการเดิน</string>
+    <string name="time_control_title">การควบคุมเวลา</string>
+    <string name="time_off">ไม่มีนาฬิกา</string>
+    <string name="time_blitz">บลิตซ์ · 5 นาที</string>
+    <string name="time_rapid">แรพิด · 10 นาที</string>
 </resources>

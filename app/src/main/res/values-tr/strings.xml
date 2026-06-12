@@ -148,4 +148,11 @@
     <string name="vip_dialog_failed_title">Etkinleştirme başarısız</string>
     <string name="hint">İpucu</string>
     <string name="hint_none">İpucu yok</string>
+    <string name="moves_title">Hamleler</string>
+    <string name="share_pgn">PGN paylaş</string>
+    <string name="moves_empty">Henüz hamle yok</string>
+    <string name="time_control_title">Zaman kontrolü</string>
+    <string name="time_off">Saat yok</string>
+    <string name="time_blitz">Blitz · 5 dk</string>
+    <string name="time_rapid">Hızlı · 10 dk</string>
 </resources>
