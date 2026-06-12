@@ -53,9 +53,14 @@ public class SplashActivity extends BaseActivity {
 
         // Load background GIF
         ImageView ivBkg = findViewById(R.id.ivBkg);
+        // Downsample GIF nền (RGB_565 + override kích thước gốc) → giảm RAM decode ~5x
+        // (GIF nền ở alpha thấp, không cần full-res; chống áp lực heap/OOM).
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.ic_bkg_1)
+                .apply(new com.bumptech.glide.request.RequestOptions()
+                        .format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)
+                        .override(360, 556))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
 

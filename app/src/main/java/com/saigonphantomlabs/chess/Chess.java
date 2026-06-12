@@ -21,7 +21,18 @@ public class Chess {
     public Chessman[/* column - x */][/* row - y */] chessmen = new Chessman[8][8];
     public Chessman.PlayerColor whichPlayerTurn = Chessman.PlayerColor.Black;
     public Point lastManPoint = null;
-    public Context ctx;
+    // ctx giữ Activity → WeakReference để Chess (dù bị giữ ngoài ý muốn) không leak Activity.
+    private java.lang.ref.WeakReference<Context> ctxRef;
+
+    /** Context đang gắn (có thể null nếu Activity đã bị thu hồi hoặc model-only mode). */
+    public Context getCtx() {
+        return ctxRef == null ? null : ctxRef.get();
+    }
+
+    public void setCtx(Context c) {
+        this.ctxRef = (c == null) ? null : new java.lang.ref.WeakReference<>(c);
+    }
+
     // Callback UI (đã tách khỏi Activity cụ thể) — xem ChessBoardView
     private ChessBoardView boardView;
     public int minDimension = 0;
@@ -168,7 +179,7 @@ public class Chess {
     }
 
     private void setLayoutParams(Context ctx, int minDimension, FrameLayout boardLayout) {
-        this.ctx = ctx;
+        setCtx(ctx);
         this.minDimension = minDimension;
         this.boardLayout = boardLayout;
 
@@ -371,7 +382,8 @@ public class Chess {
         chessmen[xt][yt] = tempMan;
         // Play illegal move sound
         playIllegalMoveSound();
-        if (ctx != null) Toast.makeText(ctx, R.string.illegal_move, Toast.LENGTH_SHORT).show();
+        Context cIllegal = getCtx();
+        if (cIllegal != null) Toast.makeText(cIllegal, R.string.illegal_move, Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -432,7 +444,8 @@ public class Chess {
             ChessLog.d("checkOpponentKingStatus: CHECK detected!");
             playCheckSound();
             showCheckAnimation(opponentKing); // ChessAnimator tự lưu kingInCheck để reset sau
-            if (ctx != null) Toast.makeText(ctx, R.string.check, Toast.LENGTH_SHORT).show();
+            Context cCheck = getCtx();
+            if (cCheck != null) Toast.makeText(cCheck, R.string.check, Toast.LENGTH_SHORT).show();
         } else {
             ChessLog.d("checkOpponentKingStatus: SAFE - game continues");
         }
@@ -440,7 +453,7 @@ public class Chess {
 
     /** Flash khi vua bị chiếu — delegate sang ChessAnimator. */
     private void showCheckAnimation(King king) {
-        animator.showCheck(ctx, king);
+        animator.showCheck(getCtx(), king);
     }
 
     /** Xoá flash chiếu — delegate sang ChessAnimator. */
@@ -696,6 +709,7 @@ public class Chess {
     }
 
     public void createValidMoveButton(Point p, int index) {
+        Context ctx = getCtx();   // UI-only path (ctx non-null); local resolve từ WeakRef
         ImageButton btn = new ImageButton(ctx);
         int width = minDimension / 8;
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, width);
@@ -753,7 +767,7 @@ public class Chess {
 
     /** Pulse quân được chọn — delegate sang ChessAnimator. */
     private void startSelectionPulse(Chessman man) {
-        animator.startSelection(ctx, man);
+        animator.startSelection(getCtx(), man);
     }
 
     /** Xoá highlight quân được chọn — delegate sang ChessAnimator. */
@@ -771,7 +785,7 @@ public class Chess {
     }
 
     public void performCaptureHaptic() {
-        ChessHaptics.capture(ctx);
+        ChessHaptics.capture(getCtx());
     }
 
     /**
@@ -841,7 +855,8 @@ public class Chess {
      */
     public void undoLastMove() {
         if (moveHistory.isEmpty()) {
-            Toast.makeText(ctx, R.string.no_undo_available, Toast.LENGTH_SHORT).show();
+            Context cUndo = getCtx();
+            if (cUndo != null) Toast.makeText(cUndo, R.string.no_undo_available, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -932,7 +947,7 @@ public class Chess {
             deadMen.remove(restored);
 
             // Recreate button and animate back in (model-only mode bỏ qua khi ctx null)
-            if (ctx != null) {
+            if (getCtx() != null) {
                 restored.createButton();
                 restored.button.setScaleX(0f);
                 restored.button.setScaleY(0f);

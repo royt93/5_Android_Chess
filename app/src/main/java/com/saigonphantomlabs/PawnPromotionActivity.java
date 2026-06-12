@@ -53,7 +53,11 @@ public class PawnPromotionActivity extends BaseActivity {
         // Load GIF background
         ImageView ivBkg = findViewById(R.id.ivBkg);
         if (ivBkg != null) {
-            Glide.with(this).asGif().load(R.drawable.ic_bkg_1).into(ivBkg);
+            Glide.with(this).asGif().load(R.drawable.ic_bkg_1)
+                    .apply(new com.bumptech.glide.request.RequestOptions()
+                            .format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)
+                            .override(360, 556))   // downsample → giảm RAM (chống OOM)
+                    .into(ivBkg);
         }
 
         // Get piece color from intent (default WHITE)

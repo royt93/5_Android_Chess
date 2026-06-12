@@ -17,10 +17,10 @@ public class Pawn extends Chessman {
         int resId = (color == PlayerColor.Black) ? R.drawable.ic_pawnb : R.drawable.ic_pawnw;
         createButton(
             color == PlayerColor.Black
-                ? parent.ctx.getResources().getDrawable(R.drawable.ic_pawnb, parent.ctx.getTheme())
-                : parent.ctx.getResources().getDrawable(R.drawable.ic_pawnw, parent.ctx.getTheme()),
+                ? parent.getCtx().getResources().getDrawable(R.drawable.ic_pawnb, parent.getCtx().getTheme())
+                : parent.getCtx().getResources().getDrawable(R.drawable.ic_pawnw, parent.getCtx().getTheme()),
             resId, color == PlayerColor.White,
-            minDimension, parent.ctx);
+            minDimension, parent.getCtx());
     }
 
     @Override

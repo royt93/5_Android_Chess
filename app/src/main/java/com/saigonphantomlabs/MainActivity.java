@@ -92,9 +92,13 @@ public class MainActivity extends BaseActivity {
         String versionName = BuildConfig.VERSION_NAME;
         tvVersion.setText(getString(R.string.version_format, versionName));
 
+        // Downsample GIF nền (RGB_565 + override) → giảm RAM decode ~5x (chống OOM).
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.ic_bkg_1)
+                .apply(new com.bumptech.glide.request.RequestOptions()
+                        .format(com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565)
+                        .override(360, 556))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
 

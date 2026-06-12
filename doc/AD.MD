@@ -35,6 +35,12 @@
 - 🔴 **Memory leak (qua LeakCanary)**: leak lớn nhất = SDK static `splashTimeoutRunnable` → callback `SplashActivity$2` (anonymous, ngầm giữ `this`) → giữ `SplashActivity` ~918KB × mỗi lần mở app. FIX: đổi 2 callback splash (consent + initSplash) sang **static nested class + WeakReference**. Verify device: cold-launch + điều hướng Main↔VIP 5× → LeakCanary **không còn dump** (Splash + Vip đều GC được). Còn lại `AdManager.provider`/`t3$b.b` = SDK-internal (không fix từ app). Đã dọn 1.4GB hprof tích lũy trên device.
 - Tests: **156 PASS**; `assembleDebug`/`assembleRelease` xanh.
 
+**Update 2026-06-12 (round feedback 5 — tối ưu memory sau QA device)**:
+- QA thật trên Pixel 7 Pro: 0 FATAL/ANR/Exception toàn session; App Open foreign-skip + banner-pause-off-board verified LIVE; LeakCanary 0 dump cho Splash/Vip/ChessBoard.
+- 🟠 **GIF nền `ic_bkg_1`**: resize 559×863→360×556 (ffmpeg palette, 3.4MB→1.76MB) + Glide `PREFER_RGB_565` + `.override(360,556)` ở Splash/Main/PawnPromotion → decode ~27MB→~5.6MB. APK release **13.2MB→11.6MB**.
+- 🟠 **`Chess.ctx` → `WeakReference`**: field `ctxRef` + `getCtx()`/`setCtx()`; đổi 6 piece class + AIEngine sang `getCtx()` (bịt rủi ro leak Activity dù đã mitigate qua Storage WeakRef). 156 test PASS.
+- 📝 **`doc/SDK_LEAKS.md`**: ghi nhận leak SDK-internal (`splashTimeoutRunnable`/`provider`) cho tác giả wrapper royt93.
+
 ### Đã hoàn thành & verify
 - Code: upgrade SDK 1.1.5, consent UMP, rewarded, VIP screen (13 UI + 5 anim), i18n 14 ngôn ngữ, banner autoManageLifecycle.
 - Unit/widget tests: **129 test PASS** (gồm 46 VIP test). `assembleDebug`/`assembleRelease` xanh.

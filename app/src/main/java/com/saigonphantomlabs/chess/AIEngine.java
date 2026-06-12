@@ -110,7 +110,7 @@ public class AIEngine {
             if (difficulty == Difficulty.HARD || difficulty == Difficulty.UNBEATABLE) {
                 MoveRecord bookMove = getOpeningBookMove(board, aiColor);
                 if (bookMove != null) {
-                    ChessLog.d("getBestMove: Found book move " + bookMove.getNotation(board.ctx));
+                    ChessLog.d("getBestMove: Found book move " + bookMove.getNotation(board.getCtx()));
                     return bookMove;
                 }
             }
