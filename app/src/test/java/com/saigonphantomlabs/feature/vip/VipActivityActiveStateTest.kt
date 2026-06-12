@@ -130,6 +130,23 @@ class VipActivityActiveStateTest {
         }
     }
 
+    /**
+     * REGRESSION (watch-ad không work): bấm "Xem QC → 3 ngày VIP" phải grant VIP.
+     * Không có rewarded provider trong test → showRewarded callback(earned=false) → app
+     * vẫn grant 3 ngày (thiết kế AD.MD). Grant dùng applicationContext + persist, KHÔNG
+     * gate theo _binding (bug cũ: callback fire khi activity recreate → grant bị nuốt).
+     */
+    @Test fun watchAd_grantsVip() {
+        Robolectric.buildActivity(VipActivity::class.java).setup().use { c ->
+            val a = c.get()
+            assertEquals(View.GONE, a.findViewById<View>(R.id.cardActiveVip).visibility)
+            a.findViewById<View>(R.id.btnWatchAd).performClick()
+            shadowOf(Looper.getMainLooper()).idle()
+            assertTrue(AdManager.isVipByKeyActive())
+            assertEquals(View.VISIBLE, a.findViewById<View>(R.id.cardActiveVip).visibility)
+        }
+    }
+
     @Test fun revoke_confirmDialog_returnsToFreeState() {
         activate30d()
         Robolectric.buildActivity(VipActivity::class.java).setup().use { c ->
