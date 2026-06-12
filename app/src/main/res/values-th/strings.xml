@@ -146,4 +146,6 @@
     <string name="vip_dialog_success_title">เปิดใช้งาน VIP แล้ว 🎉</string>
     <string name="vip_dialog_success_msg">ตอนนี้คุณเป็น VIP เป็นเวลา %1$d วัน เพลิดเพลินกับประสบการณ์ที่มีโฆษณาน้อยลง!</string>
     <string name="vip_dialog_failed_title">เปิดใช้งานไม่สำเร็จ</string>
+    <string name="hint">คำใบ้</string>
+    <string name="hint_none">ไม่มีคำใบ้</string>
 </resources>

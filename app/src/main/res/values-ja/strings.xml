@@ -146,4 +146,6 @@
     <string name="vip_dialog_success_title">VIP有効化 🎉</string>
     <string name="vip_dialog_success_msg">%1$d日間VIPになりました。広告が少ない快適な体験をお楽しみください！</string>
     <string name="vip_dialog_failed_title">有効化に失敗しました</string>
+    <string name="hint">ヒント</string>
+    <string name="hint_none">ヒントがありません</string>
 </resources>

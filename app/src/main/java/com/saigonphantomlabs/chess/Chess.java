@@ -42,13 +42,25 @@ public class Chess {
     // OPT: pre-sized to max legal moves per piece (queen max ~27)
     public ArrayList<View> validMoveButtons = new ArrayList<>(28);
 
+    // Hint feature: highlight ô from/to của nước tốt nhất (tính qua AIEngine).
+    private final ArrayList<View> hintViews = new ArrayList<>(2);
+    private boolean isHintThinking = false;
+
+    public boolean isGameEnd() {
+        return gameEnd;
+    }
+
+    public boolean isHintThinking() {
+        return isHintThinking;
+    }
+
     // Âm thanh tách sang ChessAudio (SoundPool) — giảm god-class
     private ChessAudio audio;
 
     // Game state
     private boolean gameEnd = false;
     private long gameStartTime = System.currentTimeMillis();
-    private boolean isDestroyed = false; // [ML-04] Lifecycle guard for AI thread
+    private volatile boolean isDestroyed = false; // [ML-04] Lifecycle guard for AI/hint thread (volatile: cross-thread)
 
     // --- Special-move state (chỉ áp dụng cho ván thật) ---
     // true khi AIEngine đang search → tắt castling & en passant để minimax không bị corrupt
@@ -91,6 +103,8 @@ public class Chess {
      * `chessmen` đã được khởi tạo inline thành mảng 8x8 rỗng; test tự đặt quân.
      */
     Chess() {
+        // AIEngine thuần model (không đụng Android) → cho phép computeBestHint() ở model-only mode.
+        this.aiEngine = new AIEngine();
     }
 
     /** Test seam: tiêm fake ChessBoardView để kiểm thử execution/undo không cần Activity. */
@@ -194,8 +208,9 @@ public class Chess {
     }
 
     public void onManClick(Chessman man) {
-        if (gameEnd || isAiThinking)
+        if (gameEnd || isAiThinking || isHintThinking)
             return;
+        clearHint();   // tương tác mới → xoá highlight gợi ý cũ
         if (isVsComputer && man.color != Chessman.PlayerColor.White)
             return; // Block user from clicking Black pieces in PvE (Assuming Player is White)
 
@@ -219,7 +234,9 @@ public class Chess {
     }
 
     public void onBoardClick(int x, int y) {
-        if (gameEnd)
+        // Guard isHintThinking: hint tính trên bg thread đang mutate bàn cờ (simulate/undo) →
+        // chặn doMove (main) để tránh race corrupt thế cờ.
+        if (gameEnd || isAiThinking || isHintThinking)
             return;
         if (lastManPoint == null)
             return;
@@ -765,6 +782,70 @@ public class Chess {
         validMoveButtons.clear();
     }
 
+    // ───────────────────────── HINT ─────────────────────────
+
+    /** Callback trả nước gợi ý (chạy trên main thread); move=null nếu không có nước. */
+    public interface HintCallback {
+        void onHint(MoveRecord move);
+    }
+
+    /** Tính nước tốt nhất cho bên đang đi (model-only — testable, không đụng UI). */
+    public MoveRecord computeBestHint() {
+        // HARD = depth 3: chất lượng tốt, đủ nhanh, bất kể độ khó của ván.
+        return aiEngine.getBestMove(this, AIEngine.Difficulty.HARD, whichPlayerTurn);
+    }
+
+    /** Yêu cầu gợi ý: tính off-thread (mirror AI), highlight from/to trên main, callback kết quả. */
+    public void requestHint(HintCallback cb) {
+        if (gameEnd || isAiThinking || isHintThinking) return;
+        isHintThinking = true;
+        clearHint();
+        new Thread(() -> {
+            MoveRecord best = null;
+            try {
+                if (!isDestroyed) best = computeBestHint();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            final MoveRecord result = best;
+            aiHandler.post(() -> {
+                isHintThinking = false;
+                if (isDestroyed || gameEnd) return;
+                if (result != null) showHintHighlight(result);
+                if (cb != null) cb.onHint(result);
+            });
+        }).start();
+    }
+
+    private void showHintHighlight(MoveRecord m) {
+        addHintMarker(m.fromX, m.fromY);
+        addHintMarker(m.toX, m.toY);
+    }
+
+    private void addHintMarker(int x, int y) {
+        Context ctx = getCtx();
+        if (ctx == null || boardLayout == null) return;
+        int width = minDimension / 8;
+        View v = new View(ctx);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width, width);
+        lp.setMargins(width * x, width * y, minDimension - (width * x + width),
+                minDimension - (width * y + width));
+        v.setLayoutParams(lp);
+        v.setBackground(ctx.getResources().getDrawable(R.drawable.bg_hint_square, ctx.getTheme()));
+        boardLayout.addView(v);
+        hintViews.add(v);
+    }
+
+    /** Xoá highlight gợi ý (an toàn gọi nhiều lần). */
+    public void clearHint() {
+        if (boardLayout != null) {
+            for (View v : hintViews) {
+                if (v.getParent() != null) ((ViewGroup) v.getParent()).removeView(v);
+            }
+        }
+        hintViews.clear();
+    }
+
     /** Pulse quân được chọn — delegate sang ChessAnimator. */
     private void startSelectionPulse(Chessman man) {
         animator.startSelection(getCtx(), man);
@@ -990,6 +1071,7 @@ public class Chess {
      */
     public void resetGame() {
         ChessLog.d("=== GAME START / RESET ===");
+        clearHint();
         // Clear history
         moveHistory.clear();
         deadMen.clear();

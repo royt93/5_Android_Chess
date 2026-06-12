@@ -146,4 +146,6 @@
     <string name="vip_dialog_success_title">VIP ativado 🎉</string>
     <string name="vip_dialog_success_msg">Agora você é VIP por %1$d dias. Aproveite uma experiência com menos anúncios!</string>
     <string name="vip_dialog_failed_title">Falha na ativação</string>
+    <string name="hint">Dica</string>
+    <string name="hint_none">Nenhuma dica disponível</string>
 </resources>

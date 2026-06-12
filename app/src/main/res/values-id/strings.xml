@@ -146,4 +146,6 @@
     <string name="vip_dialog_success_title">VIP Diaktifkan 🎉</string>
     <string name="vip_dialog_success_msg">Anda kini VIP selama %1$d hari. Nikmati pengalaman dengan lebih sedikit iklan!</string>
     <string name="vip_dialog_failed_title">Aktivasi gagal</string>
+    <string name="hint">Petunjuk</string>
+    <string name="hint_none">Tidak ada petunjuk</string>
 </resources>

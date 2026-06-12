@@ -146,4 +146,6 @@
     <string name="vip_dialog_success_title">ເປີດໃຊ້ VIP ແລ້ວ 🎉</string>
     <string name="vip_dialog_success_msg">ຕອນນີ້ທ່ານເປັນ VIP ເປັນເວລາ %1$d ມື້. ເພີດເພີນກັບປະສົບການທີ່ມີໂຄສະນາໜ້ອຍລົງ!</string>
     <string name="vip_dialog_failed_title">ການເປີດໃຊ້ລົ້ມເຫລວ</string>
+    <string name="hint">ຄຳແນະນຳ</string>
+    <string name="hint_none">ບໍ່ມີຄຳແນະນຳ</string>
 </resources>

@@ -150,4 +150,6 @@
     <string name="vip_dialog_success_title">Đã kích hoạt VIP 🎉</string>
     <string name="vip_dialog_success_msg">Bạn đã là VIP trong %1$d ngày. Tận hưởng trải nghiệm ít quảng cáo hơn!</string>
     <string name="vip_dialog_failed_title">Kích hoạt thất bại</string>
+    <string name="hint">Gợi ý</string>
+    <string name="hint_none">Không có gợi ý</string>
 </resources>

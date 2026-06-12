@@ -257,6 +257,22 @@
                 android:textAllCaps="false"
                 android:shadowColor="@color/game_cyan_glow"
                 android:shadowDx="0" android:shadowDy="0" android:shadowRadius="12"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnHint"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/hint"
+                android:textColor="@color/vip_on_gold"
+                android:fontFamily="@font/exo2"
+                android:background="@drawable/bg_btn_pve"
+                android:backgroundTint="@color/vip_gold"
+                android:drawableStart="@drawable/ic_hint"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/vip_on_gold"
+                android:paddingHorizontal="20dp"
+                android:textAllCaps="false" />
         </LinearLayout>
 
         <!-- Ad Banner -->

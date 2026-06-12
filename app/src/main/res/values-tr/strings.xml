@@ -146,4 +146,6 @@
     <string name="vip_dialog_success_title">VIP Etkinleştirildi 🎉</string>
     <string name="vip_dialog_success_msg">Artık %1$d gün boyunca VIP\'siniz. Daha az reklamlı bir deneyimin tadını çıkarın!</string>
     <string name="vip_dialog_failed_title">Etkinleştirme başarısız</string>
+    <string name="hint">İpucu</string>
+    <string name="hint_none">İpucu yok</string>
 </resources>

@@ -54,6 +54,9 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     private LinearLayout capturedWhitePiecesContainer;
     private AppCompatButton btnUndo;
     private AppCompatButton btnRestart;
+    private AppCompatButton btnHint;
+    private final android.os.Handler hintHandler =
+            new android.os.Handler(android.os.Looper.getMainLooper());
     private ImageView boardImage;            // The board PNG / Canvas-drawn board
     private BoardThemeManager.Theme currentTheme;  // Active board color theme
 
@@ -118,11 +121,17 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         btnRestart = findViewById(R.id.btnRestart);
 
         btnUndo.setOnClickListener(v -> {
-            if (chess != null && chess.canUndo() && !chess.isAiThinking) chess.undoLastMove();
+            if (chess != null && chess.canUndo() && !chess.isAiThinking) {
+                chess.clearHint();
+                chess.undoLastMove();
+            }
         });
         btnRestart.setOnClickListener(v -> {
             if (chess != null && !chess.isAiThinking) showRestartConfirmDialog();
         });
+
+        btnHint = findViewById(R.id.btnHint);
+        if (btnHint != null) btnHint.setOnClickListener(v -> onHintClicked());
 
         // Board theme button (if present in layout)
         boardImage = findViewById(R.id.boardImage);
@@ -265,6 +274,38 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                     return Unit.INSTANCE;
                 }
             });
+        });
+    }
+
+    /**
+     * Hint: gợi ý nước tốt nhất. VIP → gợi ý ngay; non-VIP → xem rewarded (nếu có) rồi gợi ý
+     * (không có ad vẫn gợi ý — không chặn tính năng). Trong PvE chỉ gợi ý khi tới lượt người.
+     */
+    private void onHintClicked() {
+        if (chess == null || chess.isGameEnd() || chess.isAiThinking || chess.isHintThinking()) return;
+        if (chess.isVsComputer && chess.whichPlayerTurn != Chessman.PlayerColor.White) return;
+
+        if (AdManager.INSTANCE.isVipByKeyActive()) {
+            doHint();
+        } else {
+            AdManager.INSTANCE.showRewarded(this, earned -> {
+                doHint();
+                return Unit.INSTANCE;
+            });
+        }
+    }
+
+    private void doHint() {
+        if (chess == null || isDestroyed()) return;
+        chess.requestHint(move -> {
+            if (move == null) {
+                android.widget.Toast.makeText(this, R.string.hint_none,
+                        android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // tự xoá highlight sau 4s (hoặc khi user tương tác — xem Chess.onManClick)
+            hintHandler.removeCallbacksAndMessages(null);
+            hintHandler.postDelayed(() -> { if (chess != null) chess.clearHint(); }, 4000L);
         });
     }
 
@@ -615,7 +656,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
             blackGlowAnim = null;
         }
 
-        if (chess != null) chess.cancelAiHandler();
+        hintHandler.removeCallbacksAndMessages(null);
+        if (chess != null) { chess.clearHint(); chess.cancelAiHandler(); }
         if (Storage.getChess() == chess) Storage.clearChess();
         // Destroy banner thủ công → giải phóng MaxAdView + dừng refresh timer (chống leak/OOM).
         if (adView != null) {

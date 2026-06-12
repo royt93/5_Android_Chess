@@ -146,4 +146,6 @@
     <string name="vip_dialog_success_title">VIP activado 🎉</string>
     <string name="vip_dialog_success_msg">Ahora eres VIP durante %1$d días. ¡Disfruta de una experiencia con menos anuncios!</string>
     <string name="vip_dialog_failed_title">Error de activación</string>
+    <string name="hint">Pista</string>
+    <string name="hint_none">No hay pista disponible</string>
 </resources>

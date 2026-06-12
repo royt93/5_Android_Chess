@@ -146,4 +146,6 @@
     <string name="vip_dialog_success_title">VIP 已激活 🎉</string>
     <string name="vip_dialog_success_msg">您现在是 VIP，有效期 %1$d 天。享受更少广告的体验！</string>
     <string name="vip_dialog_failed_title">激活失败</string>
+    <string name="hint">提示</string>
+    <string name="hint_none">暂无提示</string>
 </resources>

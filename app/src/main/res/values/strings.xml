@@ -166,4 +166,6 @@ Checkmate the opponent\'s King.<br/><br/>
     <string name="vip_dialog_success_title">VIP Activated 🎉</string>
     <string name="vip_dialog_success_msg">You\'re now VIP for %1$d days. Enjoy a smoother, ad-reduced experience!</string>
     <string name="vip_dialog_failed_title">Activation failed</string>
+    <string name="hint">Hint</string>
+    <string name="hint_none">No hint available</string>
 </resources>

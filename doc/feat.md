@@ -97,21 +97,38 @@
 
 ---
 
-## 📋 Picked — chờ triển khai (wave sau)
+## 🟢 Hoàn thành phiên 2026-06-12 (VIP/ads/memory — chi tiết ở doc/AD.MD)
 
-- AI side-agnostic: opening book hiện chỉ cho Black (app luôn để AI = Black nên ưu tiên thấp).
+- [x] **VIP/ads**: upgrade SDK 1.1.5 + revamp UI màn VIP + consent UMP + **rewarded watch-ad** (→ mục "❌ Skipped Reward Ad" cũ nay ĐÃ có).
+- [x] **Fix loạt bug ad**: App Open không show đè ad khác / không phá gameplay; banner lifecycle thủ công (chỉ refresh ở màn cờ); `rewardedInFlight` (watch-ad grant 3 ngày đúng).
+- [x] **ML-01 `Chess.ctx` → `WeakReference`** (trước ở Deferred) — `getCtx()`/`setCtx()` + 6 piece class + AIEngine.
+- [x] **Memory**: fix leak `SplashActivity` (static callback + WeakReference qua `splashTimeoutRunnable`); tối ưu GIF nền 3.4MB→1.76MB + Glide downsample RGB_565; APK release **13.2→11.6MB**.
+- [x] **Test: 164 unit/widget PASS** + integration (Espresso/instrumented); `doc/SDK_LEAKS.md` ghi leak SDK-internal.
+
+## 📋 Picked — 8 tính năng mới (user chọn 2026-06-12, triển khai theo wave)
+
+**Wave A — tái dùng engine, value cao:**
+1. ✅ **Gợi ý nước đi (Hint)** — `Chess.computeBestHint()` (AIEngine HARD depth 3) → highlight ô from/to (`bg_hint_square` gold), off-thread mirror AI; gate: VIP gợi ý ngay / non-VIP xem rewarded (không có ad vẫn gợi ý); auto-clear 4s + khi tương tác; nút gold "Gợi ý" + `ic_hint`; string 15 locale. **2 unit test PASS** (`HintTest` — bắt hậu treo + nước hợp lệ). **Verify device Pixel: Nb1→c3 highlight đúng, 78ms, 0 crash.**
+2. 🟡 **Lịch sử nước đi + xuất/share PGN** — `MoveRecord.getNotation` + list UI + share intent. *(tiếp theo)*
+
+**Wave B — gameplay:**
+3. **Đồng hồ cờ** (Blitz/Rapid/Classic) — timer mỗi bên, hết giờ thua.
+4. **Lưu & tiếp tục ván** — serialize board state + undo stack (SharedPreferences/file).
+
+**Wave C — content / retention:**
+5. **Câu đố cờ** (Puzzles mate-in-N) — bộ FEN nhúng, engine validate.
+6. **Phân tích sau ván** (blunder detection) — eval mỗi nước qua engine, gắn nhãn.
+7. **Thành tích / huy hiệu** (Achievements) — SharedPreferences + UI list.
+8. **Bộ quân cờ** (piece sets) — thêm asset (cân nhắc APK), có thể VIP unlock.
+
+## ⏸️ Deferred
+
+- AI side-agnostic opening book (AI luôn Black → ưu tiên thấp).
 - AI quiescence search (giảm horizon effect) cho UNBEATABLE — cần playtest đo tốc độ.
-- Reskin polish: `a_main.xml` còn nền ImageView `ic_bkg_1` (có thể thay bằng `bg_game_gradient`).
-
-## ⏸️ Deferred (cần thiết bị / rủi ro cao)
-
-- **ML-01** `Chess.ctx` → `WeakReference<Context>`: đụng ~20 call-site cast `(ChessBoardActivity) ctx`. Lợi ích biên thấp (đã có `cancelAiHandler` + `WeakReference<Chess>` ở Storage). Hoãn.
-- Lưu/khôi phục ván dở qua các phiên (persistent game state).
-- Đồng hồ cờ (chess clock), gợi ý nước đi (hint), draw 50 nước / lặp 3 lần.
 
 ## ❌ Skipped
 
-- Reward Ad (không có touchpoint — theo doc/AD.MD).
+- (trống — "Reward Ad" cũ nay đã triển khai qua VIP watch-ad)
 
 ---
 
