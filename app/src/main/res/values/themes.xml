@@ -13,6 +13,24 @@
         <item name="android:windowBackground">@color/game_bg_deep</item>
     </style>
 
+    <!-- VIP screen: ép Dark cố định. Màn VIP luôn nền tối (game_bg_deep) bất kể
+         DayNight, nên phải khoá colorSurface/onSurface/outline về tông tối để mọi
+         component Material (TextInputLayout, button…) không lấy màu sáng mặc định ở
+         light mode → tránh chữ/nút tối-trên-nền-tối (vô hình). -->
+    <style name="Theme.Chess.Vip" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/vip_gold</item>
+        <item name="colorOnPrimary">@color/vip_on_gold</item>
+        <item name="colorSecondary">@color/game_neon_cyan</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/game_bg_surface</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorOnSurfaceVariant">@color/vip_text_secondary</item>
+        <item name="colorOutline">@color/vip_text_secondary</item>
+        <item name="android:statusBarColor">@color/game_bg_deep</item>
+        <item name="android:navigationBarColor">@color/game_bg_deep</item>
+        <item name="android:windowBackground">@color/game_bg_deep</item>
+    </style>
+
     <!-- Splash Theme -->
     <style name="SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowIsTranslucent">false</item>

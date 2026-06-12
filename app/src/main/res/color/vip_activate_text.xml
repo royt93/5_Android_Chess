@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chữ/icon nút Activate: tối trên gold khi enabled, xám mờ khi disabled. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/vip_btn_disabled_text" android:state_enabled="false" />
+    <item android:color="@color/vip_on_gold" />
+</selector>

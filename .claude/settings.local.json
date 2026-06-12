@@ -54,7 +54,22 @@
       "Bash(awk 'NR>=1851 && NR<=1858' admob-wrapper-sdk/src/main/java/com/roy/sdkadbmob/AdManager.kt)",
       "Bash(awk 'NR>=1640 && NR<=1665' admob-wrapper-sdk/src/main/java/com/roy/sdkadbmob/AdManager.kt)",
       "Bash(awk 'NR>=1860 && NR<=1875' admob-wrapper-sdk/src/main/java/com/roy/sdkadbmob/AdManager.kt)",
-      "Bash(awk 'NR>=440 && NR<=490' admob-wrapper-sdk/src/main/java/com/roy/sdkadbmob/AppLovinProvider.kt)"
+      "Bash(awk 'NR>=440 && NR<=490' admob-wrapper-sdk/src/main/java/com/roy/sdkadbmob/AppLovinProvider.kt)",
+      "Bash(python3 -c \"import sys,re; d=sys.stdin.read\\(\\); [print\\(m\\) for m in re.findall\\(r'<node[^>]*\\(?:[Vv]ip|VIP\\)[^>]*bounds=\\\\\"[^\\\\\"]*\\\\\"',d\\)][:5]\")",
+      "Bash(python3 -c ' *)",
+      "Bash(echo \"done; vip active? $\\(adb -s 2B051FDH3006MU shell dumpsys activity activities)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(cd *)",
+      "Bash(echo \"night restored: $\\(adb -s 2B051FDH3006MU shell cmd uimode night \\)\")",
+      "Bash(javap -p -c com/roy/sdkadbmob/AppLovinRewarded.class)",
+      "Bash(javap -p -c com/roy/sdkadbmob/AdManager.class)",
+      "Bash(javap -p -c com/roy/sdkadbmob/AppLovinProvider.class)",
+      "Bash(javap -p com/roy/sdkadbmob/AppLovinProvider.class)",
+      "Bash(echo \"top=$\\(adb -s 2B051FDH3006MU shell dumpsys activity activities)",
+      "Bash(grep -i \"AppLovinProvider\\\\$\")",
+      "Bash(javap -p -c 'com/roy/sdkadbmob/AppLovinProvider$loadRewarded$2.class')",
+      "Bash(awk '/public void onUserRewarded/,/^$/' /tmp/lr2.txt)",
+      "Bash(awk '/public void onAdHidden/,/^$/' /tmp/lr2.txt)"
     ],
     "deny": [],
     "ask": []

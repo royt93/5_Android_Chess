@@ -156,9 +156,14 @@ Checkmate the opponent\'s King.<br/><br/>
 
     <string name="vip_days_left">%1$d days left</string>
     <string name="vip_already_longer">You already have a longer VIP period</string>
-    <string name="privacy_options">Privacy options</string>
+    <string name="privacy_options">Ad Choices</string>
 
     <!-- Common -->
     <string name="privacy_policy">Privacy Policy</string>
     <string name="confirm">Confirm</string>
+    <string name="vip_section_get">Get VIP</string>
+    <string name="vip_section_plans">Premium Plans</string>
+    <string name="vip_dialog_success_title">VIP Activated 🎉</string>
+    <string name="vip_dialog_success_msg">You\'re now VIP for %1$d days. Enjoy a smoother, ad-reduced experience!</string>
+    <string name="vip_dialog_failed_title">Activation failed</string>
 </resources>

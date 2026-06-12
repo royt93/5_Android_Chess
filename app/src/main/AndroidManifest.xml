@@ -31,7 +31,7 @@
         <activity android:name="com.saigonphantomlabs.PawnPromotionActivity" />
         <activity
             android:name="com.saigonphantomlabs.feature.vip.VipActivity"
-            android:theme="@style/Theme.Chess" />
+            android:theme="@style/Theme.Chess.Vip" />
         <activity
             android:name="com.saigonphantomlabs.MainActivity"
             android:exported="true"

@@ -138,7 +138,12 @@
     <string name="vip_menu">VIP</string>
     <string name="vip_days_left">残り%1$d日</string>
     <string name="vip_already_longer">すでにより長いVIP期間があります</string>
-    <string name="privacy_options">プライバシー設定</string>
+    <string name="privacy_options">広告の設定</string>
     <string name="privacy_policy">プライバシーポリシー</string>
     <string name="confirm">確認</string>
+    <string name="vip_section_get">VIPを取得</string>
+    <string name="vip_section_plans">プレミアムプラン</string>
+    <string name="vip_dialog_success_title">VIP有効化 🎉</string>
+    <string name="vip_dialog_success_msg">%1$d日間VIPになりました。広告が少ない快適な体験をお楽しみください！</string>
+    <string name="vip_dialog_failed_title">有効化に失敗しました</string>
 </resources>

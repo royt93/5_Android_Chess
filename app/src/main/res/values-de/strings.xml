@@ -138,7 +138,12 @@
     <string name="vip_menu">VIP</string>
     <string name="vip_days_left">Noch %1$d Tage</string>
     <string name="vip_already_longer">Du hast bereits einen längeren VIP-Zeitraum</string>
-    <string name="privacy_options">Datenschutzoptionen</string>
+    <string name="privacy_options">Anzeigeneinstellungen</string>
     <string name="privacy_policy">Datenschutzrichtlinie</string>
     <string name="confirm">Bestätigen</string>
+    <string name="vip_section_get">VIP erhalten</string>
+    <string name="vip_section_plans">Premium-Pakete</string>
+    <string name="vip_dialog_success_title">VIP aktiviert 🎉</string>
+    <string name="vip_dialog_success_msg">Du bist jetzt %1$d Tage lang VIP. Genieße ein Erlebnis mit weniger Werbung!</string>
+    <string name="vip_dialog_failed_title">Aktivierung fehlgeschlagen</string>
 </resources>

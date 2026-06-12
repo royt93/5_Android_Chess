@@ -138,7 +138,12 @@
     <string name="vip_menu">VIP</string>
     <string name="vip_days_left">剩余 %1$d 天</string>
     <string name="vip_already_longer">您已拥有更长的 VIP 期限</string>
-    <string name="privacy_options">隐私选项</string>
+    <string name="privacy_options">广告选项</string>
     <string name="privacy_policy">隐私政策</string>
     <string name="confirm">确认</string>
+    <string name="vip_section_get">获取 VIP</string>
+    <string name="vip_section_plans">高级套餐</string>
+    <string name="vip_dialog_success_title">VIP 已激活 🎉</string>
+    <string name="vip_dialog_success_msg">您现在是 VIP，有效期 %1$d 天。享受更少广告的体验！</string>
+    <string name="vip_dialog_failed_title">激活失败</string>
 </resources>

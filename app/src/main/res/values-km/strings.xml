@@ -138,7 +138,12 @@
     <string name="vip_menu">VIP</string>
     <string name="vip_days_left">នៅសល់ %1$d ថ្ងៃ</string>
     <string name="vip_already_longer">អ្នកមានរយៈពេល VIP យូរជាងនេះរួចហើយ</string>
-    <string name="privacy_options">ជម្រើសឯកជនភាព</string>
+    <string name="privacy_options">ជម្រើសពាណិជ្ជកម្ម</string>
     <string name="privacy_policy">គោលការណ៍ឯកជនភាព</string>
     <string name="confirm">បញ្ជាក់</string>
+    <string name="vip_section_get">ទទួលបាន VIP</string>
+    <string name="vip_section_plans">គម្រោងព្រីមៀម</string>
+    <string name="vip_dialog_success_title">បានធ្វើឱ្យ VIP សកម្ម 🎉</string>
+    <string name="vip_dialog_success_msg">ឥឡូវអ្នកជា VIP រយៈពេល %1$d ថ្ងៃ។ រីករាយជាមួយបទពិសោធន៍ដែលមានការផ្សាយពាណិជ្ជកម្មតិច!</string>
+    <string name="vip_dialog_failed_title">ការធ្វើឱ្យសកម្មបរាជ័យ</string>
 </resources>

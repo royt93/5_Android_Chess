@@ -40,8 +40,9 @@ class VipActivityEspressoTest {
 
     @Test fun privacyFooter_isVisible() {
         ActivityScenario.launch(VipActivity::class.java).use {
+            // Privacy Policy luôn hiện. "Ad Choices" (tvPrivacyOptions) là conditional
+            // (chỉ EEA) nên không assert ở đây.
             onView(withId(R.id.tvPrivacy)).check(matches(isDisplayed()))
-            onView(withId(R.id.tvPrivacyOptions)).check(matches(isDisplayed()))
         }
     }
 }

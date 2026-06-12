@@ -7,7 +7,22 @@
 
 ## ⏸️ TRẠNG THÁI PAUSE — 2026-06-11 (resume ~2026-06-14)
 
-**CHƯA COMMIT** (user yêu cầu không commit). Mọi thay đổi đang ở working tree.
+**Update 2026-06-12 (resume)**: Phần code VIP/ads đã được **commit ở `08bd5e1 "update ad"`**. Item #2 (blacklist `VipActivity` khỏi App Open) **ĐÃ LÀM** — `MyApplication.kt:141` nay skip cả `VipActivity`; `assembleDebug` xanh. Còn lại item 1/3/4 cần device thật / dịch giả native.
+
+**Update 2026-06-12 (UI revamp VIP — verify trên Pixel `2B051FDH3006MU`)**:
+- 🔴 **ROOT BUG light mode**: theme app là `Theme.Material3.DayNight` nhưng màn VIP luôn nền tối → ở **light mode**, component Material lấy màu mặc định sáng (onSurface/outline tối) trên nền tối = **chữ/nút vô hình**. FIX: thêm `Theme.Chess.Vip` (ép `Theme.Material3.Dark`, khoá colorSurface/onSurface/outline tông tối), gán cho `VipActivity` trong manifest. Verify thật ở `night=no` → render đủ.
+- Layout revamp: gom status/get-vip/plans thành các card có section header (`vip_section_get`/`vip_section_plans`, dịch 15 locale); input bo tròn filled gold; nút **Activate** filled gold + `enabled=false` mặc định, TextWatcher bật khi nhập key + pop anim; pulse Watch-ad giảm 1.05→1.03 + margin 6dp + `clipChildren=false` (hết cut mép); nút buy/restore disabled set màu tường minh (hết tàng hình); footer `privacy_options` đổi nhãn → "Ad Choices" (15 locale) + divider.
+- Tests: **149 unit/widget PASS** (0 fail); `assembleRelease` (lintVitalRelease, R8) xanh ~13.2MB.
+
+**Update 2026-06-12 (round feedback 2 — 5 điểm + bug watch-ad)**:
+- 🔴 **BUG watch-ad → 3 ngày VIP KHÔNG grant** (verify thật trên device, đã FIX + xác nhận grant): `onResume` gọi `AdManager.loadRewarded()` vô điều kiện → khi đóng rewarded, VipActivity resume → reload **hủy instance ad vừa xem TRƯỚC khi `onAdHidden` fire** (log: "No operations on a destroyed instance"). SDK chỉ trả reward (`onRewardedDone(earned)`) trong `onAdHidden` → grant bị mất. FIX: cờ `rewardedInFlight` (set khi showRewarded, clear trong callback) → onResume KHÔNG reload khi đang dở; preload lượt kế trong callback. Grant cũng chuyển dùng `applicationContext` + persist vô điều kiện (không gate `_binding`). Verify device: "activateVipByKey ✅ VIP activated for 3 days" + crown gold + active-state UI. Test regression `watchAd_grantsVip`.
+- Điểm 1: nút VIP crown ở home thêm entry-anim + scale heartbeat (mạnh hơn 3 nút kia) + crown wiggle ±9° (`MainActivity`).
+- Điểm 2: "Ad Choices" (privacy_options) chỉ hiện khi UMP `PrivacyOptionsRequirementStatus.REQUIRED` (EEA); non-EEA ẩn cả entry + divider. Dùng UMP api (exposed qua wrapper).
+- Điểm 3: viền input "Enter VIP code" dùng ColorStateList (gold focus / xám dịu unfocused) thay viền sáng gắt.
+- Điểm 4: dialog Material You success/failed (thay Toast) + 3 string dialog × 15 locale (escape `'`).
+- Điểm 5: bỏ chip "VIP Active" header (overlay) → báo trạng thái trên nút crown home (gold-filled `bg_btn_vip_active` + crown đậm).
+- Phụ: label "VIP %d days" dùng `Math.round` (hết lệch "2 days" vs "3 days left").
+- Tests: **150 PASS** (0 fail); `assembleRelease` xanh.
 
 ### Đã hoàn thành & verify
 - Code: upgrade SDK 1.1.5, consent UMP, rewarded, VIP screen (13 UI + 5 anim), i18n 14 ngôn ngữ, banner autoManageLifecycle.
@@ -29,7 +44,12 @@
 1. **Re-verify fix trên device** (đang dở khi pause): xác nhận grant VIP thành công sau fix.
    - Cách deterministic: mở VipActivity → gõ key 30 ngày `9fA0q7eN!27cLx04@21993Y2u0I7#Q0` (gõ TAY trên máy cho chuẩn — `adb input text` làm hỏng ký tự `!` và case) → Activate → phải thấy active-state (countdown/progress/card) + confetti.
    - Hoặc Watch ad → xem hết → grant 3 ngày (lưu ý nhiễu App Open, xem mục 2).
-2. **Cân nhắc blacklist `VipActivity` khỏi App Open** (như `ChessBoardActivity`): logcat cho thấy App Open AppLovin cố show đè lên rewarded + show lại trên VipActivity sau khi xem rewarded ("Display failed: another fullscreen ad already showing" — handled, nhưng UX chưa đẹp). Sửa ở `MyApplication.registerCustomAppOpenLifecycle()` thêm `"VipActivity"` vào blacklist. CHƯA làm — quyết định khi resume.
+2. ✅ **ĐÃ LÀM (2026-06-12)** — blacklist `VipActivity` khỏi App Open (như `ChessBoardActivity`): `MyApplication.registerCustomAppOpenLifecycle()` nay skip cả `VipActivity`, tránh App Open đè lên rewarded ("Display failed: another fullscreen ad already showing"). `assembleDebug` xanh.
+   - **Refactor để testable**: tách `MyApplication.APP_OPEN_BLACKLIST` (Set) + `shouldSkipAppOpen(name)` (pure predicate, fail-safe null→skip) ra `companion object`; observer gọi predicate thay logic inline.
+   - **Test 3 tầng cho mọi case (20 mới PASS + 3 integration compile-PASS)**:
+     - Unit thuần JVM `AppOpenPolicyTest` (14): 3 blacklisted→skip · main/promotion/unknown→show · null→skip · empty/lowercase/uppercase/FQN/whitespace→không match · blacklist contract (size + exact set).
+     - Widget Robolectric `AppOpenPolicyRobolectricTest` (6): **rename-guard** — nối predicate với `simpleName` runtime của activity class thật (Splash/ChessBoard/Vip→skip, Main/Promotion→show) + blacklist không có entry mồ côi.
+     - Integration `AppOpenPolicyInstrumentedTest` (androidTest, 3): xác minh contract tên-lớp↔policy trên runtime device thật (`./gradlew connectedDebugAndroidTest`).
 3. **km (Khmer) + lo (Lào)**: nhờ native review trước publish (dịch best-effort).
 4. **Espresso integration** (`VipActivityEspressoTest`): chạy `./gradlew connectedDebugAndroidTest` trên device (mới compile-pass, chưa chạy runtime).
 5. Khi xong hết + user duyệt → mới commit.

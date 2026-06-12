@@ -140,9 +140,14 @@
 
     <string name="vip_days_left">Còn %1$d ngày</string>
     <string name="vip_already_longer">Bạn đang có thời hạn VIP dài hơn</string>
-    <string name="privacy_options">Tùy chọn quyền riêng tư</string>
+    <string name="privacy_options">Lựa chọn quảng cáo</string>
 
     <!-- Common -->
     <string name="privacy_policy">Chính sách bảo mật</string>
     <string name="confirm">Xác nhận</string>
+    <string name="vip_section_get">Nhận VIP</string>
+    <string name="vip_section_plans">Gói Premium</string>
+    <string name="vip_dialog_success_title">Đã kích hoạt VIP 🎉</string>
+    <string name="vip_dialog_success_msg">Bạn đã là VIP trong %1$d ngày. Tận hưởng trải nghiệm ít quảng cáo hơn!</string>
+    <string name="vip_dialog_failed_title">Kích hoạt thất bại</string>
 </resources>

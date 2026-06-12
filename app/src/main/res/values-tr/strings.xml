@@ -138,7 +138,12 @@
     <string name="vip_menu">VIP</string>
     <string name="vip_days_left">%1$d gün kaldı</string>
     <string name="vip_already_longer">Zaten daha uzun bir VIP süreniz var</string>
-    <string name="privacy_options">Gizlilik seçenekleri</string>
+    <string name="privacy_options">Reklam Seçenekleri</string>
     <string name="privacy_policy">Gizlilik Politikası</string>
     <string name="confirm">Onayla</string>
+    <string name="vip_section_get">VIP Edinin</string>
+    <string name="vip_section_plans">Premium Planlar</string>
+    <string name="vip_dialog_success_title">VIP Etkinleştirildi 🎉</string>
+    <string name="vip_dialog_success_msg">Artık %1$d gün boyunca VIP\'siniz. Daha az reklamlı bir deneyimin tadını çıkarın!</string>
+    <string name="vip_dialog_failed_title">Etkinleştirme başarısız</string>
 </resources>

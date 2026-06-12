@@ -138,7 +138,12 @@
     <string name="vip_menu">VIP</string>
     <string name="vip_days_left">ຍັງເຫຼືອ %1$d ມື້</string>
     <string name="vip_already_longer">ທ່ານມີໄລຍະ VIP ທີ່ດົນກວ່ານີ້ຢູ່ແລ້ວ</string>
-    <string name="privacy_options">ຕົວເລືອກຄວາມເປັນສ່ວນຕົວ</string>
+    <string name="privacy_options">ຕົວເລືອກໂຄສະນາ</string>
     <string name="privacy_policy">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ</string>
     <string name="confirm">ຢືນຢັນ</string>
+    <string name="vip_section_get">ຮັບ VIP</string>
+    <string name="vip_section_plans">ແພັກເກັດພຣີມຽມ</string>
+    <string name="vip_dialog_success_title">ເປີດໃຊ້ VIP ແລ້ວ 🎉</string>
+    <string name="vip_dialog_success_msg">ຕອນນີ້ທ່ານເປັນ VIP ເປັນເວລາ %1$d ມື້. ເພີດເພີນກັບປະສົບການທີ່ມີໂຄສະນາໜ້ອຍລົງ!</string>
+    <string name="vip_dialog_failed_title">ການເປີດໃຊ້ລົ້ມເຫລວ</string>
 </resources>

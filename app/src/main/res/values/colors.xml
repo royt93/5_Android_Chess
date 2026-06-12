@@ -46,4 +46,8 @@
     <color name="vip_card_bg">#16213E</color>
     <color name="vip_card_stroke">#33FFD60A</color>
     <color name="vip_text_secondary">#B8C4D8</color>
+    <color name="vip_input_bg">#14203A</color>
+    <color name="vip_input_stroke">#3D4D6B</color>
+    <color name="vip_btn_disabled_bg">#212C45</color>
+    <color name="vip_btn_disabled_text">#6E7E9C</color>
 </resources>

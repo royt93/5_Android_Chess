@@ -19,7 +19,6 @@ import com.saigonphantomlabs.BaseActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.google.android.material.chip.Chip;
 import com.saigonphantomlabs.chess.BuildConfig;
 import com.saigonphantomlabs.chess.R;
 import com.saigonphantomlabs.feature.vip.VipActivity;
@@ -40,7 +39,7 @@ public class MainActivity extends BaseActivity {
     private LinearLayout btnLanguage;
     private TextView tvCurrentLanguage;
     private LinearLayout btnVip;
-    private Chip chipVipBadge;
+    private ImageView ivVipCrown;
 
     // Infinite animators — all cancelled in onDestroy
     private AnimatorSet heartbeatAnim;
@@ -55,6 +54,8 @@ public class MainActivity extends BaseActivity {
     private ObjectAnimator bottomBtnPulse1;
     private ObjectAnimator bottomBtnPulse2;
     private ObjectAnimator bottomBtnPulse3;
+    private ObjectAnimator bottomBtnPulseVip;
+    private ObjectAnimator crownWiggleAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +126,7 @@ public class MainActivity extends BaseActivity {
         });
 
         btnVip = findViewById(R.id.btnVip);
-        chipVipBadge = findViewById(R.id.chipVipBadge);
+        ivVipCrown = findViewById(R.id.ivVipCrown);
         btnVip.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
                 startActivity(new Intent(MainActivity.this, VipActivity.class));
@@ -133,16 +134,25 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void bindVipBadge() {
-        if (chipVipBadge != null) {
-            chipVipBadge.setVisibility(AdManager.INSTANCE.isVipByKeyActive() ? View.VISIBLE : View.GONE);
+    /**
+     * Điểm 5: báo trạng thái VIP NGAY trên nút crown (bỏ chip header overlay).
+     * Active → nút gold-filled + crown đậm trên nền vàng; free → nút secondary + crown vàng.
+     */
+    private void bindVipState() {
+        boolean active = AdManager.INSTANCE.isVipByKeyActive();
+        if (btnVip != null) {
+            btnVip.setBackgroundResource(active ? R.drawable.bg_btn_vip_active : R.drawable.bg_btn_secondary);
+        }
+        if (ivVipCrown != null) {
+            ivVipCrown.setColorFilter(androidx.core.content.ContextCompat.getColor(
+                    this, active ? R.color.vip_on_gold : R.color.vip_gold));
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        bindVipBadge();   // refresh khi back từ VipActivity
+        bindVipState();   // refresh khi back từ VipActivity
     }
 
     private void animateEntryViews() {
@@ -159,7 +169,7 @@ public class MainActivity extends BaseActivity {
         // Initial state for entry animation
         View[] topViews = {tvVersion};
         View[] mainViews = {btnPlayPvP, btnPlayPvE, btnStats, btnRules};
-        View[] bottomViews = {btnRateApp, btnMoreApps, btnShareApp};
+        View[] bottomViews = {btnRateApp, btnMoreApps, btnShareApp, btnVip};
 
         for (View v : topViews) { v.setAlpha(0f); v.setTranslationY(-50f); }
         for (View v : mainViews) { v.setAlpha(0f); v.setScaleX(0.1f); v.setScaleY(0.1f); v.setTranslationX(200f); }
@@ -273,6 +283,24 @@ public class MainActivity extends BaseActivity {
         if (bottomBtnPulse1 != null) bottomBtnPulse1.start();
         if (bottomBtnPulse2 != null) bottomBtnPulse2.start();
         if (bottomBtnPulse3 != null) bottomBtnPulse3.start();
+
+        // VIP crown: heartbeat hơi mạnh + nhanh hơn 3 nút kia (shrink → clip-safe) +
+        // crown wiggle xoay nhẹ → nổi bật, báo hiệu nút "premium".
+        bottomBtnPulseVip = buildScalePulse(btnVip, 1.0f, 0.86f, 1400, 900L);
+        if (bottomBtnPulseVip != null) bottomBtnPulseVip.start();
+        crownWiggleAnim = buildCrownWiggle(ivVipCrown);
+        if (crownWiggleAnim != null) crownWiggleAnim.start();
+    }
+
+    // Crown wiggle: xoay nhẹ ±9° (rotation không nở bounds → clip-safe)
+    private ObjectAnimator buildCrownWiggle(View crown) {
+        if (crown == null) return null;
+        ObjectAnimator a = ObjectAnimator.ofFloat(crown, "rotation", -9f, 9f);
+        a.setDuration(1400);
+        a.setRepeatCount(ValueAnimator.INFINITE);
+        a.setRepeatMode(ValueAnimator.REVERSE);
+        a.setStartDelay(900);
+        return a;
     }
 
     // Shimmer sweep: translate from -width to +width for full button sweep
@@ -397,11 +425,14 @@ public class MainActivity extends BaseActivity {
         cancelAnimator(bottomBtnPulse1);
         cancelAnimator(bottomBtnPulse2);
         cancelAnimator(bottomBtnPulse3);
+        cancelAnimator(bottomBtnPulseVip);
+        cancelAnimator(crownWiggleAnim);
         heartbeatAnim = null; flickerAnim = null;
         shimmerPvPAnim = null; shimmerPvEAnim = null;
         logoRing1Anim = null; logoRing2Anim = null;
         cornerTLAnim = null; cornerBRAnim = null; cornerTRAnim = null;
         bottomBtnPulse1 = null; bottomBtnPulse2 = null; bottomBtnPulse3 = null;
+        bottomBtnPulseVip = null; crownWiggleAnim = null;
         super.onDestroy();
     }
 

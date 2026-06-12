@@ -138,7 +138,12 @@
     <string name="vip_menu">VIP</string>
     <string name="vip_days_left">%1$d일 남음</string>
     <string name="vip_already_longer">이미 더 긴 VIP 기간이 있습니다</string>
-    <string name="privacy_options">개인정보 옵션</string>
+    <string name="privacy_options">광고 설정</string>
     <string name="privacy_policy">개인정보처리방침</string>
     <string name="confirm">확인</string>
+    <string name="vip_section_get">VIP 받기</string>
+    <string name="vip_section_plans">프리미엄 플랜</string>
+    <string name="vip_dialog_success_title">VIP 활성화됨 🎉</string>
+    <string name="vip_dialog_success_msg">이제 %1$d일 동안 VIP입니다. 광고가 적은 쾌적한 경험을 즐기세요!</string>
+    <string name="vip_dialog_failed_title">활성화 실패</string>
 </resources>

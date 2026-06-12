@@ -138,7 +138,12 @@
     <string name="vip_menu">VIP</string>
     <string name="vip_days_left">Sisa %1$d hari</string>
     <string name="vip_already_longer">Anda sudah memiliki masa VIP yang lebih lama</string>
-    <string name="privacy_options">Opsi privasi</string>
+    <string name="privacy_options">Pilihan Iklan</string>
     <string name="privacy_policy">Kebijakan Privasi</string>
     <string name="confirm">Konfirmasi</string>
+    <string name="vip_section_get">Dapatkan VIP</string>
+    <string name="vip_section_plans">Paket Premium</string>
+    <string name="vip_dialog_success_title">VIP Diaktifkan 🎉</string>
+    <string name="vip_dialog_success_msg">Anda kini VIP selama %1$d hari. Nikmati pengalaman dengan lebih sedikit iklan!</string>
+    <string name="vip_dialog_failed_title">Aktivasi gagal</string>
 </resources>

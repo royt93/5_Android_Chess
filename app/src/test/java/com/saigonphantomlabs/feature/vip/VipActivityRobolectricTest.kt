@@ -15,7 +15,6 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import org.robolectric.shadows.ShadowToast
 
 /**
  * Widget test (Robolectric) cho [VipActivity] — state FREE (chưa VIP).
@@ -46,12 +45,16 @@ class VipActivityRobolectricTest {
         }
     }
 
-    @Test fun invalidKey_showsInvalidToast() {
+    @Test fun invalidKey_showsFailedDialog() {
         Robolectric.buildActivity(VipActivity::class.java).setup().use { controller ->
             val a = controller.get()
             a.findViewById<EditText>(R.id.etKey).setText("NOT-A-VALID-KEY")
             a.findViewById<View>(R.id.btnActivate).performClick()
-            assertEquals(a.getString(R.string.vip_key_invalid), ShadowToast.getTextOfLatestToast())
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle()
+            // Material You dialog báo thất bại (thay cho Toast cũ)
+            val dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog()
+            org.junit.Assert.assertNotNull(dialog)
+            org.junit.Assert.assertTrue(dialog.isShowing)
             // free-state vẫn giữ (không có config nên không thể activate)
             assertEquals(View.GONE, a.findViewById<View>(R.id.cardActiveVip).visibility)
         }

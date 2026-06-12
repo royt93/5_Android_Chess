@@ -23,6 +23,34 @@ import java.lang.ref.WeakReference
 
 class MyApplication : Application() {
 
+    companion object {
+        /**
+         * Activities where the resume App Open Ad must NEVER be shown:
+         *   • SplashActivity     — initSplashScreen handles App Open separately (avoid double-show).
+         *   • ChessBoardActivity — must not interrupt an ongoing game session.
+         *   • VipActivity        — must not overlap the rewarded fullscreen ad shown there
+         *     ("Display failed: another fullscreen ad already showing").
+         *
+         * Matched by [Class.getSimpleName]; keep entries in sync if any of these activities is renamed
+         * (the rename-guard widget/integration tests will fail loudly if they drift).
+         */
+        @JvmField
+        val APP_OPEN_BLACKLIST: Set<String> = setOf(
+            "SplashActivity",
+            "ChessBoardActivity",
+            "VipActivity",
+        )
+
+        /**
+         * Pure policy predicate — decides whether the resume App Open Ad should be suppressed.
+         * Fail-safe: a null/unknown activity name → skip (don't show when we don't know the screen).
+         * Pure (no Android deps) so it can be unit-tested directly on the JVM.
+         */
+        @JvmStatic
+        fun shouldSkipAppOpen(activityName: String?): Boolean =
+            activityName == null || activityName in APP_OPEN_BLACKLIST
+    }
+
     /**
      * Own activity tracker — used by the custom App Open lifecycle observer below.
      * Mirrors what SDK does internally, but gives us control over which activities to skip.
@@ -100,6 +128,8 @@ class MyApplication : Application() {
      * Identical behaviour to the SDK's built-in version, with one extra policy rule:
      *   • "ChessBoardActivity" is blacklisted → App Open Ad is NEVER shown while
      *     the user is actively playing chess, preventing gameplay interruption.
+     *   • "VipActivity" is blacklisted → App Open must not overlap the rewarded
+     *     fullscreen ad shown there.
      *
      * Policy basis:
      *   - AppLovin MAX: "App Open ads must not interrupt ongoing game sessions."
@@ -136,9 +166,9 @@ class MyApplication : Application() {
                 val activity = currentActivity?.get() ?: return
                 val activityName = activity.javaClass.simpleName
 
-                // ✅ Policy: skip on SplashActivity (initSplashScreen handles it separately)
-                // ✅ Policy: skip on ChessBoardActivity (must not interrupt gameplay)
-                if (activityName == "SplashActivity" || activityName == "ChessBoardActivity") {
+                // ✅ Policy: skip on blacklisted activities (Splash / ChessBoard / Vip).
+                //    See [APP_OPEN_BLACKLIST] / [shouldSkipAppOpen] for rationale.
+                if (shouldSkipAppOpen(activityName)) {
                     Log.d("roy93~", "AppOpen ⏭️ skipped — blacklisted activity: $activityName")
                     return
                 }
@@ -163,7 +193,7 @@ class MyApplication : Application() {
             }
         })
 
-        Log.d("roy93~", "registerCustomAppOpenLifecycle ✅ registered — ChessBoardActivity blacklisted")
+        Log.d("roy93~", "registerCustomAppOpenLifecycle ✅ registered — ChessBoardActivity + VipActivity blacklisted")
     }
 }
 

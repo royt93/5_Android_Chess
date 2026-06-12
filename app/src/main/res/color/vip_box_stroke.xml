@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Viền box nhập key: gold khi focus, xám dịu khi chưa focus (tránh viền sáng gắt). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/vip_gold" android:state_focused="true" />
+    <item android:color="@color/vip_input_stroke" />
+</selector>
