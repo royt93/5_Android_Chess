@@ -29,6 +29,12 @@
 - Bug 2 (crash `OutOfMemoryError` ở `KonfettiView.onDraw` → `PartyEmitter.createParticle`): `celebrate()` không `reset()` trước `start()` → `KonfettiView.start` cộng dồn `PartySystem` (không thay thế) → gọi celebrate nhiều lần tích lũy particle. FIX: `viewKonfetti.reset()` trước mỗi `start` + sau `onDestroy`; thêm `timeToLive=1500ms`, giảm burst (max 120→60, duration 100→80ms). ⚠️ Lưu ý: heap đầy 256MB nên có thể còn leak bitmap khác (xem `memory_leak.md`/leakcanary) — konfetti chỉ là giọt nước tràn ly; fix này loại konfetti khỏi nguyên nhân.
 - Tests: **150 PASS**; `assembleRelease` xanh.
 
+**Update 2026-06-12 (round feedback 4 — App Open / banner / memory leak)**:
+- 🔴 **App Open show đè ad khác**: observer App Open fire trên `AppLovinFullscreenActivity` (đang xem inter/rewarded) → overlay nhấp nháy + "NOT READY" + "stale callback". FIX: `MyApplication.isForeignActivity(fullClassName)` — skip App Open khi activity KHÔNG thuộc `com.saigonphantomlabs` (ad-network/ngoài). +6 unit test.
+- 🟠 **Banner refresh ngầm ngoài màn cờ** (invalid impression + tốn memory): chuyển `loadBanner(autoManageLifecycle=false)` + tự quản `bannerResume`/`bannerPause`/`bannerDestroy` ở onResume/onPause/onDestroy `ChessBoardActivity` → banner chỉ refresh khi màn cờ hiển thị.
+- 🔴 **Memory leak (qua LeakCanary)**: leak lớn nhất = SDK static `splashTimeoutRunnable` → callback `SplashActivity$2` (anonymous, ngầm giữ `this`) → giữ `SplashActivity` ~918KB × mỗi lần mở app. FIX: đổi 2 callback splash (consent + initSplash) sang **static nested class + WeakReference**. Verify device: cold-launch + điều hướng Main↔VIP 5× → LeakCanary **không còn dump** (Splash + Vip đều GC được). Còn lại `AdManager.provider`/`t3$b.b` = SDK-internal (không fix từ app). Đã dọn 1.4GB hprof tích lũy trên device.
+- Tests: **156 PASS**; `assembleDebug`/`assembleRelease` xanh.
+
 ### Đã hoàn thành & verify
 - Code: upgrade SDK 1.1.5, consent UMP, rewarded, VIP screen (13 UI + 5 anim), i18n 14 ngôn ngữ, banner autoManageLifecycle.
 - Unit/widget tests: **129 test PASS** (gồm 46 VIP test). `assembleDebug`/`assembleRelease` xanh.
