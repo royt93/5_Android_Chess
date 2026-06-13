@@ -11,6 +11,12 @@
         <item name="android:statusBarColor">@color/game_bg_deep</item>
         <item name="android:navigationBarColor">@color/game_bg_deep</item>
         <item name="android:windowBackground">@color/game_bg_deep</item>
+        <!-- Hero animation: bật shared element transition giữa các activity. -->
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementsUseOverlay">true</item>
     </style>
 
     <!-- VIP screen: ép Dark cố định. Màn VIP luôn nền tối (game_bg_deep) bất kể
@@ -29,6 +35,12 @@
         <item name="android:statusBarColor">@color/game_bg_deep</item>
         <item name="android:navigationBarColor">@color/game_bg_deep</item>
         <item name="android:windowBackground">@color/game_bg_deep</item>
+        <!-- Hero animation: bật shared element transition (Main → Vip). -->
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementsUseOverlay">true</item>
     </style>
 
     <!-- Splash Theme -->
@@ -38,5 +50,11 @@
         <item name="android:windowBackground">@color/game_bg_deep</item>
         <item name="android:navigationBarColor">@color/game_bg_deep</item>
         <item name="android:statusBarColor">@color/game_bg_deep</item>
+        <!-- Hero animation: Splash là nguồn của logo hero (ivLogo → Main ivMainLogo). -->
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementsUseOverlay">true</item>
     </style>
 </resources>

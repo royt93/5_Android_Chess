@@ -148,6 +148,15 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         displayMinDimensions = Math.min(displayWidth, displayHeight);
 
         boardLayout = findViewById(R.id.boardLayout);
+
+        // Hero: hoãn enter transition tới khi boardLayout ĐO XONG (board được dựng async trong
+        // OnGlobalLayoutListener bên dưới). Nếu không hoãn, transition bắn lúc board còn 0×0 →
+        // shared element không có bounds đích → snap/giật thay vì "nở". Nhả lại ở listener.
+        if (NavAnim.enteredViaHero(this)) {
+            supportPostponeEnterTransition();
+            // Safety: board vì lý do gì không layout → vẫn nhả sau 600ms để không kẹt màn.
+            boardLayout.postDelayed(this::startPostponedEnterTransition, 600);
+        }
         blackTurnIndicator = findViewById(R.id.blackTurnIndicator);
         whiteTurnIndicator = findViewById(R.id.whiteTurnIndicator);
         whiteTurnGlow = findViewById(R.id.whiteTurnGlow);
@@ -286,12 +295,20 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                             BoardThemeManager.applyTheme(boardImage, currentTheme, boardSize);
                         }
 
-                        // Hero: board flies in
-                        boardLayout.setAlpha(0f);
-                        boardLayout.setScaleX(0.75f);
-                        boardLayout.setScaleY(0.75f);
-                        boardLayout.animate().alpha(1f).scaleX(1f).scaleY(1f)
-                                .setDuration(650).setInterpolator(new OvershootInterpolator(1.2f)).start();
+                        // Hero: vào bằng shared element (nút Play / mini-board / hàng câu đố → bàn cờ)
+                        // → bàn cờ đã được transition đưa vào, BỎ fly-in thủ công để tránh giật đôi.
+                        // Khi không có hero (vd recreate config) → giữ fly-in cũ.
+                        if (!NavAnim.enteredViaHero(ChessBoardActivity.this)) {
+                            boardLayout.setAlpha(0f);
+                            boardLayout.setScaleX(0.75f);
+                            boardLayout.setScaleY(0.75f);
+                            boardLayout.animate().alpha(1f).scaleX(1f).scaleY(1f)
+                                    .setDuration(650).setInterpolator(new OvershootInterpolator(1.2f)).start();
+                        } else {
+                            // Board đã đo & vẽ xong → nhả enter transition để shared element chạy mượt
+                            // (post: chờ thêm 1 frame cho quân vẽ xong trước khi transition bắt bounds).
+                            boardLayout.post(ChessBoardActivity.this::startPostponedEnterTransition);
+                        }
                     }
                 });
     }

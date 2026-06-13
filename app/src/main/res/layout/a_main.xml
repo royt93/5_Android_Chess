@@ -103,7 +103,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="@dimen/menu_logo_margin_bottom"
             android:clipChildren="false"
             android:clipToPadding="false">
 
@@ -118,16 +118,16 @@
                 android:clipToPadding="false">
 
                 <FrameLayout
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
+                    android:layout_width="@dimen/menu_logo_ring_outer"
+                    android:layout_height="@dimen/menu_logo_ring_outer"
                     android:clipChildren="false"
                     android:clipToPadding="false">
 
                     <!-- Outer ring -->
                     <View
                         android:id="@+id/logoRing2"
-                        android:layout_width="160dp"
-                        android:layout_height="160dp"
+                        android:layout_width="@dimen/menu_logo_ring_outer"
+                        android:layout_height="@dimen/menu_logo_ring_outer"
                         android:layout_gravity="center"
                         android:background="@drawable/bg_splash_ring"
                         android:alpha="0.6" />
@@ -135,24 +135,25 @@
                     <!-- Inner ring -->
                     <View
                         android:id="@+id/logoRing1"
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
+                        android:layout_width="@dimen/menu_logo_ring_inner"
+                        android:layout_height="@dimen/menu_logo_ring_inner"
                         android:layout_gravity="center"
                         android:background="@drawable/bg_splash_ring"
                         android:alpha="0.8" />
 
                     <!-- Particle glow -->
                     <View
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
+                        android:layout_width="@dimen/menu_logo_glow"
+                        android:layout_height="@dimen/menu_logo_glow"
                         android:layout_gravity="center"
                         android:background="@drawable/bg_particle_glow" />
 
                     <!-- Logo icon -->
                     <ImageView
                         android:id="@+id/ivMainLogo"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
+                        android:transitionName="hero_logo"
+                        android:layout_width="@dimen/menu_logo_icon"
+                        android:layout_height="@dimen/menu_logo_icon"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_kingw"
                         app:tint="@color/game_gold_primary"
@@ -191,7 +192,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height_game"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="@dimen/menu_btn_gap"
                 android:background="@drawable/bg_btn_clip"
                 android:clipToOutline="true"
                 android:clipChildren="true"
@@ -242,7 +243,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height_game"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="@dimen/menu_btn_gap"
                 android:background="@drawable/bg_btn_clip"
                 android:clipToOutline="true"
                 android:clipChildren="true"
@@ -367,137 +368,121 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Ván đã lưu (thư viện) -->
+            <!-- Hàng 3 cột: Ván đã lưu | Thành tích | Câu đố (gộp 3 hàng dọc → 1 hàng để fit
+                 màn ngắn không cần scroll). Mỗi ô: icon trên + nhãn dưới. -->
             <LinearLayout
-                android:id="@+id/btnSavedGames"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height_game_compact"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_btn_secondary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_height="@dimen/menu_tile_height"
+                android:layout_marginTop="@dimen/menu_btn_gap"
+                android:orientation="horizontal"
+                android:weightSum="3">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_moves"
-                    app:tint="@color/game_neon_cyan"
-                    android:contentDescription="@null" />
+                <!-- Ván đã lưu -->
+                <LinearLayout
+                    android:id="@+id/btnSavedGames"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_btn_secondary"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="4dp">
 
-                <TextView
-                    android:id="@+id/tvSavedCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/saved_games_title"
-                    android:textAllCaps="true"
-                    android:fontFamily="@font/exo2"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:shadowColor="#88FFFFFF"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="12" />
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginBottom="3dp"
+                        android:src="@drawable/ic_moves"
+                        app:tint="@color/game_neon_cyan"
+                        android:contentDescription="@null" />
 
-            <!-- Thành tích / huy hiệu -->
-            <LinearLayout
-                android:id="@+id/btnAchievements"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height_game_compact"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_btn_secondary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tvSavedCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:text="@string/saved_games_title"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/white"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_trophy"
-                    app:tint="@color/game_gold_primary"
-                    android:contentDescription="@null" />
+                <!-- Thành tích -->
+                <LinearLayout
+                    android:id="@+id/btnAchievements"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="6dp"
+                    android:background="@drawable/bg_btn_secondary"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="4dp">
 
-                <TextView
-                    android:id="@+id/tvAchCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/achievements_title"
-                    android:textAllCaps="true"
-                    android:fontFamily="@font/exo2"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:shadowColor="#88FFFFFF"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="12" />
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginBottom="3dp"
+                        android:src="@drawable/ic_trophy"
+                        app:tint="@color/game_gold_primary"
+                        android:contentDescription="@null" />
 
-            <!-- Câu đố cờ -->
-            <LinearLayout
-                android:id="@+id/btnPuzzles"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height_game_compact"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_btn_secondary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tvAchCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:text="@string/achievements_title"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/white"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_puzzle"
-                    app:tint="@color/game_neon_cyan"
-                    android:contentDescription="@null" />
+                <!-- Câu đố -->
+                <LinearLayout
+                    android:id="@+id/btnPuzzles"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_btn_secondary"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="4dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/puzzles_title"
-                    android:textAllCaps="true"
-                    android:fontFamily="@font/exo2"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:shadowColor="#88FFFFFF"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="12" />
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginBottom="3dp"
+                        android:src="@drawable/ic_puzzle"
+                        app:tint="@color/game_neon_cyan"
+                        android:contentDescription="@null" />
 
-            <LinearLayout
-                android:id="@+id/btnLanguage"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height_game_compact"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_btn_secondary"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvCurrentLanguage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/language_en_placeholder"
-                    android:fontFamily="@font/exo2"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:shadowColor="#88FFFFFF"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="12" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:text="@string/puzzles_title"
+                        android:fontFamily="@font/exo2"
+                        android:textColor="@color/white"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
@@ -508,20 +493,23 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- Bottom Section: Action Buttons (Rate, More, Share) -->
+        <!-- Bottom Section: Action Buttons (Rate, More, Share, Language, VIP) — 5 cột cân,
+             width=0dp weight=1 để luôn vừa bề ngang mọi máy. Ngôn ngữ chuyển vào đây (🌐). -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingHorizontal="24dp"
-            android:paddingBottom="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="16dp"
+            android:weightSum="5">
 
             <!-- Rate App -->
             <LinearLayout
                 android:id="@+id/btnRateApp"
-                android:layout_width="52dp"
+                android:layout_width="0dp"
                 android:layout_height="52dp"
-                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/bg_btn_secondary"
                 android:clickable="true"
                 android:focusable="true"
@@ -539,9 +527,10 @@
             <!-- More Apps -->
             <LinearLayout
                 android:id="@+id/btnMoreApps"
-                android:layout_width="52dp"
+                android:layout_width="0dp"
                 android:layout_height="52dp"
-                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="6dp"
                 android:background="@drawable/bg_btn_secondary"
                 android:clickable="true"
                 android:focusable="true"
@@ -559,9 +548,10 @@
             <!-- Share App -->
             <LinearLayout
                 android:id="@+id/btnShareApp"
-                android:layout_width="52dp"
+                android:layout_width="0dp"
                 android:layout_height="52dp"
-                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="6dp"
                 android:background="@drawable/bg_btn_secondary"
                 android:clickable="true"
                 android:focusable="true"
@@ -576,12 +566,40 @@
                     android:contentDescription="@null" />
             </LinearLayout>
 
+            <!-- Language (🌐) — chuyển từ hàng dọc xuống đây để tiết kiệm 1 hàng -->
+            <LinearLayout
+                android:id="@+id/btnLanguage"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/bg_btn_secondary"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCurrentLanguage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="@string/language_en_placeholder"
+                    android:fontFamily="@font/exo2"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <!-- VIP -->
             <LinearLayout
                 android:id="@+id/btnVip"
-                android:layout_width="52dp"
+                android:layout_width="0dp"
                 android:layout_height="52dp"
-                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
                 android:background="@drawable/bg_btn_secondary"
                 android:clickable="true"
                 android:focusable="true"

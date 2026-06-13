@@ -26,7 +26,8 @@ public class AchievementsActivity extends BaseActivity {
         UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_achievements);
         UIUtils.INSTANCE.setupEdgeToEdge2(findViewById(R.id.contentLayout), true, true);
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        // finishAfterTransition → kích hoạt return hero (header → nút menu) khi bấm nút back.
+        findViewById(R.id.btnBack).setOnClickListener(v -> finishAfterTransition());
         startGlow();
         populate();
     }

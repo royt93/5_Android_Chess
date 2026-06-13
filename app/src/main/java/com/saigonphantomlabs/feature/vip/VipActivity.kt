@@ -72,7 +72,8 @@ class VipActivity : BaseActivity() {
         // (rewarded callback) → prefs phải gắn app context, không phải instance này.
         vipPrefs = VipPrefs(applicationContext)
 
-        binding.btnBack.setOnClickListener { finish() }
+        // finishAfterTransition → kích hoạt return hero (header VIP → nút menu) khi bấm nút back.
+        binding.btnBack.setOnClickListener { finishAfterTransition() }
         binding.btnActivate.setOnClickListener { onActivateKeyClicked() }
         // Nút Activate chỉ enable khi user đã nhập key (tránh bấm rỗng). Pop nhẹ khi
         // chuyển disabled→enabled để thu hút chú ý.

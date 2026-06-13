@@ -28,6 +28,9 @@ public class SplashActivity extends BaseActivity {
     private long splashStartTime;
     private boolean isNavigating = false;
 
+    // Logo — giữ ref để làm shared element (hero) khi navigate sang MainActivity.
+    private ImageView ivLogo;
+
     // Handler for minimum duration delay
     private android.os.Handler splashHandler;
 
@@ -64,7 +67,7 @@ public class SplashActivity extends BaseActivity {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivBkg);
 
-        ImageView ivLogo = findViewById(R.id.ivLogo);
+        ivLogo = findViewById(R.id.ivLogo);
         android.widget.TextView tvTitle = findViewById(R.id.tvTitle);
         View ring1 = findViewById(R.id.ring1);
         View ring2 = findViewById(R.id.ring2);
@@ -210,10 +213,15 @@ public class SplashActivity extends BaseActivity {
         if (isNavigating || isFinishing()) return;
         isNavigating = true;
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        // KHÔNG dùng FLAG_ACTIVITY_NEW_TASK: launch vào task mới làm OS BỎ QUA shared element
+        // transition (logo hero). Giữ cùng task để hero Splash→Main chạy. CLEAR_TOP đủ để dọn stack.
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // Hero: logo splash bay xuyên sang logo của Main. Stop breathing để shared element bắt
+        // đúng trạng thái tĩnh (scale/rotation đang chạy sẽ làm hero "nhảy").
+        if (logoAnim != null) { logoAnim.cancel(); }
+        if (ivLogo != null) { ivLogo.setScaleX(1f); ivLogo.setScaleY(1f); ivLogo.setRotation(0f); }
+        NavAnim.startWithHero(this, intent, ivLogo, NavAnim.HERO_LOGO);
         finish();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override

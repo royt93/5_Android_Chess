@@ -43,7 +43,8 @@ public class SavedGamesActivity extends BaseActivity {
         savedList = findViewById(R.id.savedList);
         scrollList = findViewById(R.id.scrollList);
         emptyState = findViewById(R.id.emptyState);
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        // finishAfterTransition → kích hoạt return hero (header → nút menu) khi bấm nút back.
+        findViewById(R.id.btnBack).setOnClickListener(v -> finishAfterTransition());
         startGlow();
     }
 
@@ -118,18 +119,20 @@ public class SavedGamesActivity extends BaseActivity {
                         DateUtils.MINUTE_IN_MILLIS));
 
         row.setOnClickListener(new SafeClickListener() {
-            @Override public void onSafeClick(View v) { resume(g.sessionId); }
+            @Override public void onSafeClick(View v) {
+                resume(g.sessionId, row.findViewById(R.id.miniBoard));
+            }
         });
         ((ImageButton) row.findViewById(R.id.btnDelete)).setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View v) { confirmDelete(g); }
         });
     }
 
-    private void resume(String sessionId) {
+    private void resume(String sessionId, View hero) {
         Intent intent = new Intent(this, ChessBoardActivity.class);
         intent.putExtra("RESUME_SESSION", sessionId);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
+        // Hero: mini-board thumbnail phóng to thành bàn cờ.
+        NavAnim.startWithHero(this, intent, hero, NavAnim.HERO_BOARD);
     }
 
     private void confirmDelete(GameSaveManager.SavedGame g) {

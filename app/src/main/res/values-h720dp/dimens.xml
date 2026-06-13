@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bucket màn CAO (available height >= 720dp, gồm Pixel 7 Pro ~891dp): giữ kích thước menu
+  THOÁNG như thiết kế gốc. Máy màn ngắn (< 720dp) dùng giá trị compact ở values/dimens.xml để
+  menu vừa khít, không cần scroll. Chỉ override đúng các dimen của menu (a_main).
+-->
+<resources>
+    <dimen name="button_height_game">72dp</dimen>
+    <dimen name="button_height_game_compact">56dp</dimen>
+    <dimen name="game_title_text_size">36sp</dimen>
+    <dimen name="game_button_text_size">20sp</dimen>
+
+    <dimen name="menu_logo_ring_outer">160dp</dimen>
+    <dimen name="menu_logo_ring_inner">110dp</dimen>
+    <dimen name="menu_logo_glow">120dp</dimen>
+    <dimen name="menu_logo_icon">64dp</dimen>
+    <dimen name="menu_btn_gap">12dp</dimen>
+    <dimen name="menu_logo_margin_bottom">20dp</dimen>
+    <dimen name="menu_tile_height">74dp</dimen>
+</resources>

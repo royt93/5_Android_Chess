@@ -27,7 +27,8 @@ public class PuzzlesActivity extends BaseActivity {
         UIUtils.INSTANCE.setupEdgeToEdge1(getWindow());
         setContentView(R.layout.a_puzzles);
         UIUtils.INSTANCE.setupEdgeToEdge2(findViewById(R.id.contentLayout), true, true);
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        // finishAfterTransition → kích hoạt return hero (header → nút menu) khi bấm nút back.
+        findViewById(R.id.btnBack).setOnClickListener(v -> finishAfterTransition());
         startGlow();
         populate();
     }
@@ -60,17 +61,17 @@ public class PuzzlesActivity extends BaseActivity {
             TextView status = row.findViewById(R.id.puzzleStatus);
             if (solved) { status.setText("✅"); status.setTextSize(18f); }
             row.setOnClickListener(new SafeClickListener() {
-                @Override public void onSafeClick(View v) { openPuzzle(index); }
+                @Override public void onSafeClick(View v) { openPuzzle(index, row); }
             });
             list.addView(row);
         }
     }
 
-    private void openPuzzle(int index) {
+    private void openPuzzle(int index, View hero) {
         Intent i = new Intent(this, ChessBoardActivity.class);
         i.putExtra("PUZZLE_INDEX", index);
-        startActivity(i);
-        overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
+        // Hero: hàng câu đố "nở" thành bàn cờ.
+        NavAnim.startWithHero(this, i, hero, NavAnim.HERO_BOARD);
     }
 
     private void startGlow() {

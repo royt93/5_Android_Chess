@@ -78,6 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
+                android:transitionName="hero_saved"
                 android:fontFamily="@font/cinzel_bold"
                 android:text="@string/saved_games_title"
                 android:textAllCaps="true"

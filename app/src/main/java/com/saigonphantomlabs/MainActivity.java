@@ -103,7 +103,7 @@ public class MainActivity extends BaseActivity {
                 .into(ivBkg);
 
         btnPlayPvP.setOnClickListener(new SafeClickListener() {
-            @Override public void onSafeClick(View view) { showTimeControlDialog(ms -> startGame(false, null, ms)); }
+            @Override public void onSafeClick(View view) { showTimeControlDialog(ms -> startGame(false, null, ms, btnPlayPvP)); }
         });
         btnPlayPvE.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) { showDifficultySelectionDialog(); }
@@ -125,20 +125,20 @@ public class MainActivity extends BaseActivity {
         });
         findViewById(R.id.btnSavedGames).setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
-                startActivity(new Intent(MainActivity.this, SavedGamesActivity.class));
-                overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
+                NavAnim.startWithHero(MainActivity.this,
+                        new Intent(MainActivity.this, SavedGamesActivity.class), view, NavAnim.HERO_SAVED);
             }
         });
         findViewById(R.id.btnAchievements).setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
-                startActivity(new Intent(MainActivity.this, AchievementsActivity.class));
-                overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
+                NavAnim.startWithHero(MainActivity.this,
+                        new Intent(MainActivity.this, AchievementsActivity.class), view, NavAnim.HERO_ACHIEVEMENTS);
             }
         });
         findViewById(R.id.btnPuzzles).setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
-                startActivity(new Intent(MainActivity.this, PuzzlesActivity.class));
-                overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
+                NavAnim.startWithHero(MainActivity.this,
+                        new Intent(MainActivity.this, PuzzlesActivity.class), view, NavAnim.HERO_PUZZLES);
             }
         });
         btnLanguage.setOnClickListener(new SafeClickListener() {
@@ -151,7 +151,8 @@ public class MainActivity extends BaseActivity {
         ivVipCrown = findViewById(R.id.ivVipCrown);
         btnVip.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
-                startActivity(new Intent(MainActivity.this, VipActivity.class));
+                NavAnim.startWithHero(MainActivity.this,
+                        new Intent(MainActivity.this, VipActivity.class), view, NavAnim.HERO_VIP);
             }
         });
     }
@@ -200,6 +201,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void animateEntryViews() {
+        // Vào bằng hero (Splash → Main): logo là shared element → BỎ pop thủ công, tránh giật đôi.
+        boolean heroLogo = NavAnim.enteredViaHero(this);
         ImageView ivMainLogo = findViewById(R.id.ivMainLogo);
         TextView tvMainTitle = findViewById(R.id.tvMainTitle);
         View shimmerPvP = findViewById(R.id.shimmerPvP);
@@ -226,13 +229,13 @@ public class MainActivity extends BaseActivity {
         for (View v : heroViews) { v.setAlpha(0f); v.setScaleX(0.1f); v.setScaleY(0.1f); v.setTranslationX(200f); }
         for (View v : secondaryViews) { if (v != null) { v.setAlpha(0f); v.setTranslationY(40f); } }
         for (View v : bottomViews) { v.setAlpha(0f); v.setTranslationY(150f); }
-        if (ivMainLogo != null) { ivMainLogo.setAlpha(0f); ivMainLogo.setScaleX(0f); ivMainLogo.setScaleY(0f); }
+        if (ivMainLogo != null && !heroLogo) { ivMainLogo.setAlpha(0f); ivMainLogo.setScaleX(0f); ivMainLogo.setScaleY(0f); }
         if (tvMainTitle != null) { tvMainTitle.setAlpha(0f); tvMainTitle.setTranslationY(30f); }
 
         // --- Entry animations (one-shot, ViewPropertyAnimator auto-managed) ---
 
-        // Logo bouncy pop
-        if (ivMainLogo != null) {
+        // Logo bouncy pop — bỏ khi vào bằng hero (shared element đã lo chuyển động logo).
+        if (ivMainLogo != null && !heroLogo) {
             ivMainLogo.animate().alpha(1f).scaleX(1f).scaleY(1f)
                     .setStartDelay(100).setDuration(600)
                     .setInterpolator(new OvershootInterpolator(2f)).start();
@@ -438,18 +441,18 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void startGame(boolean isVsAi, String difficulty, long timeControlMs) {
+    private void startGame(boolean isVsAi, String difficulty, long timeControlMs, View hero) {
         Intent intent = new Intent(MainActivity.this, ChessBoardActivity.class);
         intent.putExtra("IS_VS_AI", isVsAi);
         if (difficulty != null) intent.putExtra("AI_DIFFICULTY", difficulty);
         intent.putExtra("TIME_CONTROL_MS", timeControlMs);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
+        // Hero: nút Play "nở" thành bàn cờ.
+        NavAnim.startWithHero(this, intent, hero, NavAnim.HERO_BOARD);
     }
 
     private void showDifficultySelectionDialog() {
         DialogUtils.showDifficultyDialog(this,
-                difficulty -> showTimeControlDialog(ms -> startGame(true, difficulty, ms)));
+                difficulty -> showTimeControlDialog(ms -> startGame(true, difficulty, ms, btnPlayPvE)));
     }
 
     /** Chọn kiểm soát thời gian (glass game style chung) → callback ms (0 = không giờ). */

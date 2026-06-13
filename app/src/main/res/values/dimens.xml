@@ -15,11 +15,24 @@
     <dimen name="banner_label_corner_radius">45dp</dimen>
 
     <!-- Game Reskin Dimensions -->
-    <dimen name="button_height_game">72dp</dimen>
-    <dimen name="button_height_game_compact">56dp</dimen>
+    <!-- LƯU Ý: đây là bucket MẶC ĐỊNH = COMPACT, để menu (a_main) vừa khít trên máy màn NGẮN
+         mà KHÔNG cần scroll. Máy màn cao (height >= 720dp, gồm Pixel 7 Pro) lấy giá trị thoáng
+         hơn ở values-h720dp/dimens.xml. Tất cả dimen menu bên dưới đều có cặp override ở đó. -->
+    <dimen name="button_height_game">60dp</dimen>
+    <dimen name="button_height_game_compact">48dp</dimen>
     <dimen name="corner_game">12dp</dimen>
     <dimen name="corner_dialog_game">20dp</dimen>
     <dimen name="game_stroke_width">2dp</dimen>
-    <dimen name="game_title_text_size">36sp</dimen>
-    <dimen name="game_button_text_size">20sp</dimen>
+    <dimen name="game_title_text_size">28sp</dimen>
+    <dimen name="game_button_text_size">17sp</dimen>
+
+    <!-- Menu logo + khoảng cách (compact mặc định; override thoáng ở values-h720dp) -->
+    <dimen name="menu_logo_ring_outer">116dp</dimen>
+    <dimen name="menu_logo_ring_inner">80dp</dimen>
+    <dimen name="menu_logo_glow">88dp</dimen>
+    <dimen name="menu_logo_icon">46dp</dimen>
+    <dimen name="menu_btn_gap">8dp</dimen>
+    <dimen name="menu_logo_margin_bottom">10dp</dimen>
+    <!-- Ô lưới nút phụ (icon trên + nhãn dưới) — cao hơn nút ngang vì 2 dòng -->
+    <dimen name="menu_tile_height">62dp</dimen>
 </resources>
