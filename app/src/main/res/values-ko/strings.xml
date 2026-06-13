@@ -159,4 +159,13 @@
     <string name="resume_message">완료되지 않은 게임이 있습니다. 계속하시겠습니까?</string>
     <string name="resume_continue">이어하기</string>
     <string name="resume_new">삭제</string>
+    <string name="saved_games_title">저장된 게임</string>
+    <string name="saved_games_menu">저장된 게임 (%d)</string>
+    <string name="saved_games_empty">저장된 게임이 없습니다</string>
+    <string name="saved_mode_pvp">1대 1</string>
+    <string name="saved_mode_pve">AI 대전</string>
+    <string name="saved_moves">%d수</string>
+    <string name="saved_delete">삭제</string>
+    <string name="saved_delete_title">저장된 게임을 삭제할까요?</string>
+    <string name="saved_delete_message">이 게임은 영구적으로 삭제됩니다.</string>
 </resources>

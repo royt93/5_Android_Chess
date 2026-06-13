@@ -1,27 +1,35 @@
 package com.saigonphantomlabs.chess;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
- * Lưu & tiếp tục ván dở. Dùng cách <b>snapshot</b> (ảnh chụp thế cờ kiểu FEN) thay vì replay:
- * mã hoá từng quân (loại + màu + đã-đi) + lượt + en passant + đồng hồ 50-nước + quân bị ăn + đồng hồ cờ
- * thành 1 chuỗi text gọn, KHÔNG reflection (an toàn R8 full-mode).
+ * Lưu & tiếp tục ván dở — ĐA SLOT (thư viện ván đã lưu). Dùng cách <b>snapshot</b> (ảnh chụp thế
+ * cờ kiểu FEN) thay vì replay; KHÔNG reflection (an toàn R8 full-mode).
  *
- * <p>Phần mã hoá/giải mã ({@link #serialize}/{@link #deserialize}) là thuần — test trực tiếp JVM.
- * Phần đọc trạng thái từ/ghi vào {@link Chess} nằm ở {@code Chess.captureSaveState/loadSaveState}.
+ * <p>Mỗi ván = 1 file text trong {@code filesDir/saves/<sessionId>.sav} (scale tốt tới {@link #MAX_SLOTS},
+ * đọc lazy, không nạp hết vào RAM như SharedPreferences). Auto-save theo <b>session</b>: ván giữ 1
+ * {@code sessionId} từ lúc bắt đầu → ghi đè đúng slot khi chơi tiếp, xoá khi kết thúc. Vượt
+ * {@link #MAX_SLOTS} → xoá ván cũ nhất (LRU theo {@code savedAtMs}).
  *
- * <p>v1 giới hạn: KHÔNG lưu undo-stack (sau khi resume không undo về trước điểm lưu) và bộ đếm lặp
- * thế (threefold) — đếm lại từ thế hiện tại. Đủ để chơi tiếp đúng luật.
+ * <p>{@link #serialize}/{@link #deserialize} thuần — test trực tiếp JVM. v1 giới hạn: không lưu
+ * undo-stack & đếm lặp thế (threefold).
  */
 public final class GameSaveManager {
 
-    private static final String PREFS = "chess_saved_game";
-    private static final String KEY = "save";
+    public static final int MAX_SLOTS = 100; // trần an toàn; LRU xoá cũ nhất khi vượt
     private static final String HEADER = "CHESSSAVE1";
+    private static final String DIR = "saves";
+    private static final String EXT = ".sav";
 
     private GameSaveManager() {}
 
@@ -30,7 +38,7 @@ public final class GameSaveManager {
         public final int x, y;
         public final Chessman.ChessmanType type;
         public final Chessman.PlayerColor color;
-        public final boolean moved; // K/R đã di chuyển, hoặc tốt không còn nước đôi (firstMove=false)
+        public final boolean moved;
         public PieceData(int x, int y, Chessman.ChessmanType type, Chessman.PlayerColor color, boolean moved) {
             this.x = x; this.y = y; this.type = type; this.color = color; this.moved = moved;
         }
@@ -41,14 +49,18 @@ public final class GameSaveManager {
         public List<PieceData> pieces = new ArrayList<>();
         public List<PieceData> captured = new ArrayList<>();
         public Chessman.PlayerColor turn = Chessman.PlayerColor.White;
-        public Point enPassant = null;       // null nếu không có
+        public Point enPassant = null;
         public int halfMoveClock = 0;
         public boolean isVsAi = false;
-        public String difficulty = null;     // tên AIEngine.Difficulty, null nếu PvP
+        public String difficulty = null;
         // Đồng hồ cờ
         public boolean hasClock = false;
         public long whiteMs = 0, blackMs = 0, incrementMs = 0;
         public boolean whiteActive = true;
+        // Slot meta
+        public String sessionId = null;   // id ván (tên file)
+        public long savedAtMs = 0;        // thời điểm lưu (sort + LRU)
+        public int moveCount = 0;         // tổng số ply (tích luỹ qua resume) — để hiển thị
     }
 
     // ───────────────────────── Mã hoá / giải mã (thuần) ─────────────────────────
@@ -56,14 +68,14 @@ public final class GameSaveManager {
     public static String serialize(SavedGame g) {
         StringBuilder sb = new StringBuilder();
         sb.append(HEADER).append('\n');
-        // M|turn|half|vsai|diff|ep
+        sb.append("I|").append(g.sessionId == null ? "-" : g.sessionId)
+                .append('|').append(g.savedAtMs).append('|').append(g.moveCount).append('\n');
         sb.append("M|").append(g.turn == Chessman.PlayerColor.White ? 'W' : 'B')
                 .append('|').append(g.halfMoveClock)
                 .append('|').append(g.isVsAi ? '1' : '0')
                 .append('|').append(g.difficulty == null ? "-" : g.difficulty)
                 .append('|').append(g.enPassant == null ? "-" : (g.enPassant.x + "," + g.enPassant.y))
                 .append('\n');
-        // C|hasClock|white|black|inc|active
         sb.append("C|").append(g.hasClock ? '1' : '0')
                 .append('|').append(g.whiteMs).append('|').append(g.blackMs)
                 .append('|').append(g.incrementMs).append('|').append(g.whiteActive ? '1' : '0')
@@ -91,6 +103,11 @@ public final class GameSaveManager {
                 if (line.isEmpty()) continue;
                 String[] f = line.split("\\|");
                 switch (f[0]) {
+                    case "I":
+                        g.sessionId = "-".equals(f[1]) ? null : f[1];
+                        g.savedAtMs = Long.parseLong(f[2]);
+                        g.moveCount = Integer.parseInt(f[3]);
+                        break;
                     case "M":
                         g.turn = "W".equals(f[1]) ? Chessman.PlayerColor.White : Chessman.PlayerColor.Black;
                         g.halfMoveClock = Integer.parseInt(f[2]);
@@ -121,30 +138,88 @@ public final class GameSaveManager {
             }
             return g;
         } catch (RuntimeException ex) {
-            return null; // dữ liệu hỏng → bỏ qua save
+            return null;
         }
     }
 
-    // ───────────────────────── SharedPreferences ─────────────────────────
+    // ───────────────────────── Slot store (file-per-slot) ─────────────────────────
 
-    public static void save(Context ctx, SavedGame g) {
-        prefs(ctx).edit().putString(KEY, serialize(g)).apply();
+    /** Lưu/ghi đè slot theo sessionId; vượt MAX_SLOTS → xoá ván cũ nhất (LRU theo savedAtMs). */
+    public static void saveSlot(Context ctx, SavedGame g) {
+        if (g == null || g.sessionId == null) return;
+        File dir = dir(ctx);
+        if (!dir.exists() && !dir.mkdirs()) return;
+        writeFile(new File(dir, g.sessionId + EXT), serialize(g));
+        enforceCap(ctx);
     }
 
-    public static SavedGame load(Context ctx) {
-        return deserialize(prefs(ctx).getString(KEY, null));
+    /** Danh sách ván đã lưu, sort mới→cũ theo savedAtMs (bỏ qua file hỏng). */
+    public static List<SavedGame> listSlots(Context ctx) {
+        List<SavedGame> out = new ArrayList<>();
+        File dir = dir(ctx);
+        File[] files = dir.listFiles((d, name) -> name.endsWith(EXT));
+        if (files == null) return out;
+        for (File f : files) {
+            SavedGame g = deserialize(readFile(f));
+            if (g != null) {
+                if (g.sessionId == null) g.sessionId = stripExt(f.getName());
+                out.add(g);
+            }
+        }
+        Collections.sort(out, new Comparator<SavedGame>() {
+            @Override public int compare(SavedGame a, SavedGame b) {
+                return Long.compare(b.savedAtMs, a.savedAtMs);
+            }
+        });
+        return out;
     }
 
-    public static boolean hasSave(Context ctx) {
-        return load(ctx) != null;
+    public static SavedGame loadSlot(Context ctx, String sessionId) {
+        if (sessionId == null) return null;
+        return deserialize(readFile(new File(dir(ctx), sessionId + EXT)));
     }
 
-    public static void clear(Context ctx) {
-        prefs(ctx).edit().remove(KEY).apply();
+    public static void deleteSlot(Context ctx, String sessionId) {
+        if (sessionId == null) return;
+        File f = new File(dir(ctx), sessionId + EXT);
+        if (f.exists()) f.delete();
     }
 
-    private static SharedPreferences prefs(Context ctx) {
-        return ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+    public static int slotCount(Context ctx) {
+        File[] files = dir(ctx).listFiles((d, name) -> name.endsWith(EXT));
+        return files == null ? 0 : files.length;
+    }
+
+    private static void enforceCap(Context ctx) {
+        List<SavedGame> slots = listSlots(ctx); // đã sort mới→cũ
+        for (int i = MAX_SLOTS; i < slots.size(); i++) {
+            deleteSlot(ctx, slots.get(i).sessionId); // xoá phần đuôi (cũ nhất)
+        }
+    }
+
+    private static File dir(Context ctx) {
+        return new File(ctx.getFilesDir(), DIR);
+    }
+
+    private static String stripExt(String name) {
+        return name.endsWith(EXT) ? name.substring(0, name.length() - EXT.length()) : name;
+    }
+
+    private static void writeFile(File f, String content) {
+        try (FileOutputStream os = new FileOutputStream(f)) {
+            os.write(content.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException ignored) { }
+    }
+
+    private static String readFile(File f) {
+        if (f == null || !f.exists()) return null;
+        try (FileInputStream is = new FileInputStream(f)) {
+            byte[] buf = new byte[(int) f.length()];
+            int n = is.read(buf);
+            return n <= 0 ? "" : new String(buf, 0, n, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            return null;
+        }
     }
 
     // ───────────────────────── Map type/color ↔ chữ ─────────────────────────

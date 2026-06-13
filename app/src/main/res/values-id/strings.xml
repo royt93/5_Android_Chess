@@ -159,4 +159,13 @@
     <string name="resume_message">Ada permainan yang belum selesai. Lanjutkan?</string>
     <string name="resume_continue">Lanjutkan</string>
     <string name="resume_new">Buang</string>
+    <string name="saved_games_title">Permainan tersimpan</string>
+    <string name="saved_games_menu">Permainan tersimpan (%d)</string>
+    <string name="saved_games_empty">Belum ada permainan tersimpan</string>
+    <string name="saved_mode_pvp">1 vs 1</string>
+    <string name="saved_mode_pve">Vs AI</string>
+    <string name="saved_moves">%d langkah</string>
+    <string name="saved_delete">Hapus</string>
+    <string name="saved_delete_title">Hapus permainan tersimpan?</string>
+    <string name="saved_delete_message">Permainan ini akan dihapus permanen.</string>
 </resources>

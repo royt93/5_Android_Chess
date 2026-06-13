@@ -159,4 +159,13 @@
     <string name="resume_message">คุณมีเกมที่ยังไม่จบ เล่นต่อไหม?</string>
     <string name="resume_continue">เล่นต่อ</string>
     <string name="resume_new">ละทิ้ง</string>
+    <string name="saved_games_title">เกมที่บันทึก</string>
+    <string name="saved_games_menu">เกมที่บันทึก (%d)</string>
+    <string name="saved_games_empty">ยังไม่มีเกมที่บันทึก</string>
+    <string name="saved_mode_pvp">1 ต่อ 1</string>
+    <string name="saved_mode_pve">ปะทะ AI</string>
+    <string name="saved_moves">%d ตา</string>
+    <string name="saved_delete">ลบ</string>
+    <string name="saved_delete_title">ลบเกมที่บันทึก?</string>
+    <string name="saved_delete_message">เกมนี้จะถูกลบถาวร</string>
 </resources>

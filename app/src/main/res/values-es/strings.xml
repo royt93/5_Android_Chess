@@ -159,4 +159,13 @@
     <string name="resume_message">Tienes una partida sin terminar. ¿Continuar?</string>
     <string name="resume_continue">Reanudar</string>
     <string name="resume_new">Descartar</string>
+    <string name="saved_games_title">Partidas guardadas</string>
+    <string name="saved_games_menu">Partidas guardadas (%d)</string>
+    <string name="saved_games_empty">No hay partidas guardadas</string>
+    <string name="saved_mode_pvp">1 vs 1</string>
+    <string name="saved_mode_pve">Vs IA</string>
+    <string name="saved_moves">%d jugadas</string>
+    <string name="saved_delete">Eliminar</string>
+    <string name="saved_delete_title">¿Eliminar partida guardada?</string>
+    <string name="saved_delete_message">Esta partida se eliminará permanentemente.</string>
 </resources>

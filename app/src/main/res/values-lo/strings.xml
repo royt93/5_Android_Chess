@@ -159,4 +159,13 @@
     <string name="resume_message">ທ່ານມີເກມທີ່ຍັງບໍ່ຈົບ. ສືບຕໍ່ບໍ?</string>
     <string name="resume_continue">ສືບຕໍ່</string>
     <string name="resume_new">ຍົກເລີກ</string>
+    <string name="saved_games_title">ເກມທີ່ບັນທຶກ</string>
+    <string name="saved_games_menu">ເກມທີ່ບັນທຶກ (%d)</string>
+    <string name="saved_games_empty">ຍັງບໍ່ມີເກມທີ່ບັນທຶກ</string>
+    <string name="saved_mode_pvp">1 ຕໍ່ 1</string>
+    <string name="saved_mode_pve">ຕໍ່ AI</string>
+    <string name="saved_moves">%d ບາດ</string>
+    <string name="saved_delete">ລຶບ</string>
+    <string name="saved_delete_title">ລຶບເກມທີ່ບັນທຶກ?</string>
+    <string name="saved_delete_message">ເກມນີ້ຈະຖືກລຶບຖາວອນ.</string>
 </resources>

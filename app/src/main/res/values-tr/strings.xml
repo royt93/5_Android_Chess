@@ -159,4 +159,13 @@
     <string name="resume_message">Bitmemiş bir oyununuz var. Devam edilsin mi?</string>
     <string name="resume_continue">Devam et</string>
     <string name="resume_new">Sil</string>
+    <string name="saved_games_title">Kaydedilen oyunlar</string>
+    <string name="saved_games_menu">Kaydedilen oyunlar (%d)</string>
+    <string name="saved_games_empty">Kaydedilen oyun yok</string>
+    <string name="saved_mode_pvp">1\'e 1</string>
+    <string name="saved_mode_pve">Yapay zekâya karşı</string>
+    <string name="saved_moves">%d hamle</string>
+    <string name="saved_delete">Sil</string>
+    <string name="saved_delete_title">Kaydedilen oyun silinsin mi?</string>
+    <string name="saved_delete_message">Bu oyun kalıcı olarak silinecek.</string>
 </resources>

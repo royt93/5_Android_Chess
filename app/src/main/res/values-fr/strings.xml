@@ -159,4 +159,13 @@
     <string name="resume_message">Vous avez une partie en cours. Continuer ?</string>
     <string name="resume_continue">Reprendre</string>
     <string name="resume_new">Abandonner</string>
+    <string name="saved_games_title">Parties sauvegardées</string>
+    <string name="saved_games_menu">Parties sauvegardées (%d)</string>
+    <string name="saved_games_empty">Aucune partie sauvegardée</string>
+    <string name="saved_mode_pvp">1 contre 1</string>
+    <string name="saved_mode_pve">Contre IA</string>
+    <string name="saved_moves">%d coups</string>
+    <string name="saved_delete">Supprimer</string>
+    <string name="saved_delete_title">Supprimer la partie ?</string>
+    <string name="saved_delete_message">Cette partie sera définitivement supprimée.</string>
 </resources>

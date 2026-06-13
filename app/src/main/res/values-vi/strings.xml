@@ -163,4 +163,13 @@
     <string name="resume_message">Bạn có một ván chưa kết thúc. Chơi tiếp?</string>
     <string name="resume_continue">Tiếp tục</string>
     <string name="resume_new">Bỏ ván</string>
+    <string name="saved_games_title">Ván đã lưu</string>
+    <string name="saved_games_menu">Ván đã lưu (%d)</string>
+    <string name="saved_games_empty">Chưa có ván nào đã lưu</string>
+    <string name="saved_mode_pvp">1 vs 1</string>
+    <string name="saved_mode_pve">Đấu máy</string>
+    <string name="saved_moves">%d nước</string>
+    <string name="saved_delete">Xoá</string>
+    <string name="saved_delete_title">Xoá ván đã lưu?</string>
+    <string name="saved_delete_message">Ván này sẽ bị xoá vĩnh viễn.</string>
 </resources>

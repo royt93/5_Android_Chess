@@ -63,6 +63,9 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     private com.saigonphantomlabs.chess.ChessClock chessClock;
     // Snapshot ván dở đang resume (null nếu ván mới) — dùng để dựng lại đồng hồ
     private com.saigonphantomlabs.chess.GameSaveManager.SavedGame resumedSave;
+    // Id slot của ván hiện tại (tạo khi ván mới, reuse khi resume) + số ply gốc đã tích luỹ
+    private String currentSessionId;
+    private int resumedBaseMoveCount = 0;
     private TextView tvWhiteClock, tvBlackClock;
     private long lastClockTickMs;
     private boolean clockRunning;
@@ -218,9 +221,10 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                             chess = new Chess(ChessBoardActivity.this,
                                     boardSize, boardLayout);
                             Storage.setChess(chess);
+                            String resumeId = getIntent().getStringExtra("RESUME_SESSION");
                             com.saigonphantomlabs.chess.GameSaveManager.SavedGame saved =
-                                    getIntent().getBooleanExtra("RESUME", false)
-                                            ? com.saigonphantomlabs.chess.GameSaveManager.load(ChessBoardActivity.this)
+                                    resumeId != null
+                                            ? com.saigonphantomlabs.chess.GameSaveManager.loadSlot(ChessBoardActivity.this, resumeId)
                                             : null;
                             if (saved != null) {
                                 // Tiếp tục ván dở: khôi phục mode + thế cờ từ snapshot
@@ -233,6 +237,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                                     }
                                 }
                                 resumedSave = saved;
+                                currentSessionId = saved.sessionId != null ? saved.sessionId : resumeId;
+                                resumedBaseMoveCount = saved.moveCount;
                                 chess.loadSaveState(saved);
                             } else {
                                 boolean isVsAi = getIntent().getBooleanExtra("IS_VS_AI", false);
@@ -247,6 +253,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                                         }
                                     }
                                 }
+                                currentSessionId = newSessionId(); // ván mới → session mới
                             }
                         } else {
                             chess = Storage.getChess();
@@ -448,8 +455,11 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     private void showRestartConfirmDialog() {
         DialogUtils.showRestartDialog(this, () -> {
             if (chess != null) chess.resetGame();
+            // Ván cũ bỏ → xoá slot, bắt đầu session mới
+            com.saigonphantomlabs.chess.GameSaveManager.deleteSlot(this, currentSessionId);
             resumedSave = null;
-            com.saigonphantomlabs.chess.GameSaveManager.clear(this);
+            resumedBaseMoveCount = 0;
+            currentSessionId = newSessionId();
             resetClock();
         });
     }
@@ -651,8 +661,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     }
 
     public void showCustomGameEndDialog(boolean whiteWins, boolean isStalemate) {
-        // Ván đã kết thúc → không còn gì để tiếp tục, xoá save
-        com.saigonphantomlabs.chess.GameSaveManager.clear(this);
+        // Ván đã kết thúc → không còn gì để tiếp tục, xoá slot
+        com.saigonphantomlabs.chess.GameSaveManager.deleteSlot(this, currentSessionId);
         resumedSave = null;
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_game_end, null);
 
@@ -719,6 +729,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
             dialog.dismiss();
             chess.resetGame();
             resumedSave = null;
+            resumedBaseMoveCount = 0;
+            currentSessionId = newSessionId(); // ván chơi-lại = session mới
             resetClock();
         });
         if (btnExit != null) btnExit.setOnClickListener(v -> {
@@ -780,12 +792,15 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
     /** Lưu ván dở khi rời màn (nếu còn chơi & đã có nước); ngược lại xoá save. */
     private void persistOrClearSave() {
-        if (chess == null) return;
+        if (chess == null || currentSessionId == null) return;
         // Đáng lưu khi: chưa kết thúc & (đã có nước đi MỚI hoặc đang tiếp tục 1 ván resume).
         // resumedSave != null đảm bảo ván vừa resume (undo-stack rỗng) không bị xoá nhầm khi onPause.
         boolean inProgress = !chess.isGameEnd() && (chess.hasMovesMade() || resumedSave != null);
         if (inProgress) {
             com.saigonphantomlabs.chess.GameSaveManager.SavedGame g = chess.captureSaveState();
+            g.sessionId = currentSessionId;
+            g.savedAtMs = System.currentTimeMillis();
+            g.moveCount = resumedBaseMoveCount + chess.getMoveCount(); // tích luỹ ply qua resume
             if (chessClock != null) {
                 g.hasClock = true;
                 g.whiteMs = chessClock.getWhiteMs();
@@ -793,10 +808,15 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                 g.incrementMs = chessClock.getIncrementMs();
                 g.whiteActive = chessClock.isWhiteActive();
             }
-            com.saigonphantomlabs.chess.GameSaveManager.save(this, g);
+            com.saigonphantomlabs.chess.GameSaveManager.saveSlot(this, g);
         } else {
-            com.saigonphantomlabs.chess.GameSaveManager.clear(this);
+            com.saigonphantomlabs.chess.GameSaveManager.deleteSlot(this, currentSessionId);
         }
+    }
+
+    /** Id slot duy nhất cho 1 ván (theo thời điểm bắt đầu). */
+    private String newSessionId() {
+        return "g" + System.currentTimeMillis();
     }
 
     /**

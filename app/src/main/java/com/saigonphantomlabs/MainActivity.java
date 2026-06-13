@@ -28,7 +28,6 @@ import com.roy.sdkadbmob.UIUtils;
 @SuppressLint("CustomSplashScreen")
 public class MainActivity extends BaseActivity {
 
-    private boolean resumeOffered = false; // chỉ mời tiếp tục ván dở 1 lần/lần vào menu
     private LinearLayout btnPlayPvP;
     private LinearLayout btnPlayPvE;
     private LinearLayout btnStats;
@@ -124,6 +123,12 @@ public class MainActivity extends BaseActivity {
         btnRules.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) { DialogUtils.showRulesDialog(MainActivity.this); }
         });
+        findViewById(R.id.btnSavedGames).setOnClickListener(new SafeClickListener() {
+            @Override public void onSafeClick(View view) {
+                startActivity(new Intent(MainActivity.this, SavedGamesActivity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
         btnLanguage.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
                 new com.saigonphantomlabs.language.LanguageBottomSheet().show(getSupportFragmentManager(), "LanguageBottomSheet");
@@ -158,25 +163,17 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         bindVipState();   // refresh khi back từ VipActivity
-        maybeOfferResume();
+        updateSavedGamesBadge();
     }
 
-    /** Mời tiếp tục ván dở (1 lần/lần vào menu) nếu có save hợp lệ. */
-    private void maybeOfferResume() {
-        if (resumeOffered) return;
-        if (!com.saigonphantomlabs.chess.GameSaveManager.hasSave(this)) return;
-        resumeOffered = true;
-        DialogUtils.showBasicDialog(this,
-                getString(R.string.resume_title), getString(R.string.resume_message),
-                getString(R.string.resume_continue), getString(R.string.resume_new),
-                R.drawable.ic_clock,
-                () -> {
-                    Intent intent = new Intent(MainActivity.this, ChessBoardActivity.class);
-                    intent.putExtra("RESUME", true);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                },
-                () -> com.saigonphantomlabs.chess.GameSaveManager.clear(this));
+    /** Cập nhật nhãn nút "Ván đã lưu (N)" theo số ván đang lưu. */
+    private void updateSavedGamesBadge() {
+        TextView tv = findViewById(R.id.tvSavedCount);
+        if (tv == null) return;
+        int n = com.saigonphantomlabs.chess.GameSaveManager.slotCount(this);
+        tv.setText(n > 0
+                ? getString(R.string.saved_games_menu, n)
+                : getString(R.string.saved_games_title));
     }
 
     private void animateEntryViews() {

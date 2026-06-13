@@ -159,4 +159,13 @@
     <string name="resume_message">未完了のゲームがあります。続けますか？</string>
     <string name="resume_continue">再開</string>
     <string name="resume_new">破棄</string>
+    <string name="saved_games_title">保存した対局</string>
+    <string name="saved_games_menu">保存した対局 (%d)</string>
+    <string name="saved_games_empty">保存した対局はありません</string>
+    <string name="saved_mode_pvp">1 対 1</string>
+    <string name="saved_mode_pve">対 AI</string>
+    <string name="saved_moves">%d 手</string>
+    <string name="saved_delete">削除</string>
+    <string name="saved_delete_title">保存した対局を削除しますか？</string>
+    <string name="saved_delete_message">この対局は完全に削除されます。</string>
 </resources>

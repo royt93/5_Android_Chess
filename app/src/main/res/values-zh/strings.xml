@@ -159,4 +159,13 @@
     <string name="resume_message">您有一局未完成的对局。继续吗？</string>
     <string name="resume_continue">继续</string>
     <string name="resume_new">放弃</string>
+    <string name="saved_games_title">已保存的对局</string>
+    <string name="saved_games_menu">已保存的对局 (%d)</string>
+    <string name="saved_games_empty">暂无已保存的对局</string>
+    <string name="saved_mode_pvp">1 对 1</string>
+    <string name="saved_mode_pve">对战 AI</string>
+    <string name="saved_moves">%d 步</string>
+    <string name="saved_delete">删除</string>
+    <string name="saved_delete_title">删除已保存的对局？</string>
+    <string name="saved_delete_message">此对局将被永久删除。</string>
 </resources>

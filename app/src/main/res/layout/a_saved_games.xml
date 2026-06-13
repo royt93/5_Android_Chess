@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_game_gradient"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <!-- Nền art mờ -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.15"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_bkg_1" />
+
+    <!-- Corner glow lung linh -->
+    <View
+        android:id="@+id/glowTL"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_gravity="top|start"
+        android:alpha="0.55"
+        android:background="@drawable/bg_particle_glow"
+        android:translationX="-70dp"
+        android:translationY="-70dp" />
+
+    <View
+        android:id="@+id/glowBR"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_gravity="bottom|end"
+        android:alpha="0.45"
+        android:background="@drawable/bg_particle_glow"
+        android:translationX="80dp"
+        android:translationY="80dp" />
+
+    <View
+        android:id="@+id/glowTR"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="top|end"
+        android:alpha="0.3"
+        android:background="@drawable/bg_splash_ring"
+        android:translationX="60dp"
+        android:translationY="-50dp" />
+
+    <!-- Nội dung (được pad theo system bars) -->
+    <LinearLayout
+        android:id="@+id/contentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Top app bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cancel"
+                app:tint="@color/white"
+                android:src="@drawable/ic_arrow_back" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/cinzel_bold"
+                android:text="@string/saved_games_title"
+                android:textAllCaps="true"
+                android:textColor="@color/game_gold_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:shadowColor="@color/game_gold_glow"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="18" />
+        </LinearLayout>
+
+        <!-- Empty state -->
+        <LinearLayout
+            android:id="@+id/emptyState"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:alpha="0.5"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_moves"
+                app:tint="@color/game_text_muted" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/saved_games_empty"
+                android:textColor="@color/game_text_muted"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/scrollList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/savedList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="24dp" />
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>

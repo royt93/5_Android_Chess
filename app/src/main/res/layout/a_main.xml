@@ -367,6 +367,42 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Ván đã lưu (thư viện) -->
+            <LinearLayout
+                android:id="@+id/btnSavedGames"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_game_compact"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_btn_secondary"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_moves"
+                    app:tint="@color/game_neon_cyan"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvSavedCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/saved_games_title"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/exo2"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#88FFFFFF"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="12" />
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/btnLanguage"
                 android:layout_width="match_parent"

@@ -179,4 +179,13 @@ Checkmate the opponent\'s King.<br/><br/>
     <string name="resume_message">You have an unfinished game. Continue where you left off?</string>
     <string name="resume_continue">Resume</string>
     <string name="resume_new">Discard</string>
+    <string name="saved_games_title">Saved games</string>
+    <string name="saved_games_menu">Saved games (%d)</string>
+    <string name="saved_games_empty">No saved games yet</string>
+    <string name="saved_mode_pvp">1 vs 1</string>
+    <string name="saved_mode_pve">Vs AI</string>
+    <string name="saved_moves">%d moves</string>
+    <string name="saved_delete">Delete</string>
+    <string name="saved_delete_title">Delete saved game?</string>
+    <string name="saved_delete_message">This game will be permanently deleted.</string>
 </resources>
