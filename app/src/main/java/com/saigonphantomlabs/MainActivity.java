@@ -205,12 +205,19 @@ public class MainActivity extends BaseActivity {
         View cornerTR = findViewById(R.id.cornerGlowTR);
 
         // Initial state for entry animation
+        View btnSaved = findViewById(R.id.btnSavedGames);
+        View btnAch = findViewById(R.id.btnAchievements);
+
         View[] topViews = {tvVersion};
-        View[] mainViews = {btnPlayPvP, btnPlayPvE, btnStats, btnRules};
+        // 2 nút "hero" (PvP/PvE) vào MẠNH; 5 nút phụ CÙNG CLASS vào NHẸ + NHANH + ĐỒNG BỘ
+        // thành 1 nhóm (đồng bộ hoá: trước đây SavedGames/Achievements/Language không animate).
+        View[] heroViews = {btnPlayPvP, btnPlayPvE};
+        View[] secondaryViews = {btnStats, btnRules, btnSaved, btnAch, btnLanguage};
         View[] bottomViews = {btnRateApp, btnMoreApps, btnShareApp, btnVip};
 
         for (View v : topViews) { v.setAlpha(0f); v.setTranslationY(-50f); }
-        for (View v : mainViews) { v.setAlpha(0f); v.setScaleX(0.1f); v.setScaleY(0.1f); v.setTranslationX(200f); }
+        for (View v : heroViews) { v.setAlpha(0f); v.setScaleX(0.1f); v.setScaleY(0.1f); v.setTranslationX(200f); }
+        for (View v : secondaryViews) { if (v != null) { v.setAlpha(0f); v.setTranslationY(40f); } }
         for (View v : bottomViews) { v.setAlpha(0f); v.setTranslationY(150f); }
         if (ivMainLogo != null) { ivMainLogo.setAlpha(0f); ivMainLogo.setScaleX(0f); ivMainLogo.setScaleY(0f); }
         if (tvMainTitle != null) { tvMainTitle.setAlpha(0f); tvMainTitle.setTranslationY(30f); }
@@ -235,11 +242,19 @@ public class MainActivity extends BaseActivity {
                     .setStartDelay(200 + i * 100L).setDuration(400)
                     .setInterpolator(new DecelerateInterpolator()).start();
         }
-        // Main buttons
-        for (int i = 0; i < mainViews.length; i++) {
-            mainViews[i].animate().alpha(1f).scaleX(1f).scaleY(1f).translationX(0f)
-                    .setStartDelay(150 + i * 120L).setDuration(600)
+        // Hero buttons (PvP/PvE): bay vào mạnh, overshoot
+        for (int i = 0; i < heroViews.length; i++) {
+            heroViews[i].animate().alpha(1f).scaleX(1f).scaleY(1f).translationX(0f)
+                    .setStartDelay(120 + i * 120L).setDuration(600)
                     .setInterpolator(new OvershootInterpolator(2.5f)).start();
+        }
+        // Nút phụ: 1 nhóm đồng bộ, fade + nhích lên, stagger ngắn 70ms (xong ~1.06s, không ì)
+        for (int i = 0; i < secondaryViews.length; i++) {
+            View v = secondaryViews[i];
+            if (v == null) continue;
+            v.animate().alpha(1f).translationY(0f)
+                    .setStartDelay(360 + i * 70L).setDuration(420)
+                    .setInterpolator(new DecelerateInterpolator()).start();
         }
         // Bottom buttons
         for (int i = 0; i < bottomViews.length; i++) {
