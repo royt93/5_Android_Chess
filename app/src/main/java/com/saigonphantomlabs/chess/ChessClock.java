@@ -28,6 +28,15 @@ public final class ChessClock {
     /** Đặt bên đang chạy đồng hồ (đồng bộ với lượt đi của ván). */
     public void setWhiteActive(boolean white) { this.whiteActive = white; }
 
+    public long getIncrementMs() { return incrementMs; }
+
+    /** Khôi phục thời gian còn lại 2 bên + bên đang chạy (dùng khi resume ván dở). */
+    public void restore(long whiteMs, long blackMs, boolean whiteActive) {
+        this.whiteMs = Math.max(0, whiteMs);
+        this.blackMs = Math.max(0, blackMs);
+        this.whiteActive = whiteActive;
+    }
+
     /** Trừ deltaMs khỏi bên đang chạy (clamp ≥ 0). */
     public void tick(long deltaMs) {
         if (deltaMs <= 0) return;

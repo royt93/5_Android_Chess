@@ -155,4 +155,8 @@
     <string name="time_off">Keine Uhr</string>
     <string name="time_blitz">Blitz · 5 Min</string>
     <string name="time_rapid">Schnell · 10 Min</string>
+    <string name="resume_title">Spiel fortsetzen</string>
+    <string name="resume_message">Du hast ein laufendes Spiel. Fortsetzen?</string>
+    <string name="resume_continue">Fortsetzen</string>
+    <string name="resume_new">Verwerfen</string>
 </resources>

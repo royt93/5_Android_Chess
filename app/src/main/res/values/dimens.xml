@@ -10,7 +10,7 @@
     <dimen name="text_size_tiny">10sp</dimen>
 
     <!-- Banner ad -->
-    <dimen name="banner_ad_margin">8dp</dimen>
+    <dimen name="banner_ad_margin">4dp</dimen>
     <dimen name="banner_label_padding">16dp</dimen>
     <dimen name="banner_label_corner_radius">45dp</dimen>
 

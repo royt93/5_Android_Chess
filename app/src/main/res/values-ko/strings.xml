@@ -155,4 +155,8 @@
     <string name="time_off">시계 없음</string>
     <string name="time_blitz">블리츠 · 5분</string>
     <string name="time_rapid">래피드 · 10분</string>
+    <string name="resume_title">게임 이어하기</string>
+    <string name="resume_message">완료되지 않은 게임이 있습니다. 계속하시겠습니까?</string>
+    <string name="resume_continue">이어하기</string>
+    <string name="resume_new">삭제</string>
 </resources>

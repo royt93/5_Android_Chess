@@ -155,4 +155,8 @@
     <string name="time_off">Sans pendule</string>
     <string name="time_blitz">Blitz · 5 min</string>
     <string name="time_rapid">Rapide · 10 min</string>
+    <string name="resume_title">Reprendre la partie</string>
+    <string name="resume_message">Vous avez une partie en cours. Continuer ?</string>
+    <string name="resume_continue">Reprendre</string>
+    <string name="resume_new">Abandonner</string>
 </resources>

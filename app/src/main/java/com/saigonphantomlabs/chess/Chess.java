@@ -1161,4 +1161,107 @@ public class Chess {
             }
         }
     }
+
+    // ───────────────────────── Lưu & tiếp tục ván (snapshot) ─────────────────────────
+
+    /** Đã có nước đi nào chưa (để biết có đáng lưu ván dở không). */
+    public boolean hasMovesMade() {
+        return moveHistory != null && !moveHistory.isEmpty();
+    }
+
+    /** Chụp trạng thái hiện tại thành {@link GameSaveManager.SavedGame} (board + lượt + ep + half + quân ăn). */
+    public GameSaveManager.SavedGame captureSaveState() {
+        GameSaveManager.SavedGame g = new GameSaveManager.SavedGame();
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Chessman c = chessmen[x][y];
+                if (c == null) continue;
+                boolean moved =
+                        (c instanceof King && ((King) c).hasMoved)
+                        || (c instanceof Rook && ((Rook) c).hasMoved)
+                        || (c instanceof Pawn && !((Pawn) c).firstMove);
+                g.pieces.add(new GameSaveManager.PieceData(x, y, c.type, c.color, moved));
+            }
+        }
+        g.turn = whichPlayerTurn;
+        g.enPassant = enPassantTarget;
+        g.halfMoveClock = halfMoveClock;
+        g.isVsAi = isVsComputer;
+        g.difficulty = difficultyLevel != null ? difficultyLevel.name() : null;
+        for (Chessman d : deadMen) {
+            g.captured.add(new GameSaveManager.PieceData(0, 0, d.type, d.color, false));
+        }
+        return g;
+    }
+
+    /** Dựng lại bàn cờ từ snapshot (thay cho thế bắt đầu). View được tạo nếu đang ở chế độ UI. */
+    public void loadSaveState(GameSaveManager.SavedGame g) {
+        clearHint();
+        moveHistory.clear();
+        deadMen.clear();
+        gameEnd = false;
+        gameStartTime = System.currentTimeMillis();
+        enPassantTarget = g.enPassant;
+        halfMoveClock = g.halfMoveClock;
+        positionCounts.clear();
+        clearSelectionHighlight();
+        clearCheckAnimation();
+        resetValidMoveButtons();
+
+        // Gỡ mọi quân hiện có khỏi bàn
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (chessmen[i][j] != null && chessmen[i][j].button != null
+                        && chessmen[i][j].button.getParent() != null) {
+                    ((ViewGroup) chessmen[i][j].button.getParent()).removeView(chessmen[i][j].button);
+                }
+                chessmen[i][j] = null;
+            }
+        }
+
+        // Đặt quân theo snapshot + khôi phục cờ hasMoved/firstMove
+        for (GameSaveManager.PieceData pd : g.pieces) {
+            Chessman c = makePiece(pd.type, new Point(pd.x, pd.y), pd.color);
+            if (c instanceof King) {
+                ((King) c).hasMoved = pd.moved;
+                if (pd.color == Chessman.PlayerColor.White) whiteKing = (King) c;
+                else blackKing = (King) c;
+            } else if (c instanceof Rook) {
+                ((Rook) c).hasMoved = pd.moved;
+            } else if (c instanceof Pawn) {
+                ((Pawn) c).firstMove = !pd.moved;
+            }
+            chessmen[pd.x][pd.y] = c;
+        }
+        if (boardLayout != null) addMenToBoard(boardLayout);
+
+        // Khôi phục danh sách quân bị ăn (hiển thị khay)
+        boardView.clearCapturedPieces();
+        for (GameSaveManager.PieceData cap : g.captured) {
+            Chessman c = makePiece(cap.type, new Point(0, 0), cap.color);
+            deadMen.add(c);
+            boardView.addCapturedPiece(c);
+        }
+
+        whichPlayerTurn = g.turn;
+        boardView.animateTurnChange(whichPlayerTurn);
+        boardView.updateUndoButton(false); // undo-stack rỗng sau resume
+        positionCounts.merge(positionKey(), 1, Integer::sum);
+
+        // PvE và tới lượt máy → cho máy đi
+        if (isVsComputer && whichPlayerTurn == Chessman.PlayerColor.Black && !gameEnd) {
+            triggerAITurn();
+        }
+    }
+
+    private Chessman makePiece(Chessman.ChessmanType t, Point p, Chessman.PlayerColor c) {
+        switch (t) {
+            case King: return new King(p, c, minDimension, this);
+            case Queen: return new Queen(p, c, minDimension, this);
+            case Rook: return new Rook(p, c, minDimension, this);
+            case Bishop: return new Bishop(p, c, minDimension, this);
+            case Knight: return new Knight(p, c, minDimension, this);
+            case Pawn: default: return new Pawn(p, c, minDimension, this);
+        }
+    }
 }

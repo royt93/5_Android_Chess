@@ -192,7 +192,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height_game"
                 android:layout_marginBottom="16dp"
-                android:clipChildren="false"
+                android:background="@drawable/bg_btn_clip"
+                android:clipToOutline="true"
+                android:clipChildren="true"
                 android:clipToPadding="false">
 
                 <LinearLayout
@@ -241,7 +243,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height_game"
                 android:layout_marginBottom="24dp"
-                android:clipChildren="false"
+                android:background="@drawable/bg_btn_clip"
+                android:clipToOutline="true"
+                android:clipChildren="true"
                 android:clipToPadding="false">
 
                 <LinearLayout

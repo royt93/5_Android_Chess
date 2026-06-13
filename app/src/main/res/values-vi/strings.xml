@@ -159,4 +159,8 @@
     <string name="time_off">Không giờ</string>
     <string name="time_blitz">Cờ chớp · 5 phút</string>
     <string name="time_rapid">Cờ nhanh · 10 phút</string>
+    <string name="resume_title">Tiếp tục ván</string>
+    <string name="resume_message">Bạn có một ván chưa kết thúc. Chơi tiếp?</string>
+    <string name="resume_continue">Tiếp tục</string>
+    <string name="resume_new">Bỏ ván</string>
 </resources>

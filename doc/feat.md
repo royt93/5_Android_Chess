@@ -114,13 +114,18 @@
 
 **Wave B — gameplay:**
 3. ✅ **Đồng hồ cờ** (Blitz 5'/Rapid 10'/Không giờ) — `ChessClock` thuần (tick/switch/increment/flag/format, **8 unit test**); dialog time-control (Material, ép theme tối `ThemeOverlay.Chess.Dialog`) ở game start (PvP+PvE) → `TIME_CONTROL_MS` extra; 2 đồng hồ pill (đen trên/trắng dưới) đồng bộ lượt; tick 200ms `SystemClock`; flag-fall → `endGameByTimeout` + end dialog; pause/resume theo lifecycle, reset khi chơi lại. **Verify device:** Blitz → trắng đếm 5:00→4:4x, đen 5:00; dialog tối. *(v1: increment=0, clock reset khi xoay màn.)*
-4. **Lưu & tiếp tục ván** — serialize board state + undo stack (SharedPreferences/file). *(tiếp theo)*
+4. ✅ **Lưu & tiếp tục ván** — `GameSaveManager` thuần (snapshot kiểu FEN: từng quân loại+màu+đã-đi + lượt + en passant + đồng hồ 50-nước + quân ăn + đồng hồ cờ; KHÔNG reflection, an toàn R8). `Chess.captureSaveState()/loadSaveState()` chụp/dựng lại bàn (tái dùng engine: castling/2-ô pawn rights đúng qua cờ hasMoved/firstMove). Lưu ở `onPause` (còn chơi & có nước, HOẶC đang resume), xoá khi kết thúc/restart/chơi-lại. `MainActivity` mời "Tiếp tục ván?" (glass `showBasicDialog`, 1 lần/lần vào menu) → resume. Đồng hồ khôi phục thời gian còn lại 2 bên (`ChessClock.restore`). String 15 locale. **8 unit test** (`GameSaveManagerTest` 6 round-trip/garbage/null + `GameSaveRoundTripTest` 2 capture↔load qua engine + playable-after-resume). *(v1 giới hạn: không lưu undo-stack & threefold → sau resume không undo về trước điểm lưu, đếm lặp thế lại từ đầu.)*
 
 **🎨 Hệ DIALOG CHUNG (glass game style — nhất quán cả app):**
 - ✅ `DialogUtils.showChoiceDialog` — dialog chọn 1-trong-N **glass** chung (icon halo/ring + title gold-glow + list card accent/emoji/subtitle/arrow + stagger anim) qua `dialog_glass_choice.xml`. Migrate **time-control** (trước `MaterialAlertDialog.setItems` — không nhất quán) → glass. Verify device: dialog xinh, khớp difficulty.
 - ✅ Migrate **VIP success/failed/revoke** (trước `MaterialAlertDialogBuilder` ×3) → `showBasicDialog` (glass message). Sửa test revoke (click `btn_positive` custom).
 - ⚪ `showDifficultyDialog` vẫn impl riêng (visual Y HỆT glass choice) — fold vào `showChoiceDialog` sau (pure refactor, 0 đổi visual).
-- Build: **186 test PASS**; `assembleDebug` xanh.
+- ✅ **Test 3 tầng cho dialog chung (+5)**: `DialogUtilsChoiceTest` (4 Robolectric — show/title/icon=0/click→index/cancel), VIP success-dialog là glass (`VipActivityActiveStateTest`), `DialogGlassChoiceInstrumentedTest` (androidTest contract layout).
+- ✅ **Fix viền end-game kỳ quặc**: `dialog_game_end` + `dialog_difficulty` đổi nền `bg_dialog_game` (3 vòng stroke lồng) → `bg_dialog_glass` (1 viền sạch, chung app).
+- ✅ **Dọn dead-code**: xoá style `ThemeOverlay.Chess.Dialog` + drawable `bg_dialog_game.xml` (mồ côi sau migrate glass).
+- Build: **191 test PASS**; `assembleDebug` xanh. Audit phiên 9.5/10.
+
+**🐛 Fix UI menu (shimmer tràn nút):** shimmer sweep (`shimmerPvP/PvE`) rộng = nút, dịch `translationX` ±w nhưng FrameLayout bọc để `clipChildren=false` → dải sáng lòi ra ngoài mép nút. Fix **khoanh vùng** (không đụng clip toàn cục vốn cố ý cho glow): 2 FrameLayout shimmer thêm `bg_btn_clip` (rounded trong suốt 20dp) + `clipToOutline=true` → cắt shimmer gọn trong khung nút, sạch cả góc bo. **199 test PASS.**
 
 **Wave C — content / retention:**
 5. **Câu đố cờ** (Puzzles mate-in-N) — bộ FEN nhúng, engine validate.

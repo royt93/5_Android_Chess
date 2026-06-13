@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Outline trong suốt bo góc 20dp (khớp mép ngoài bg_btn_pvp/pve) — dùng cho clipToOutline
+     để cắt shimmer sweep gọn trong khung nút, không lòi ra ngoài/lòi góc. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="20dp" />
+</shape>

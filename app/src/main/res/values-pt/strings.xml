@@ -155,4 +155,8 @@
     <string name="time_off">Sem relógio</string>
     <string name="time_blitz">Blitz · 5 min</string>
     <string name="time_rapid">Rápido · 10 min</string>
+    <string name="resume_title">Retomar jogo</string>
+    <string name="resume_message">Você tem um jogo inacabado. Continuar?</string>
+    <string name="resume_continue">Retomar</string>
+    <string name="resume_new">Descartar</string>
 </resources>

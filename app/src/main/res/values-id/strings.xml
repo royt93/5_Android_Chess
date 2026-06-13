@@ -155,4 +155,8 @@
     <string name="time_off">Tanpa jam</string>
     <string name="time_blitz">Blitz · 5 mnt</string>
     <string name="time_rapid">Cepat · 10 mnt</string>
+    <string name="resume_title">Lanjutkan permainan</string>
+    <string name="resume_message">Ada permainan yang belum selesai. Lanjutkan?</string>
+    <string name="resume_continue">Lanjutkan</string>
+    <string name="resume_new">Buang</string>
 </resources>

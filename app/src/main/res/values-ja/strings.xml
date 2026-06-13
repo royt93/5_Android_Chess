@@ -155,4 +155,8 @@
     <string name="time_off">時計なし</string>
     <string name="time_blitz">ブリッツ · 5分</string>
     <string name="time_rapid">ラピッド · 10分</string>
+    <string name="resume_title">ゲームを再開</string>
+    <string name="resume_message">未完了のゲームがあります。続けますか？</string>
+    <string name="resume_continue">再開</string>
+    <string name="resume_new">破棄</string>
 </resources>

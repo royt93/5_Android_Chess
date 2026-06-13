@@ -155,4 +155,8 @@
     <string name="time_off">គ្មាននាឡិកា</string>
     <string name="time_blitz">Blitz · 5 នាទី</string>
     <string name="time_rapid">Rapid · 10 នាទី</string>
+    <string name="resume_title">បន្តល្បែង</string>
+    <string name="resume_message">អ្នកមានល្បែងមិនទាន់ចប់។ បន្តទេ?</string>
+    <string name="resume_continue">បន្ត</string>
+    <string name="resume_new">បោះបង់</string>
 </resources>

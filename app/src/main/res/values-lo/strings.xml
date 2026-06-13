@@ -155,4 +155,8 @@
     <string name="time_off">ບໍ່ມີໂມງ</string>
     <string name="time_blitz">Blitz · 5 ນາທີ</string>
     <string name="time_rapid">Rapid · 10 ນາທີ</string>
+    <string name="resume_title">ສືບຕໍ່ເກມ</string>
+    <string name="resume_message">ທ່ານມີເກມທີ່ຍັງບໍ່ຈົບ. ສືບຕໍ່ບໍ?</string>
+    <string name="resume_continue">ສືບຕໍ່</string>
+    <string name="resume_new">ຍົກເລີກ</string>
 </resources>

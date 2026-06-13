@@ -155,4 +155,8 @@
     <string name="time_off">无时钟</string>
     <string name="time_blitz">快棋 · 5分钟</string>
     <string name="time_rapid">快速 · 10分钟</string>
+    <string name="resume_title">继续对局</string>
+    <string name="resume_message">您有一局未完成的对局。继续吗？</string>
+    <string name="resume_continue">继续</string>
+    <string name="resume_new">放弃</string>
 </resources>

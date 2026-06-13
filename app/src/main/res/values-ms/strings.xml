@@ -155,4 +155,8 @@
     <string name="time_off">Tiada jam</string>
     <string name="time_blitz">Blitz · 5 min</string>
     <string name="time_rapid">Pantas · 10 min</string>
+    <string name="resume_title">Sambung permainan</string>
+    <string name="resume_message">Anda ada permainan belum selesai. Sambung?</string>
+    <string name="resume_continue">Sambung</string>
+    <string name="resume_new">Buang</string>
 </resources>

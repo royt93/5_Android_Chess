@@ -61,6 +61,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
     // Chess clock (đồng hồ cờ) — null nếu không bật giờ
     private com.saigonphantomlabs.chess.ChessClock chessClock;
+    // Snapshot ván dở đang resume (null nếu ván mới) — dùng để dựng lại đồng hồ
+    private com.saigonphantomlabs.chess.GameSaveManager.SavedGame resumedSave;
     private TextView tvWhiteClock, tvBlackClock;
     private long lastClockTickMs;
     private boolean clockRunning;
@@ -216,15 +218,33 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                             chess = new Chess(ChessBoardActivity.this,
                                     boardSize, boardLayout);
                             Storage.setChess(chess);
-                            boolean isVsAi = getIntent().getBooleanExtra("IS_VS_AI", false);
-                            chess.isVsComputer = isVsAi;
-                            if (isVsAi) {
-                                String diffStr = getIntent().getStringExtra("AI_DIFFICULTY");
-                                if (diffStr != null) {
+                            com.saigonphantomlabs.chess.GameSaveManager.SavedGame saved =
+                                    getIntent().getBooleanExtra("RESUME", false)
+                                            ? com.saigonphantomlabs.chess.GameSaveManager.load(ChessBoardActivity.this)
+                                            : null;
+                            if (saved != null) {
+                                // Tiếp tục ván dở: khôi phục mode + thế cờ từ snapshot
+                                chess.isVsComputer = saved.isVsAi;
+                                if (saved.difficulty != null) {
                                     try {
-                                        chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.valueOf(diffStr);
+                                        chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.valueOf(saved.difficulty);
                                     } catch (IllegalArgumentException ex) {
                                         chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.EASY;
+                                    }
+                                }
+                                resumedSave = saved;
+                                chess.loadSaveState(saved);
+                            } else {
+                                boolean isVsAi = getIntent().getBooleanExtra("IS_VS_AI", false);
+                                chess.isVsComputer = isVsAi;
+                                if (isVsAi) {
+                                    String diffStr = getIntent().getStringExtra("AI_DIFFICULTY");
+                                    if (diffStr != null) {
+                                        try {
+                                            chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.valueOf(diffStr);
+                                        } catch (IllegalArgumentException ex) {
+                                            chess.difficultyLevel = com.saigonphantomlabs.chess.AIEngine.Difficulty.EASY;
+                                        }
                                     }
                                 }
                             }
@@ -377,6 +397,16 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     // ───────────────────────── CHESS CLOCK ─────────────────────────
 
     private void setupClock() {
+        // Resume ván dở có đồng hồ → khôi phục thời gian còn lại 2 bên
+        if (resumedSave != null && resumedSave.hasClock) {
+            chessClock = new com.saigonphantomlabs.chess.ChessClock(0, resumedSave.incrementMs);
+            chessClock.restore(resumedSave.whiteMs, resumedSave.blackMs, resumedSave.whiteActive);
+            if (tvWhiteClock != null) tvWhiteClock.setVisibility(View.VISIBLE);
+            if (tvBlackClock != null) tvBlackClock.setVisibility(View.VISIBLE);
+            updateClockDisplays();
+            startClock();
+            return;
+        }
         long ms = getIntent().getLongExtra("TIME_CONTROL_MS", 0L);
         if (ms <= 0) return;
         if (chessClock == null) chessClock = new com.saigonphantomlabs.chess.ChessClock(ms, 0);
@@ -418,6 +448,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     private void showRestartConfirmDialog() {
         DialogUtils.showRestartDialog(this, () -> {
             if (chess != null) chess.resetGame();
+            resumedSave = null;
+            com.saigonphantomlabs.chess.GameSaveManager.clear(this);
             resetClock();
         });
     }
@@ -619,6 +651,9 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     }
 
     public void showCustomGameEndDialog(boolean whiteWins, boolean isStalemate) {
+        // Ván đã kết thúc → không còn gì để tiếp tục, xoá save
+        com.saigonphantomlabs.chess.GameSaveManager.clear(this);
+        resumedSave = null;
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_game_end, null);
 
         ImageView iconView = dialogView.findViewById(R.id.dialog_icon);
@@ -683,6 +718,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         if (btnPlayAgain != null) btnPlayAgain.setOnClickListener(v -> {
             dialog.dismiss();
             chess.resetGame();
+            resumedSave = null;
             resetClock();
         });
         if (btnExit != null) btnExit.setOnClickListener(v -> {
@@ -738,7 +774,29 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         // Dừng auto-refresh khi rời màn cờ (sang Menu/VIP/ad…) → hết invalid impression off-screen.
         if (adView != null) AdManager.INSTANCE.bannerPause(adView);
         stopClock();    // tạm dừng đồng hồ khi rời màn (công bằng)
+        persistOrClearSave();   // lưu ván dở (hoặc xoá nếu đã kết thúc)
         super.onPause();
+    }
+
+    /** Lưu ván dở khi rời màn (nếu còn chơi & đã có nước); ngược lại xoá save. */
+    private void persistOrClearSave() {
+        if (chess == null) return;
+        // Đáng lưu khi: chưa kết thúc & (đã có nước đi MỚI hoặc đang tiếp tục 1 ván resume).
+        // resumedSave != null đảm bảo ván vừa resume (undo-stack rỗng) không bị xoá nhầm khi onPause.
+        boolean inProgress = !chess.isGameEnd() && (chess.hasMovesMade() || resumedSave != null);
+        if (inProgress) {
+            com.saigonphantomlabs.chess.GameSaveManager.SavedGame g = chess.captureSaveState();
+            if (chessClock != null) {
+                g.hasClock = true;
+                g.whiteMs = chessClock.getWhiteMs();
+                g.blackMs = chessClock.getBlackMs();
+                g.incrementMs = chessClock.getIncrementMs();
+                g.whiteActive = chessClock.isWhiteActive();
+            }
+            com.saigonphantomlabs.chess.GameSaveManager.save(this, g);
+        } else {
+            com.saigonphantomlabs.chess.GameSaveManager.clear(this);
+        }
     }
 
     /**

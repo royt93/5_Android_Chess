@@ -155,4 +155,8 @@
     <string name="time_off">ไม่มีนาฬิกา</string>
     <string name="time_blitz">บลิตซ์ · 5 นาที</string>
     <string name="time_rapid">แรพิด · 10 นาที</string>
+    <string name="resume_title">เล่นต่อ</string>
+    <string name="resume_message">คุณมีเกมที่ยังไม่จบ เล่นต่อไหม?</string>
+    <string name="resume_continue">เล่นต่อ</string>
+    <string name="resume_new">ละทิ้ง</string>
 </resources>

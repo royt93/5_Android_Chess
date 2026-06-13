@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
-    android:padding="@dimen/banner_ad_margin">
+    android:paddingVertical="@dimen/banner_ad_margin">
 
     <!-- Ad Label with improved styling -->
     <TextView

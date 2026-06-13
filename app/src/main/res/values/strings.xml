@@ -175,4 +175,8 @@ Checkmate the opponent\'s King.<br/><br/>
     <string name="time_off">No clock</string>
     <string name="time_blitz">Blitz · 5 min</string>
     <string name="time_rapid">Rapid · 10 min</string>
+    <string name="resume_title">Resume game</string>
+    <string name="resume_message">You have an unfinished game. Continue where you left off?</string>
+    <string name="resume_continue">Resume</string>
+    <string name="resume_new">Discard</string>
 </resources>

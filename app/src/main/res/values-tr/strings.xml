@@ -155,4 +155,8 @@
     <string name="time_off">Saat yok</string>
     <string name="time_blitz">Blitz · 5 dk</string>
     <string name="time_rapid">Hızlı · 10 dk</string>
+    <string name="resume_title">Oyuna devam et</string>
+    <string name="resume_message">Bitmemiş bir oyununuz var. Devam edilsin mi?</string>
+    <string name="resume_continue">Devam et</string>
+    <string name="resume_new">Sil</string>
 </resources>
