@@ -129,7 +129,7 @@ public class SavedGamesActivity extends BaseActivity {
         Intent intent = new Intent(this, ChessBoardActivity.class);
         intent.putExtra("RESUME_SESSION", sessionId);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
     }
 
     private void confirmDelete(GameSaveManager.SavedGame g) {

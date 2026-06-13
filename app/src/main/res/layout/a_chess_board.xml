@@ -205,7 +205,7 @@
                 android:fontFamily="@font/exo2"
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="4dp"
-                android:textColor="@color/game_bg_deep"
+                android:textColor="@color/game_gold_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:visibility="gone"

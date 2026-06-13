@@ -336,7 +336,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     public void showPromotionActivity() {
         Intent intent = new Intent(this, PawnPromotionActivity.class);
         promotionLauncher.launch(intent);
-        overridePendingTransition(R.anim.slide_up, R.anim.slide_out_left);
+        overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
     }
 
     private void handleBackPress() {
@@ -344,7 +344,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         if (puzzleMode) {
             com.saigonphantomlabs.chess.Storage.clearChess();
             finish();
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
             return;
         }
         DialogUtils.showQuitDialog(this, () -> {
@@ -353,7 +353,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                 @Override
                 public Unit invoke(Boolean adShown) {
                     finish();
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
                     return Unit.INSTANCE;
                 }
             });
@@ -652,8 +652,10 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
             btn.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(300)
                     .setInterpolator(new OvershootInterpolator()).start();
         } else if (!show && btn.getVisibility() == View.VISIBLE) {
+            // GONE (không INVISIBLE): nút ẩn KHÔNG được giữ chỗ layout → tránh "khoảng trống lạ"
+            // giữa nhóm nút (undo/restart ẩn từng để lại 48dp×2 trống cạnh nút Gợi ý).
             btn.animate().alpha(0f).scaleX(0.5f).scaleY(0.5f).setDuration(150)
-                    .withEndAction(() -> btn.setVisibility(View.INVISIBLE)).start();
+                    .withEndAction(() -> btn.setVisibility(View.GONE)).start();
         }
     }
 
@@ -803,7 +805,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                 @Override
                 public Unit invoke(Boolean adShown) {
                     finish();
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
                     return Unit.INSTANCE;
                 }
             });

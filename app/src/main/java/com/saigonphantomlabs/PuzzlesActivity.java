@@ -70,7 +70,7 @@ public class PuzzlesActivity extends BaseActivity {
         Intent i = new Intent(this, ChessBoardActivity.class);
         i.putExtra("PUZZLE_INDEX", index);
         startActivity(i);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
     }
 
     private void startGlow() {

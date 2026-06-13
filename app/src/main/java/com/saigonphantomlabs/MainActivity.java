@@ -126,19 +126,19 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.btnSavedGames).setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
                 startActivity(new Intent(MainActivity.this, SavedGamesActivity.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
             }
         });
         findViewById(R.id.btnAchievements).setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
                 startActivity(new Intent(MainActivity.this, AchievementsActivity.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
             }
         });
         findViewById(R.id.btnPuzzles).setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
                 startActivity(new Intent(MainActivity.this, PuzzlesActivity.class));
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
             }
         });
         btnLanguage.setOnClickListener(new SafeClickListener() {
@@ -444,7 +444,7 @@ public class MainActivity extends BaseActivity {
         if (difficulty != null) intent.putExtra("AI_DIFFICULTY", difficulty);
         intent.putExtra("TIME_CONTROL_MS", timeControlMs);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        overridePendingTransition(R.anim.fade_zoom_in, R.anim.fade_zoom_out);
     }
 
     private void showDifficultySelectionDialog() {
