@@ -168,4 +168,45 @@
     <string name="saved_delete">Löschen</string>
     <string name="saved_delete_title">Spiel löschen?</string>
     <string name="saved_delete_message">Dieses Spiel wird dauerhaft gelöscht.</string>
+    <!-- Phân tích sau ván (post-game analysis) -->
+    <string name="analyze_board">PARTIE ANALYSIEREN</string>
+    <string name="analyzing">Analysiere…</string>
+    <string name="analysis_title">Partieanalyse</string>
+    <string name="analysis_accuracy">Genauigkeit</string>
+    <string name="analysis_white">Weiß</string>
+    <string name="analysis_black">Schwarz</string>
+    <string name="quality_blunder">Patzer</string>
+    <string name="quality_mistake">Fehler</string>
+    <string name="quality_inaccuracy">Ungenauigkeit</string>
+    <string name="quality_good">Gut</string>
+    <string name="quality_best">Beste</string>
+    <string name="analysis_none">Analyse für diese Partie nicht verfügbar</string>
+    <!-- Achievements UI -->
+    <string name="achievements_title">Erfolge</string>
+    <string name="achievements_menu">ERFOLGE (%1$d/%2$d)</string>
+    <string name="achievements_progress">%1$d / %2$d</string>
+    <string name="achievement_unlocked">🏆 Freigeschaltet!\n%1$s</string>
+    <!-- Achievements badges -->
+    <string name="ach_first_win_title">Erster Sieg</string>
+    <string name="ach_first_win_desc">Gewinne dein erstes Spiel.</string>
+    <string name="ach_wins10_title">Champion</string>
+    <string name="ach_wins10_desc">Gewinne 10 Spiele.</string>
+    <string name="ach_games10_title">Engagiert</string>
+    <string name="ach_games10_desc">Spiele 10 Partien.</string>
+    <string name="ach_hard_title">Schwer-Modus</string>
+    <string name="ach_hard_desc">Besiege die schwere KI.</string>
+    <string name="ach_unbeatable_title">Riesentöter</string>
+    <string name="ach_unbeatable_desc">Besiege die unbesiegbare KI.</string>
+    <string name="ach_checkmate_title">Schachmatt!</string>
+    <string name="ach_checkmate_desc">Gewinne durch Schachmatt.</string>
+    <string name="ach_castle_title">Rochiert</string>
+    <string name="ach_castle_desc">Rochiere in einer Partie.</string>
+    <string name="ach_promote_title">Umwandlung</string>
+    <string name="ach_promote_desc">Wandle einen Bauern um.</string>
+    <string name="ach_flawless_title">Makellos</string>
+    <string name="ach_flawless_desc">Gewinne ohne Figurverlust.</string>
+    <string name="ach_quick_title">Blitzkrieg</string>
+    <string name="ach_quick_desc">Gewinne in 20 Halbzügen oder weniger.</string>
+    <string name="ach_marathon_title">Marathon</string>
+    <string name="ach_marathon_desc">Spiele insgesamt 1 Stunde.</string>
 </resources>

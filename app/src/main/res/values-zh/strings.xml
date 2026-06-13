@@ -168,4 +168,45 @@
     <string name="saved_delete">删除</string>
     <string name="saved_delete_title">删除已保存的对局？</string>
     <string name="saved_delete_message">此对局将被永久删除。</string>
+    <!-- Phân tích sau ván (post-game analysis) -->
+    <string name="analyze_board">分析对局</string>
+    <string name="analyzing">分析中…</string>
+    <string name="analysis_title">对局分析</string>
+    <string name="analysis_accuracy">准确率</string>
+    <string name="analysis_white">白方</string>
+    <string name="analysis_black">黑方</string>
+    <string name="quality_blunder">重大失误</string>
+    <string name="quality_mistake">失误</string>
+    <string name="quality_inaccuracy">不精确</string>
+    <string name="quality_good">良好</string>
+    <string name="quality_best">最佳</string>
+    <string name="analysis_none">无法分析此对局</string>
+    <!-- Achievements UI -->
+    <string name="achievements_title">成就</string>
+    <string name="achievements_menu">成就 (%1$d/%2$d)</string>
+    <string name="achievements_progress">%1$d / %2$d</string>
+    <string name="achievement_unlocked">🏆 已解锁!\n%1$s</string>
+    <!-- Achievements badges -->
+    <string name="ach_first_win_title">首胜</string>
+    <string name="ach_first_win_desc">赢得你的第一局。</string>
+    <string name="ach_wins10_title">冠军</string>
+    <string name="ach_wins10_desc">赢得10局。</string>
+    <string name="ach_games10_title">投入</string>
+    <string name="ach_games10_desc">进行10局。</string>
+    <string name="ach_hard_title">困难模式</string>
+    <string name="ach_hard_desc">击败困难AI。</string>
+    <string name="ach_unbeatable_title">巨人杀手</string>
+    <string name="ach_unbeatable_desc">击败无敌AI。</string>
+    <string name="ach_checkmate_title">将死！</string>
+    <string name="ach_checkmate_desc">以将死获胜。</string>
+    <string name="ach_castle_title">王车易位</string>
+    <string name="ach_castle_desc">在对局中王车易位。</string>
+    <string name="ach_promote_title">升变</string>
+    <string name="ach_promote_desc">升变一个兵。</string>
+    <string name="ach_flawless_title">完美</string>
+    <string name="ach_flawless_desc">不失子获胜。</string>
+    <string name="ach_quick_title">闪电战</string>
+    <string name="ach_quick_desc">20个半回合内获胜。</string>
+    <string name="ach_marathon_title">马拉松</string>
+    <string name="ach_marathon_desc">累计游戏1小时。</string>
 </resources>

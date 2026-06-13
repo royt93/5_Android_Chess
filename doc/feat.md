@@ -131,10 +131,16 @@
 
 **🐛 Fix UI menu (shimmer tràn nút):** shimmer sweep (`shimmerPvP/PvE`) rộng = nút, dịch `translationX` ±w nhưng FrameLayout bọc để `clipChildren=false` → dải sáng lòi ra ngoài mép nút. Fix **khoanh vùng** (không đụng clip toàn cục vốn cố ý cho glow): 2 FrameLayout shimmer thêm `bg_btn_clip` (rounded trong suốt 20dp) + `clipToOutline=true` → cắt shimmer gọn trong khung nút, sạch cả góc bo. **199 test PASS.**
 
-**Wave C — content / retention:**
-5. **Câu đố cờ** (Puzzles mate-in-N) — bộ FEN nhúng, engine validate.
-6. **Phân tích sau ván** (blunder detection) — eval mỗi nước qua engine, gắn nhãn.
-7. **Thành tích / huy hiệu** (Achievements) — SharedPreferences + UI list.
+**Wave C — content / retention** *(user chọn làm lần lượt: 6 → 7 → 5 → 8):*
+6. ✅ **Phân tích sau ván** (blunder detection) — `GameAnalyzer` thuần (dựng bàn model-only từ thế đầu, replay từng `MoveRecord` tự xử castle/en passant/promotion→Hậu) + `AIEngine.searchBestScore()` (negamax+alpha-beta, mate=±100000). Mỗi nước so `bestCp` vs `playedCp` (cùng depth) → centipawn loss → nhãn **Blunder/Mistake/Inaccuracy/Good/Best** + accuracy 2 bên (hàm mũ ACPL). UI nút **"PHÂN TÍCH VÁN"** (cyan) trong dialog end-game → chạy off-thread → dialog glass list **nước đáng chú ý** (Inaccuracy↑) + tổng hợp 🔴🟠🟡 + accuracy. String 15 locale.
+   - **Depth 3** (không phải 2): để eval-nước-đã-đánh dùng depth 2 cho đối thủ ⇒ bắt được cả "để đối thủ CHIẾU HẾT" (Fool's mate), không chỉ treo quân.
+   - **9 unit test PASS** (`GameAnalyzerTest`: classify/accuracy, applyMove fidelity normal/capture/promotion/castle/en-passant, detect hung-queen blunder, guard resume/empty→null). Tổng **215 test JVM xanh**.
+   - **Verify thiết bị (Pixel 1440×3120, adb)**: drive Fool's mate (1.f3 e5 2.g4 Qh4#) → dialog end hiện nút Analyze → tap → **White 0% · 🔴1, Black 98%, "2. g4 🔴 Blunder (−999.8)"** đúng (g4 là nước thua, không phải f3). 0 crash.
+   - *v1 giới hạn:* chỉ ván chơi TỪ ĐẦU (resume bị cắt history → ẩn nút); phong cấp giả định Hậu; search nông có thể chấm nhầm nước thí quân tốt.
+7. ✅ **Thành tích / huy hiệu** (Achievements) — `AchievementManager` (SharedPreferences "chess_achievements"): 11 huy hiệu emoji (First Victory, Champion×10, Dedicated, Hard/Giant Slayer, Checkmate, Castled, Promotion, Flawless, Blitzkrieg, Marathon). Logic xét điều kiện tách `qualifying()` **thuần** (static) + counter tích luỹ riêng (đếm CẢ PvP+PvE). Hook ở `ChessBoardActivity.showCustomGameEndDialog` → `recordGameEnd` → **toast huy hiệu vừa mở** (guard `achievementsRecorded` + cờ `pendingEndIsTimeout` phân biệt chiếu hết/hết giờ). Màn **`AchievementsActivity`** (BaseActivity, glow nền): list emoji+tên+mô tả, mở→✅ sáng / khoá→🔒 mờ; header tiến độ X/N. Nút menu **"ACHIEVEMENTS (X/N)"** (trophy gold). UI chrome 15 locale; tên/mô tả huy hiệu en+vi (13 locale fallback English — *v1 scope*).
+   - **Test 3 tầng**: **9 unit** (`AchievementManagerTest`: từng điều kiện + gate khó/checkmate/flawless/quick/marathon/draw) + **5 Robolectric** (`AchievementManagerRobolectricTest`: persist/dedup/cumulative/loss-counts) + **2 Espresso** (`AchievementsActivityEspressoTest`: header + row hiển thị, PASS Pixel 7 Pro). Tổng **229 test JVM xanh**.
+   - **Verify thiết bị**: drive ván White thắng nhanh `1.e4 g5 2.d4 f5 3.Qh5#` (flawless, 5 nửa-nước) → **toast "🏆 Unlocked! First Victory…"**, menu badge **"ACHIEVEMENTS (4/11)"**, màn list đúng 4 mở (First/Checkmate/Flawless/Blitzkrieg ✅) còn lại 🔒. 0 crash.
+5. **Câu đố cờ** (Puzzles mate-in-N) — bộ FEN nhúng, engine validate. *(kế tiếp)*
 8. **Bộ quân cờ** (piece sets) — thêm asset (cân nhắc APK), có thể VIP unlock.
 
 ## ⏸️ Deferred

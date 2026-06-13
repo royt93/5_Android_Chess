@@ -168,4 +168,45 @@
     <string name="saved_delete">ลบ</string>
     <string name="saved_delete_title">ลบเกมที่บันทึก?</string>
     <string name="saved_delete_message">เกมนี้จะถูกลบถาวร</string>
+    <!-- Phân tích sau ván (post-game analysis) -->
+    <string name="analyze_board">วิเคราะห์เกม</string>
+    <string name="analyzing">กำลังวิเคราะห์…</string>
+    <string name="analysis_title">การวิเคราะห์เกม</string>
+    <string name="analysis_accuracy">ความแม่นยำ</string>
+    <string name="analysis_white">ขาว</string>
+    <string name="analysis_black">ดำ</string>
+    <string name="quality_blunder">พลาดร้ายแรง</string>
+    <string name="quality_mistake">ผิดพลาด</string>
+    <string name="quality_inaccuracy">ไม่แม่นยำ</string>
+    <string name="quality_good">ดี</string>
+    <string name="quality_best">ดีที่สุด</string>
+    <string name="analysis_none">ไม่สามารถวิเคราะห์เกมนี้</string>
+    <!-- Achievements UI -->
+    <string name="achievements_title">ความสำเร็จ</string>
+    <string name="achievements_menu">ความสำเร็จ (%1$d/%2$d)</string>
+    <string name="achievements_progress">%1$d / %2$d</string>
+    <string name="achievement_unlocked">🏆 ปลดล็อก!\n%1$s</string>
+    <!-- Achievements badges -->
+    <string name="ach_first_win_title">ชัยชนะแรก</string>
+    <string name="ach_first_win_desc">ชนะเกมแรกของคุณ</string>
+    <string name="ach_wins10_title">แชมเปี้ยน</string>
+    <string name="ach_wins10_desc">ชนะ 10 เกม</string>
+    <string name="ach_games10_title">ทุ่มเท</string>
+    <string name="ach_games10_desc">เล่น 10 เกม</string>
+    <string name="ach_hard_title">โหมดยาก</string>
+    <string name="ach_hard_desc">เอาชนะ AI ระดับยาก</string>
+    <string name="ach_unbeatable_title">นักล้มยักษ์</string>
+    <string name="ach_unbeatable_desc">เอาชนะ AI ที่เอาชนะไม่ได้</string>
+    <string name="ach_checkmate_title">รุกจน!</string>
+    <string name="ach_checkmate_desc">ชนะด้วยการรุกจน</string>
+    <string name="ach_castle_title">เข้าป้อม</string>
+    <string name="ach_castle_desc">เข้าป้อมในเกม</string>
+    <string name="ach_promote_title">เลื่อนขั้น</string>
+    <string name="ach_promote_desc">เลื่อนขั้นเบี้ย</string>
+    <string name="ach_flawless_title">ไร้ที่ติ</string>
+    <string name="ach_flawless_desc">ชนะโดยไม่เสียหมาก</string>
+    <string name="ach_quick_title">สงครามสายฟ้าแลบ</string>
+    <string name="ach_quick_desc">ชนะใน 20 ครึ่งตาหรือน้อยกว่า</string>
+    <string name="ach_marathon_title">มาราธอน</string>
+    <string name="ach_marathon_desc">เล่นรวม 1 ชั่วโมง</string>
 </resources>

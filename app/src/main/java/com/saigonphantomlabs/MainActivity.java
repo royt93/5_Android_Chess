@@ -129,6 +129,12 @@ public class MainActivity extends BaseActivity {
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
+        findViewById(R.id.btnAchievements).setOnClickListener(new SafeClickListener() {
+            @Override public void onSafeClick(View view) {
+                startActivity(new Intent(MainActivity.this, AchievementsActivity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
         btnLanguage.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
                 new com.saigonphantomlabs.language.LanguageBottomSheet().show(getSupportFragmentManager(), "LanguageBottomSheet");
@@ -164,6 +170,17 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         bindVipState();   // refresh khi back từ VipActivity
         updateSavedGamesBadge();
+        updateAchievementsBadge();
+    }
+
+    /** Cập nhật nhãn nút "Thành tích (X/N)" theo số huy hiệu đã mở. */
+    private void updateAchievementsBadge() {
+        TextView tv = findViewById(R.id.tvAchCount);
+        if (tv == null) return;
+        int n = new com.saigonphantomlabs.chess.AchievementManager(this).unlockedCount();
+        tv.setText(n > 0
+                ? getString(R.string.achievements_menu, n, com.saigonphantomlabs.chess.AchievementManager.total())
+                : getString(R.string.achievements_title));
     }
 
     /** Cập nhật nhãn nút "Ván đã lưu (N)" theo số ván đang lưu. */

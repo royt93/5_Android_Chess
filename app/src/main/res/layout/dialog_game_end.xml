@@ -194,6 +194,29 @@
 
     </LinearLayout>
 
+    <!-- Analyze Game button (phân tích sau ván) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_analyze"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/cinzel"
+            android:text="@string/analyze_board"
+            android:textColor="@color/game_neon_cyan"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:strokeColor="@color/game_neon_cyan"
+            app:strokeWidth="1dp" />
+
+    </LinearLayout>
+
     <!-- Exit / Play Again -->
     <LinearLayout
         android:layout_width="match_parent"

@@ -168,4 +168,45 @@
     <string name="saved_delete">Sil</string>
     <string name="saved_delete_title">Kaydedilen oyun silinsin mi?</string>
     <string name="saved_delete_message">Bu oyun kalıcı olarak silinecek.</string>
+    <!-- Phân tích sau ván (post-game analysis) -->
+    <string name="analyze_board">OYUNU ANALİZ ET</string>
+    <string name="analyzing">Analiz ediliyor…</string>
+    <string name="analysis_title">Oyun Analizi</string>
+    <string name="analysis_accuracy">Doğruluk</string>
+    <string name="analysis_white">Beyaz</string>
+    <string name="analysis_black">Siyah</string>
+    <string name="quality_blunder">Vahim hata</string>
+    <string name="quality_mistake">Hata</string>
+    <string name="quality_inaccuracy">Yanlışlık</string>
+    <string name="quality_good">İyi</string>
+    <string name="quality_best">En iyi</string>
+    <string name="analysis_none">Bu oyun için analiz mevcut değil</string>
+    <!-- Achievements UI -->
+    <string name="achievements_title">Başarımlar</string>
+    <string name="achievements_menu">BAŞARIMLAR (%1$d/%2$d)</string>
+    <string name="achievements_progress">%1$d / %2$d</string>
+    <string name="achievement_unlocked">🏆 Açıldı!\n%1$s</string>
+    <!-- Achievements badges -->
+    <string name="ach_first_win_title">İlk Zafer</string>
+    <string name="ach_first_win_desc">İlk oyununu kazan.</string>
+    <string name="ach_wins10_title">Şampiyon</string>
+    <string name="ach_wins10_desc">10 oyun kazan.</string>
+    <string name="ach_games10_title">Azimli</string>
+    <string name="ach_games10_desc">10 oyun oyna.</string>
+    <string name="ach_hard_title">Zor Mod</string>
+    <string name="ach_hard_desc">Zor yapay zekayı yen.</string>
+    <string name="ach_unbeatable_title">Dev Avcısı</string>
+    <string name="ach_unbeatable_desc">Yenilmez yapay zekayı yen.</string>
+    <string name="ach_checkmate_title">Şah mat!</string>
+    <string name="ach_checkmate_desc">Şah mat ile kazan.</string>
+    <string name="ach_castle_title">Rok</string>
+    <string name="ach_castle_desc">Bir oyunda rok yap.</string>
+    <string name="ach_promote_title">Terfi</string>
+    <string name="ach_promote_desc">Bir piyonu terfi ettir.</string>
+    <string name="ach_flawless_title">Kusursuz</string>
+    <string name="ach_flawless_desc">Taş kaybetmeden kazan.</string>
+    <string name="ach_quick_title">Yıldırım Savaşı</string>
+    <string name="ach_quick_desc">20 yarı hamlede veya daha azında kazan.</string>
+    <string name="ach_marathon_title">Maraton</string>
+    <string name="ach_marathon_desc">Toplam 1 saat oyna.</string>
 </resources>

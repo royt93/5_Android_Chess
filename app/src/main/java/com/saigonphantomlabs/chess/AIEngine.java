@@ -152,6 +152,54 @@ public class AIEngine {
         }
     }
 
+    // --- Post-game analysis (negamax) ---
+    // Giá trị "thắng/thua tuyệt đối" cho terminal (chiếu hết). Đủ lớn để vượt mọi
+    // chênh lệch material nhưng vẫn an toàn khi đảo dấu (không tràn int).
+    private static final int MATE_SCORE = 100000;
+
+    /**
+     * Điểm tốt nhất bên {@code side} có thể đạt ở vị trí hiện tại, search {@code depth} nửa-nước
+     * (negamax + alpha-beta, tái dùng evaluateBoard/generateAllLegalMoves/simulateMove).
+     * Dương = lợi cho {@code side}. Mate-in-1 bị bỏ lỡ ⇒ chênh ~{@link #MATE_SCORE} ⇒ phát hiện được.
+     *
+     * <p>Bật {@link Chess#inAiSimulation} trong lúc search (như getBestMove) để generateMoves chỉ
+     * sinh nước "cổ điển" mà simulateMove xử lý đúng. Cân bằng simulate/undo ⇒ KHÔNG đổi thế cờ.
+     * Dùng cho {@link GameAnalyzer}.
+     */
+    public int searchBestScore(Chess board, Chessman.PlayerColor side, int depth) {
+        boolean prev = board.inAiSimulation;
+        board.inAiSimulation = true;
+        try {
+            return negamax(board, side, depth, -MATE_SCORE - 1, MATE_SCORE + 1);
+        } finally {
+            board.inAiSimulation = prev;
+        }
+    }
+
+    private int negamax(Chess board, Chessman.PlayerColor side, int depth, int alpha, int beta) {
+        if (depth == 0) {
+            return evaluateBoard(board, side);
+        }
+        List<MoveRecord> moves = generateAllLegalMoves(board, side);
+        if (moves.isEmpty()) {
+            King k = (side == Chessman.PlayerColor.White) ? board.whiteKing : board.blackKing;
+            return k.isPointSafe() ? 0 : -MATE_SCORE; // chiếu hết = thảm hoạ cho side; hết cờ = 0
+        }
+        orderMoves(moves); // ăn quân trước → cắt tỉa sớm
+        Chessman.PlayerColor opp = (side == Chessman.PlayerColor.White)
+                ? Chessman.PlayerColor.Black : Chessman.PlayerColor.White;
+        int best = -MATE_SCORE - 1;
+        for (MoveRecord m : moves) {
+            simulateMove(board, m);
+            int score = -negamax(board, opp, depth - 1, -beta, -alpha);
+            undoSimulateMove(board, m);
+            if (score > best) best = score;
+            if (best > alpha) alpha = best;
+            if (alpha >= beta) break;
+        }
+        return best;
+    }
+
     public long getThinkDelay(Difficulty difficulty) {
         switch (difficulty) {
             case EASY:

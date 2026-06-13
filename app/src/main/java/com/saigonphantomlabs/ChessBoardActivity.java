@@ -449,8 +449,14 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         updateClockDisplays();
         // Bên hết giờ thua → bên kia thắng
         boolean whiteWins = (flag == com.saigonphantomlabs.chess.ChessClock.Flag.BLACK);
+        pendingEndIsTimeout = true; // hết giờ ≠ chiếu hết (cho achievement)
         showCustomGameEndDialog(whiteWins, false);
     }
+
+    // Kết thúc ván vừa rồi là do HẾT GIỜ (không phải chiếu hết) — reset sau mỗi lần show dialog.
+    private boolean pendingEndIsTimeout = false;
+    // Tránh ghi nhận thành tích 2 lần cho cùng 1 ván (dialog có thể dựng lại khi xoay màn).
+    private boolean achievementsRecorded = false;
 
     private void showRestartConfirmDialog() {
         DialogUtils.showRestartDialog(this, () -> {
@@ -459,6 +465,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
             com.saigonphantomlabs.chess.GameSaveManager.deleteSlot(this, currentSessionId);
             resumedSave = null;
             resumedBaseMoveCount = 0;
+            achievementsRecorded = false;
             currentSessionId = newSessionId();
             resetClock();
         });
@@ -664,6 +671,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         // Ván đã kết thúc → không còn gì để tiếp tục, xoá slot
         com.saigonphantomlabs.chess.GameSaveManager.deleteSlot(this, currentSessionId);
         resumedSave = null;
+        recordAchievements(whiteWins, isStalemate);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_game_end, null);
 
         ImageView iconView = dialogView.findViewById(R.id.dialog_icon);
@@ -730,6 +738,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
             chess.resetGame();
             resumedSave = null;
             resumedBaseMoveCount = 0;
+            achievementsRecorded = false;      // ván mới → cho phép ghi nhận lại
             currentSessionId = newSessionId(); // ván chơi-lại = session mới
             resetClock();
         });
@@ -745,7 +754,160 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                 }
             });
         });
+
+        // Phân tích sau ván: chỉ bật cho ván chơi TỪ ĐẦU (không resume, vì history bị cắt) và có nước đi.
+        com.google.android.material.button.MaterialButton btnAnalyze = dialogView.findViewById(R.id.btn_analyze);
+        if (btnAnalyze != null) {
+            boolean canAnalyze = chess != null && resumedBaseMoveCount == 0 && chess.getMoveCount() > 0;
+            if (!canAnalyze) {
+                btnAnalyze.setVisibility(View.GONE);
+            } else {
+                btnAnalyze.setOnClickListener(v -> onAnalyzeClicked(btnAnalyze));
+            }
+        }
+
         dialog.show();
+    }
+
+    /** Chạy phân tích ván off-thread (nặng CPU) rồi hiện dialog kết quả. */
+    private void onAnalyzeClicked(com.google.android.material.button.MaterialButton btn) {
+        if (chess == null) return;
+        java.util.List<com.saigonphantomlabs.chess.MoveRecord> history = chess.getMoveHistory();
+        btn.setEnabled(false);
+        btn.setText(R.string.analyzing);
+        new Thread(() -> {
+            com.saigonphantomlabs.chess.GameAnalyzer.Result result =
+                    com.saigonphantomlabs.chess.GameAnalyzer.analyze(
+                            history, new com.saigonphantomlabs.chess.AIEngine());
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed()) return;
+                btn.setEnabled(true);
+                btn.setText(R.string.analyze_board);
+                if (result == null) {
+                    android.widget.Toast.makeText(this, R.string.analysis_none,
+                            android.widget.Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                showAnalysisDialog(result);
+            });
+        }).start();
+    }
+
+    /** Dialog liệt kê chất lượng từng nước + tổng hợp lỗi & độ chính xác 2 bên. */
+    private void showAnalysisDialog(com.saigonphantomlabs.chess.GameAnalyzer.Result res) {
+        CharSequence body = buildAnalysisText(res);
+        DialogUtils.showBasicDialog(this,
+                getString(R.string.analysis_title),
+                body,
+                getString(R.string.close),
+                null,
+                R.drawable.ic_moves,
+                null,
+                null);
+    }
+
+    private CharSequence buildAnalysisText(com.saigonphantomlabs.chess.GameAnalyzer.Result res) {
+        StringBuilder sb = new StringBuilder();
+        String acc = getString(R.string.analysis_accuracy);
+        // Tổng hợp 2 bên: độ chính xác + đếm 🔴 blunder / 🟠 mistake / 🟡 inaccuracy
+        sb.append(getString(R.string.analysis_white)).append(" — ").append(acc).append(' ')
+                .append(res.whiteAccuracy).append("%\n")
+                .append("🔴 ").append(res.whiteBlunders)
+                .append("   🟠 ").append(res.whiteMistakes)
+                .append("   🟡 ").append(res.whiteInaccuracies).append("\n\n");
+        sb.append(getString(R.string.analysis_black)).append(" — ").append(acc).append(' ')
+                .append(res.blackAccuracy).append("%\n")
+                .append("🔴 ").append(res.blackBlunders)
+                .append("   🟠 ").append(res.blackMistakes)
+                .append("   🟡 ").append(res.blackInaccuracies).append("\n\n");
+
+        // Chỉ liệt kê nước ĐÁNG CHÚ Ý (Inaccuracy trở lên) — gọn & đúng trọng tâm lỗi; vẫn giữ
+        // bộ đếm số nước chạy qua mọi ply để đánh số chính xác (Trắng "N.", Đen "N…").
+        int fullMove = 1;
+        boolean anyNotable = false;
+        for (com.saigonphantomlabs.chess.GameAnalyzer.MovePly p : res.plies) {
+            String num = p.whiteMove ? (fullMove + ".") : (fullMove + "…");
+            if (!p.whiteMove) fullMove++;
+            boolean notable = p.quality == com.saigonphantomlabs.chess.GameAnalyzer.Quality.INACCURACY
+                    || p.quality == com.saigonphantomlabs.chess.GameAnalyzer.Quality.MISTAKE
+                    || p.quality == com.saigonphantomlabs.chess.GameAnalyzer.Quality.BLUNDER;
+            if (!notable) continue;
+            anyNotable = true;
+            sb.append(num).append(' ').append(p.san).append("  ")
+                    .append(qualityEmoji(p.quality)).append(' ').append(qualityLabel(p.quality))
+                    .append(String.format(java.util.Locale.US, " (−%.1f)", p.lossCp / 100.0))
+                    .append('\n');
+        }
+        if (!anyNotable) {
+            // Không có lỗi đáng kể → bỏ phần thừa, chỉ giữ tổng hợp + dòng tích cực
+            sb.append("⭐ ").append(getString(R.string.quality_best));
+        }
+        return sb.toString().trim();
+    }
+
+    private String qualityEmoji(com.saigonphantomlabs.chess.GameAnalyzer.Quality q) {
+        switch (q) {
+            case BLUNDER:    return "🔴";
+            case MISTAKE:    return "🟠";
+            case INACCURACY: return "🟡";
+            case BEST:       return "⭐";
+            default:         return "🟢"; // GOOD
+        }
+    }
+
+    private String qualityLabel(com.saigonphantomlabs.chess.GameAnalyzer.Quality q) {
+        switch (q) {
+            case BLUNDER:    return getString(R.string.quality_blunder);
+            case MISTAKE:    return getString(R.string.quality_mistake);
+            case INACCURACY: return getString(R.string.quality_inaccuracy);
+            case BEST:       return getString(R.string.quality_best);
+            default:         return getString(R.string.quality_good);
+        }
+    }
+
+    // ───────────────────────── THÀNH TÍCH (achievements) ─────────────────────────
+
+    /** Ghi nhận thành tích khi ván kết thúc + toast huy hiệu vừa mở. Gọi 1 lần/ván. */
+    private void recordAchievements(boolean whiteWins, boolean isStalemate) {
+        boolean timeout = pendingEndIsTimeout;
+        pendingEndIsTimeout = false; // reset bất kể, cho ván sau
+        if (chess == null || achievementsRecorded) return;
+        achievementsRecorded = true;
+
+        com.saigonphantomlabs.chess.AchievementManager.GameResult r =
+                new com.saigonphantomlabs.chess.AchievementManager.GameResult();
+        r.vsAi = chess.isVsComputer;
+        r.difficulty = chess.difficultyLevel;
+        r.draw = isStalemate;
+        r.humanWon = !isStalemate && whiteWins;           // người chơi = Trắng
+        r.byCheckmate = !isStalemate && !timeout;          // chiếu hết (không phải hết giờ/hoà)
+        r.moveCount = chess.getMoveCount();
+        r.humanLostPieces = chess.getCapturedWhiteCount(); // quân Trắng bị bắt
+        r.durationMs = chess.getGameDurationMs();
+        // Quét lịch sử: Trắng có nhập thành / phong cấp không
+        for (com.saigonphantomlabs.chess.MoveRecord m : chess.getMoveHistory()) {
+            if (m.movedPiece == null
+                    || m.movedPiece.color != Chessman.PlayerColor.White) continue;
+            if (m.isCastle) r.whiteCastled = true;
+            boolean isPawn = m.movedPiece.type == Chessman.ChessmanType.Pawn;
+            if (isPawn && m.toY == 0) r.whitePromoted = true; // tốt Trắng tới hàng cuối
+        }
+
+        java.util.List<com.saigonphantomlabs.chess.AchievementManager.Achievement> newly =
+                new com.saigonphantomlabs.chess.AchievementManager(this).recordGameEnd(r);
+        if (!newly.isEmpty()) showAchievementToast(newly);
+    }
+
+    private void showAchievementToast(
+            java.util.List<com.saigonphantomlabs.chess.AchievementManager.Achievement> list) {
+        StringBuilder sb = new StringBuilder();
+        for (com.saigonphantomlabs.chess.AchievementManager.Achievement a : list) {
+            if (sb.length() > 0) sb.append('\n');
+            sb.append(a.emoji).append(' ').append(getString(a.titleRes));
+        }
+        android.widget.Toast.makeText(this,
+                getString(R.string.achievement_unlocked, sb.toString()),
+                android.widget.Toast.LENGTH_LONG).show();
     }
 
     private void initializeStatusBar() {

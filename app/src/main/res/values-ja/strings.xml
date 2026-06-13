@@ -168,4 +168,45 @@
     <string name="saved_delete">削除</string>
     <string name="saved_delete_title">保存した対局を削除しますか？</string>
     <string name="saved_delete_message">この対局は完全に削除されます。</string>
+    <!-- Phân tích sau ván (post-game analysis) -->
+    <string name="analyze_board">対局を分析</string>
+    <string name="analyzing">分析中…</string>
+    <string name="analysis_title">対局分析</string>
+    <string name="analysis_accuracy">正確度</string>
+    <string name="analysis_white">白</string>
+    <string name="analysis_black">黒</string>
+    <string name="quality_blunder">大悪手</string>
+    <string name="quality_mistake">悪手</string>
+    <string name="quality_inaccuracy">不正確</string>
+    <string name="quality_good">好手</string>
+    <string name="quality_best">最善</string>
+    <string name="analysis_none">この対局は分析できません</string>
+    <!-- Achievements UI -->
+    <string name="achievements_title">実績</string>
+    <string name="achievements_menu">実績 (%1$d/%2$d)</string>
+    <string name="achievements_progress">%1$d / %2$d</string>
+    <string name="achievement_unlocked">🏆 解除！\n%1$s</string>
+    <!-- Achievements badges -->
+    <string name="ach_first_win_title">初勝利</string>
+    <string name="ach_first_win_desc">最初の対局に勝つ。</string>
+    <string name="ach_wins10_title">チャンピオン</string>
+    <string name="ach_wins10_desc">10局勝利する。</string>
+    <string name="ach_games10_title">熱心</string>
+    <string name="ach_games10_desc">10局プレイする。</string>
+    <string name="ach_hard_title">ハードモード</string>
+    <string name="ach_hard_desc">難しいAIに勝つ。</string>
+    <string name="ach_unbeatable_title">巨人殺し</string>
+    <string name="ach_unbeatable_desc">無敵のAIに勝つ。</string>
+    <string name="ach_checkmate_title">チェックメイト！</string>
+    <string name="ach_checkmate_desc">チェックメイトで勝つ。</string>
+    <string name="ach_castle_title">キャスリング</string>
+    <string name="ach_castle_desc">対局でキャスリングする。</string>
+    <string name="ach_promote_title">プロモーション</string>
+    <string name="ach_promote_desc">ポーンを昇格させる。</string>
+    <string name="ach_flawless_title">完璧</string>
+    <string name="ach_flawless_desc">駒を失わずに勝つ。</string>
+    <string name="ach_quick_title">電撃戦</string>
+    <string name="ach_quick_desc">20手以内で勝つ。</string>
+    <string name="ach_marathon_title">マラソン</string>
+    <string name="ach_marathon_desc">合計1時間プレイする。</string>
 </resources>
