@@ -66,6 +66,12 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     // Id slot của ván hiện tại (tạo khi ván mới, reuse khi resume) + số ply gốc đã tích luỹ
     private String currentSessionId;
     private int resumedBaseMoveCount = 0;
+    // Câu đố (mate-in-N): tắt AI/đồng hồ/autosave; sai nước → undo + thử lại; chiếu hết → giải xong.
+    // Nước Trắng đúng (chưa phải nước cuối) → app tự đi nước Đen đáp trả rồi chờ nước Trắng kế.
+    private boolean puzzleMode = false;
+    private int puzzleIndex = -1;
+    private com.saigonphantomlabs.chess.Puzzle currentPuzzle;
+    private int puzzlePly = 0; // số nước Trắng đã đi đúng
     private TextView tvWhiteClock, tvBlackClock;
     private long lastClockTickMs;
     private boolean clockRunning;
@@ -170,6 +176,13 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         tvWhiteClock = findViewById(R.id.tvWhiteClock);
         tvBlackClock = findViewById(R.id.tvBlackClock);
 
+        // Nạp bộ quân (piece set) đã lưu vào renderer TRƯỚC khi dựng quân (pieces tạo ở listener sau).
+        com.saigonphantomlabs.chess.PieceSetManager.applySaved(this);
+
+        // Piece set button → picker glass; đổi xong render lại quân trên bàn ngay.
+        View btnPieceSet = findViewById(R.id.btnPieceSet);
+        if (btnPieceSet != null) btnPieceSet.setOnClickListener(v -> showPieceSetPicker());
+
         // Board theme button (if present in layout)
         boardImage = findViewById(R.id.boardImage);
         View btnTheme = findViewById(R.id.btnBoardTheme);
@@ -221,12 +234,15 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
                             chess = new Chess(ChessBoardActivity.this,
                                     boardSize, boardLayout);
                             Storage.setChess(chess);
+                            int pIdx = getIntent().getIntExtra("PUZZLE_INDEX", -1);
                             String resumeId = getIntent().getStringExtra("RESUME_SESSION");
                             com.saigonphantomlabs.chess.GameSaveManager.SavedGame saved =
-                                    resumeId != null
+                                    (pIdx < 0 && resumeId != null)
                                             ? com.saigonphantomlabs.chess.GameSaveManager.loadSlot(ChessBoardActivity.this, resumeId)
                                             : null;
-                            if (saved != null) {
+                            if (pIdx >= 0) {
+                                setupPuzzle(pIdx);
+                            } else if (saved != null) {
                                 // Tiếp tục ván dở: khôi phục mode + thế cờ từ snapshot
                                 chess.isVsComputer = saved.isVsAi;
                                 if (saved.difficulty != null) {
@@ -324,6 +340,13 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     }
 
     private void handleBackPress() {
+        // Câu đố: không phải "ván" → back thoát thẳng về danh sách (không hỏi "Quit game?", không ad)
+        if (puzzleMode) {
+            com.saigonphantomlabs.chess.Storage.clearChess();
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            return;
+        }
         DialogUtils.showQuitDialog(this, () -> {
             Storage.clearChess();
             AdManager.INSTANCE.showInterstitial(this, new kotlin.jvm.functions.Function1<Boolean, kotlin.Unit>() {
@@ -342,7 +365,17 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
      * (không có ad vẫn gợi ý — không chặn tính năng). Trong PvE chỉ gợi ý khi tới lượt người.
      */
     private void onHintClicked() {
-        if (chess == null || chess.isGameEnd() || chess.isAiThinking || chess.isHintThinking()) return;
+        if (chess == null || chess.isGameEnd() || chess.isAiThinking || chess.isHintThinking()
+                || chess.inputLocked) return; // inputLocked: chặn gợi ý sớm/stale lúc chờ auto-reply/undo (puzzle)
+        // Câu đố: gợi ý = highlight nước giải kỳ vọng hiện tại (miễn phí, không rewarded ad)
+        if (puzzleMode) {
+            int[] m = currentPuzzle != null ? currentPuzzle.whiteMove(puzzlePly) : null;
+            if (m != null) {
+                chess.showHintForMove(new com.saigonphantomlabs.chess.Point(m[0], m[1]),
+                        new com.saigonphantomlabs.chess.Point(m[2], m[3]));
+            }
+            return;
+        }
         if (chess.isVsComputer && chess.whichPlayerTurn != Chessman.PlayerColor.White) return;
 
         if (AdManager.INSTANCE.isVipByKeyActive()) {
@@ -366,6 +399,20 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
             // tự xoá highlight sau 4s (hoặc khi user tương tác — xem Chess.onManClick)
             hintHandler.removeCallbacksAndMessages(null);
             hintHandler.postDelayed(() -> { if (chess != null) chess.clearHint(); }, 4000L);
+        });
+    }
+
+    /** Picker bộ quân cờ (glass) — đổi xong lưu + render lại quân trên bàn ngay. */
+    private void showPieceSetPicker() {
+        com.saigonphantomlabs.chess.PieceSet[] sets = com.saigonphantomlabs.chess.PieceSet.values();
+        DialogUtils.ChoiceOption[] opts = new DialogUtils.ChoiceOption[sets.length];
+        int accent = ContextCompat.getColor(this, R.color.game_gold_primary);
+        for (int i = 0; i < sets.length; i++) {
+            opts[i] = new DialogUtils.ChoiceOption(getString(sets[i].nameRes), null, sets[i].emoji, accent);
+        }
+        DialogUtils.showChoiceDialog(this, getString(R.string.pieceset_title), 0, opts, idx -> {
+            com.saigonphantomlabs.chess.PieceSetManager.setCurrent(this, sets[idx]);
+            if (chess != null) chess.refreshPieceVisuals();
         });
     }
 
@@ -488,6 +535,10 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
      * - System bars tinted
      */
     public void animateTurnChange(Chessman.PlayerColor turn) {
+        // Câu đố: người chơi (Trắng) vừa đi mà CHƯA chiếu hết (lượt sang Đen, ván chưa kết thúc).
+        if (puzzleMode && turn == Chessman.PlayerColor.Black && chess != null && !chess.isGameEnd()) {
+            handlePuzzleWhiteMove();
+        }
         updateTurnIndicators(turn);
 
         // Cancel previous glow animators before starting new ones
@@ -582,6 +633,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     }
 
     public void updateUndoButton(boolean visible) {
+        if (puzzleMode) return; // câu đố: undo/restart luôn ẩn
         updateGameButtons(visible, visible);
     }
 
@@ -668,6 +720,8 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
     }
 
     public void showCustomGameEndDialog(boolean whiteWins, boolean isStalemate) {
+        // Câu đố: tới đây nghĩa là người chơi vừa tạo chiếu hết ⇒ GIẢI XONG (bỏ qua dialog/stats/save ván thường)
+        if (puzzleMode) { showPuzzleSolvedDialog(); return; }
         // Ván đã kết thúc → không còn gì để tiếp tục, xoá slot
         com.saigonphantomlabs.chess.GameSaveManager.deleteSlot(this, currentSessionId);
         resumedSave = null;
@@ -925,6 +979,100 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
         }
     }
 
+    // ───────────────────────── CÂU ĐỐ (puzzle mate-in-1) ─────────────────────────
+
+    /** Dựng thế cờ câu đố từ FEN + tắt chrome ván thường. */
+    private void setupPuzzle(int index) {
+        puzzleMode = true;
+        puzzleIndex = index;
+        puzzlePly = 0;
+        chess.isVsComputer = false;
+        currentSessionId = newSessionId(); // không dùng (autosave tắt) nhưng tránh null
+        currentPuzzle = com.saigonphantomlabs.chess.PuzzleRepository.get(index);
+        if (currentPuzzle != null) {
+            com.saigonphantomlabs.chess.GameSaveManager.SavedGame sg =
+                    com.saigonphantomlabs.chess.FenParser.toSavedGame(currentPuzzle.fen);
+            if (sg != null) chess.loadSaveState(sg);
+        }
+        // Ẩn nút không liên quan (undo/restart/moves) — GIỮ nút Gợi ý (highlight nước giải).
+        if (btnUndo != null) btnUndo.setVisibility(View.GONE);
+        if (btnRestart != null) btnRestart.setVisibility(View.GONE);
+        if (btnMoves != null) btnMoves.setVisibility(View.GONE);
+        // Nhãn đúng theo mateIn (tránh luôn ghi "mate in 1")
+        String mateLabel = (currentPuzzle != null && currentPuzzle.mateIn == 2)
+                ? getString(R.string.puzzle_mate_in_2) : getString(R.string.puzzle_mate_in_1);
+        android.widget.Toast.makeText(this,
+                getString(R.string.puzzle_item, index + 1) + " · " + mateLabel,
+                android.widget.Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Sau nước Trắng chưa-mate trong puzzle: nếu KHỚP nước giải kỳ vọng VÀ còn nước Đen đáp →
+     * app tự đi nước Đen rồi chờ nước Trắng kế (mate-in-2+). Ngược lại = SAI → hoàn tác + thử lại.
+     */
+    private void handlePuzzleWhiteMove() {
+        java.util.List<com.saigonphantomlabs.chess.MoveRecord> h = chess.getMoveHistory();
+        com.saigonphantomlabs.chess.MoveRecord last = h.isEmpty() ? null : h.get(h.size() - 1);
+        int[] expected = currentPuzzle != null ? currentPuzzle.whiteMove(puzzlePly) : null;
+        int[] reply = currentPuzzle != null ? currentPuzzle.blackReply(puzzlePly) : null;
+
+        if (matchesMove(last, expected) && reply != null) {
+            // Nước Trắng đúng (chưa cuối) → tiến 1 ply, app tự đi nước Đen đáp trả
+            puzzlePly++;
+            chess.inputLocked = true;
+            final int[] r = reply;
+            hintHandler.postDelayed(() -> {
+                if (chess == null) return;
+                chess.doMove(new com.saigonphantomlabs.chess.Point(r[0], r[1]),
+                        new com.saigonphantomlabs.chess.Point(r[2], r[3]));
+                chess.inputLocked = false;
+            }, 450);
+        } else {
+            // Nước SAI → hoàn tác + nhắc thử lại (chặn input trong lúc chờ)
+            chess.inputLocked = true;
+            hintHandler.postDelayed(() -> {
+                if (chess == null) return;
+                if (!chess.isGameEnd() && chess.canUndo()) {
+                    chess.undoLastMove();
+                    android.widget.Toast.makeText(this, R.string.puzzle_try_again,
+                            android.widget.Toast.LENGTH_SHORT).show();
+                }
+                chess.inputLocked = false;
+            }, 500);
+        }
+    }
+
+    private boolean matchesMove(com.saigonphantomlabs.chess.MoveRecord m, int[] e) {
+        return m != null && e != null
+                && m.fromX == e[0] && m.fromY == e[1] && m.toX == e[2] && m.toY == e[3];
+    }
+
+    private void launchPuzzle(int index) {
+        com.saigonphantomlabs.chess.Storage.clearChess();
+        Intent i = new Intent(this, ChessBoardActivity.class);
+        i.putExtra("PUZZLE_INDEX", index);
+        startActivity(i);
+    }
+
+    /** Dialog "Giải xong!" — nếu còn câu kế thì cho qua câu tiếp, không thì đóng về danh sách. */
+    private void showPuzzleSolvedDialog() {
+        if (currentPuzzle != null) {
+            com.saigonphantomlabs.chess.PuzzleProgress.markSolved(this, currentPuzzle.id);
+        }
+        boolean hasNext = com.saigonphantomlabs.chess.PuzzleRepository.get(puzzleIndex + 1) != null;
+        DialogUtils.showBasicDialog(this,
+                getString(R.string.puzzle_solved_title),
+                getString(R.string.puzzle_solved_message),
+                getString(hasNext ? R.string.puzzle_next : R.string.close),
+                getString(R.string.puzzle_back_list),
+                R.drawable.ic_trophy,
+                () -> {                       // positive
+                    if (hasNext) launchPuzzle(puzzleIndex + 1);
+                    finish();
+                },
+                this::finish);                // negative → về danh sách câu đố
+    }
+
     private void updateSystemBarsTint() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             View dv = getWindow().getDecorView();
@@ -954,6 +1102,7 @@ public class ChessBoardActivity extends BaseActivity implements ChessBoardView {
 
     /** Lưu ván dở khi rời màn (nếu còn chơi & đã có nước); ngược lại xoá save. */
     private void persistOrClearSave() {
+        if (puzzleMode) return; // câu đố không lưu vào thư viện ván
         if (chess == null || currentSessionId == null) return;
         // Đáng lưu khi: chưa kết thúc & (đã có nước đi MỚI hoặc đang tiếp tục 1 ván resume).
         // resumedSave != null đảm bảo ván vừa resume (undo-stack rỗng) không bị xoá nhầm khi onPause.

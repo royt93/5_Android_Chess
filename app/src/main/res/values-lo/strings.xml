@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">ຊະນະໃນ 20 ເຄິ່ງຕາ ຫຼື ໜ້ອຍກວ່າ.</string>
     <string name="ach_marathon_title">ມາຣາທອນ</string>
     <string name="ach_marathon_desc">ຫຼິ້ນລວມ 1 ຊົ່ວໂມງ.</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">ປິດສະໜາ</string>
+    <string name="puzzle_item">ປິດສະໜາ %1$d</string>
+    <string name="puzzle_mate_in_1">ຮຸກຈົນ 1 ບາດ</string>
+    <string name="puzzle_try_again">ຍັງບໍ່ຮຸກຈົນ — ລອງໃໝ່</string>
+    <string name="puzzle_solved_title">ແກ້ໄດ້!</string>
+    <string name="puzzle_solved_message">ຮຸກຈົນ! ເກັ່ງຫຼາຍ.</string>
+    <string name="puzzle_next">ປິດສະໜາຕໍ່ໄປ</string>
+    <string name="puzzle_back_list">ປິດສະໜາ</string>
+    <string name="puzzle_mate_in_2">ຮຸກຈົນ 2 ບາດ</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ ໝາກ</string>
+    <string name="pieceset_title">ຊຸດໝາກ</string>
+    <string name="pieceset_classic">ຄລາສສິກ</string>
+    <string name="pieceset_gold">ຄຳ</string>
+    <string name="pieceset_neon">ນີອອນ</string>
+    <string name="pieceset_royal">ລາຊະວົງ</string>
+    <string name="pieceset_ember">ແສງໄຟ</string>
 </resources>

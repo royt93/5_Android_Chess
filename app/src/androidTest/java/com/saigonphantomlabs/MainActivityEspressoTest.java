@@ -9,6 +9,7 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 import android.app.Activity;
@@ -65,6 +66,8 @@ public class MainActivityEspressoTest {
     @Test
     public void clickPvP_launchesChessBoardAsHumanVsHuman() {
         onView(withId(R.id.btnPlayPvP)).perform(click());
+        // PvP nay hiện dialog chọn thời gian trước → chọn "No clock" để khởi ván
+        onView(withText(R.string.time_off)).perform(click());
         intended(allOf(
                 hasComponent(ChessBoardActivity.class.getName()),
                 hasExtra("IS_VS_AI", false)));

@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">ชนะใน 20 ครึ่งตาหรือน้อยกว่า</string>
     <string name="ach_marathon_title">มาราธอน</string>
     <string name="ach_marathon_desc">เล่นรวม 1 ชั่วโมง</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">ปริศนา</string>
+    <string name="puzzle_item">ปริศนา %1$d</string>
+    <string name="puzzle_mate_in_1">รุกจนใน 1 ตา</string>
+    <string name="puzzle_try_again">ยังไม่รุกจน — ลองใหม่</string>
+    <string name="puzzle_solved_title">แก้ได้แล้ว!</string>
+    <string name="puzzle_solved_message">รุกจน! เยี่ยมมาก</string>
+    <string name="puzzle_next">ปริศนาถัดไป</string>
+    <string name="puzzle_back_list">ปริศนา</string>
+    <string name="puzzle_mate_in_2">รุกจนใน 2 ตา</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ หมาก</string>
+    <string name="pieceset_title">ชุดหมาก</string>
+    <string name="pieceset_classic">คลาสสิก</string>
+    <string name="pieceset_gold">ทอง</string>
+    <string name="pieceset_neon">นีออน</string>
+    <string name="pieceset_royal">รอยัล</string>
+    <string name="pieceset_ember">ถ่านไฟ</string>
 </resources>

@@ -63,6 +63,9 @@ public class Chess {
         return isHintThinking;
     }
 
+    // Khoá input tạm (vd cửa sổ chờ undo nước sai ở puzzle) — chặn chọn/đi quân.
+    public boolean inputLocked = false;
+
     // Âm thanh tách sang ChessAudio (SoundPool) — giảm god-class
     private ChessAudio audio;
 
@@ -217,7 +220,7 @@ public class Chess {
     }
 
     public void onManClick(Chessman man) {
-        if (gameEnd || isAiThinking || isHintThinking)
+        if (gameEnd || isAiThinking || isHintThinking || inputLocked)
             return;
         clearHint();   // tương tác mới → xoá highlight gợi ý cũ
         if (isVsComputer && man.color != Chessman.PlayerColor.White)
@@ -244,8 +247,8 @@ public class Chess {
 
     public void onBoardClick(int x, int y) {
         // Guard isHintThinking: hint tính trên bg thread đang mutate bàn cờ (simulate/undo) →
-        // chặn doMove (main) để tránh race corrupt thế cờ.
-        if (gameEnd || isAiThinking || isHintThinking)
+        // chặn doMove (main) để tránh race corrupt thế cờ. inputLocked: chặn lúc chờ undo nước sai (puzzle).
+        if (gameEnd || isAiThinking || isHintThinking || inputLocked)
             return;
         if (lastManPoint == null)
             return;
@@ -734,6 +737,13 @@ public class Chess {
             }
     }
 
+    /** Render lại toàn bộ quân trên bàn theo bộ quân (piece set) hiện hành. */
+    public void refreshPieceVisuals() {
+        for (int x = 0; x < 8; x++)
+            for (int y = 0; y < 8; y++)
+                if (chessmen[x][y] != null) chessmen[x][y].refreshDrawable();
+    }
+
     public void createValidMoveButton(Point p, int index) {
         Context ctx = getCtx();   // UI-only path (ctx non-null); local resolve từ WeakRef
         ImageButton btn = new ImageButton(ctx);
@@ -829,6 +839,14 @@ public class Chess {
     private void showHintHighlight(MoveRecord m) {
         addHintMarker(m.fromX, m.fromY);
         addHintMarker(m.toX, m.toY);
+    }
+
+    /** Highlight ô from/to của 1 nước cho trước (gợi ý câu đố — dùng lời giải sẵn, không tính toán). */
+    public void showHintForMove(Point from, Point to) {
+        if (from == null || to == null) return;
+        clearHint();
+        addHintMarker(from.x, from.y);
+        addHintMarker(to.x, to.y);
     }
 
     private void addHintMarker(int x, int y) {

@@ -439,6 +439,41 @@
                     android:shadowRadius="12" />
             </LinearLayout>
 
+            <!-- Câu đố cờ -->
+            <LinearLayout
+                android:id="@+id/btnPuzzles"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_game_compact"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_btn_secondary"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_puzzle"
+                    app:tint="@color/game_neon_cyan"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/puzzles_title"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/exo2"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:shadowColor="#88FFFFFF"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="12" />
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/btnLanguage"
                 android:layout_width="match_parent"

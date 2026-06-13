@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">20个半回合内获胜。</string>
     <string name="ach_marathon_title">马拉松</string>
     <string name="ach_marathon_desc">累计游戏1小时。</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">谜题</string>
+    <string name="puzzle_item">谜题 %1$d</string>
+    <string name="puzzle_mate_in_1">一步将死</string>
+    <string name="puzzle_try_again">还没将死，再试一次</string>
+    <string name="puzzle_solved_title">已解决！</string>
+    <string name="puzzle_solved_message">将死！做得好。</string>
+    <string name="puzzle_next">下一题</string>
+    <string name="puzzle_back_list">谜题</string>
+    <string name="puzzle_mate_in_2">两步将死</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ 棋子</string>
+    <string name="pieceset_title">棋子套装</string>
+    <string name="pieceset_classic">经典</string>
+    <string name="pieceset_gold">黄金</string>
+    <string name="pieceset_neon">霓虹</string>
+    <string name="pieceset_royal">皇家</string>
+    <string name="pieceset_ember">余烬</string>
 </resources>

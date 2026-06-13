@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">20 yarı hamlede veya daha azında kazan.</string>
     <string name="ach_marathon_title">Maraton</string>
     <string name="ach_marathon_desc">Toplam 1 saat oyna.</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">Bulmacalar</string>
+    <string name="puzzle_item">Bulmaca %1$d</string>
+    <string name="puzzle_mate_in_1">1 hamlede mat</string>
+    <string name="puzzle_try_again">Mat değil — tekrar dene</string>
+    <string name="puzzle_solved_title">Çözüldü!</string>
+    <string name="puzzle_solved_message">Şah mat! Aferin.</string>
+    <string name="puzzle_next">Sonraki</string>
+    <string name="puzzle_back_list">Bulmacalar</string>
+    <string name="puzzle_mate_in_2">2 hamlede mat</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ Taşlar</string>
+    <string name="pieceset_title">Taş seti</string>
+    <string name="pieceset_classic">Klasik</string>
+    <string name="pieceset_gold">Altın</string>
+    <string name="pieceset_neon">Neon</string>
+    <string name="pieceset_royal">Kraliyet</string>
+    <string name="pieceset_ember">Köz</string>
 </resources>

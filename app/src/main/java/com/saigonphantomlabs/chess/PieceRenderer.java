@@ -33,6 +33,19 @@ public class PieceRenderer {
     private static final int CACHE_SIZE = 24; // 12 piece types × 2 colors
     private static final LruCache<String, BitmapDrawable> cache = new LruCache<>(CACHE_SIZE);
 
+    // Tint bộ quân (piece set) — 0 = không tint (Classic). Áp MULTIPLY giữ shading. Xem PieceSetManager.
+    // volatile: chỉ đọc/ghi trên main thread, nhưng phòng torn-read nếu sau này render off-thread.
+    private static volatile int whiteTint = 0;
+    private static volatile int blackTint = 0;
+
+    /** Đặt tint bộ quân hiện hành + xoá cache (render lại với màu mới). */
+    public static void setTints(int white, int black) {
+        if (white == whiteTint && black == blackTint) return;
+        whiteTint = white;
+        blackTint = black;
+        cache.evictAll();
+    }
+
     /** Shadow config */
     private static final float SHADOW_RADIUS = 6f;
     private static final float SHADOW_DX = 3f;
@@ -52,12 +65,13 @@ public class PieceRenderer {
      * @param targetSizePx Desired output size in pixels
      */
     public static BitmapDrawable get3dPiece(Context ctx, int resId, boolean isWhite, int targetSizePx) {
-        String key = resId + "_" + isWhite + "_" + targetSizePx;
+        String key = resId + "_" + isWhite + "_" + targetSizePx + "_" + (isWhite ? whiteTint : blackTint);
         BitmapDrawable cached = cache.get(key);
         if (cached != null) return cached;
 
         BitmapDrawable result = render3d(ctx, resId, isWhite, targetSizePx);
-        cache.put(key, result);
+        // LruCache CẤM value null → guard tránh NPE/crash khi decode lỗi hoặc OOM (fallback về icon gốc).
+        if (result != null) cache.put(key, result);
         return result;
     }
 
@@ -86,18 +100,24 @@ public class PieceRenderer {
         // ── Layer 1: Drop Shadow ──────────────────────────────────────
         drawDropShadow(canvas, scaled, pad, pad, sizePx, SHADOW_DX, SHADOW_DY, SHADOW_RADIUS);
 
-        // ── Layer 2: Piece base with subtle color enhancement ─────────
+        // ── Layer 2: Piece base + tint bộ quân (MULTIPLY giữ shading) ──
         Paint basePaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        int tint = isWhite ? whiteTint : blackTint;
+        if (tint != 0) {
+            basePaint.setColorFilter(new android.graphics.PorterDuffColorFilter(tint, PorterDuff.Mode.MULTIPLY));
+        }
         canvas.drawBitmap(scaled, pad, pad, basePaint);
 
         // ── Layer 3: Rim light (top-left diagonal gradient overlay) ───
-        drawRimLight(canvas, pad, pad, sizePx, isWhite);
+        drawRimLight(canvas, pad, pad, sizePx, isWhite, tint);
 
         // ── Layer 4: Specular highlight (round glint top-left) ────────
         drawSpecular(canvas, pad, pad, sizePx);
 
         scaled.recycle();
-        return new BitmapDrawable(ctx.getResources(), out);
+        // Dùng Resources của APPLICATION cho drawable cache static → KHÔNG ghim Resources của Activity
+        // (BaseActivity tạo Resources riêng/locale qua createConfigurationContext) ⇒ tránh leak/LeakCanary noise.
+        return new BitmapDrawable(ctx.getApplicationContext().getResources(), out);
     }
 
     /** Render a blurred silhouette of the piece as drop shadow */
@@ -124,11 +144,17 @@ public class PieceRenderer {
     }
 
     /** Subtle diagonal overlay simulating 3D form light from top-left */
-    private static void drawRimLight(Canvas canvas, int x, int y, int sizePx, boolean isWhite) {
-        // White pieces: softer warm highlight; Black pieces: cool blue highlight
-        int rimColor = isWhite
-            ? Color.argb(35, 255, 248, 220)   // warm ivory glow
-            : Color.argb(30, 100, 180, 255);   // cool blue edge
+    private static void drawRimLight(Canvas canvas, int x, int y, int sizePx, boolean isWhite, int tint) {
+        // Bộ quân có màu (tint != 0): viền sáng theo SẮC SET ⇒ quân Đen (vốn MULTIPLY đổi rất nhẹ)
+        // cũng "ăn" theme qua mép sáng. Classic (tint=0): giữ warm ivory (Trắng) / cool blue (Đen).
+        int rimColor;
+        if (tint != 0) {
+            rimColor = (0x4D << 24) | (tint & 0x00FFFFFF); // alpha ~77, màu của set
+        } else {
+            rimColor = isWhite
+                ? Color.argb(35, 255, 248, 220)   // warm ivory glow
+                : Color.argb(30, 100, 180, 255);  // cool blue edge
+        }
 
         Paint rimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         LinearGradient rimGrad = new LinearGradient(

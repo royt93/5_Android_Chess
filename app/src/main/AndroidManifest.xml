@@ -36,6 +36,9 @@
             android:name="com.saigonphantomlabs.AchievementsActivity"
             android:theme="@style/Theme.Chess" />
         <activity
+            android:name="com.saigonphantomlabs.PuzzlesActivity"
+            android:theme="@style/Theme.Chess" />
+        <activity
             android:name="com.saigonphantomlabs.feature.vip.VipActivity"
             android:theme="@style/Theme.Chess.Vip" />
         <activity

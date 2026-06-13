@@ -135,6 +135,12 @@ public class MainActivity extends BaseActivity {
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
+        findViewById(R.id.btnPuzzles).setOnClickListener(new SafeClickListener() {
+            @Override public void onSafeClick(View view) {
+                startActivity(new Intent(MainActivity.this, PuzzlesActivity.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
         btnLanguage.setOnClickListener(new SafeClickListener() {
             @Override public void onSafeClick(View view) {
                 new com.saigonphantomlabs.language.LanguageBottomSheet().show(getSupportFragmentManager(), "LanguageBottomSheet");
@@ -207,12 +213,13 @@ public class MainActivity extends BaseActivity {
         // Initial state for entry animation
         View btnSaved = findViewById(R.id.btnSavedGames);
         View btnAch = findViewById(R.id.btnAchievements);
+        View btnPuz = findViewById(R.id.btnPuzzles);
 
         View[] topViews = {tvVersion};
-        // 2 nút "hero" (PvP/PvE) vào MẠNH; 5 nút phụ CÙNG CLASS vào NHẸ + NHANH + ĐỒNG BỘ
-        // thành 1 nhóm (đồng bộ hoá: trước đây SavedGames/Achievements/Language không animate).
+        // 2 nút "hero" (PvP/PvE) vào MẠNH; các nút phụ CÙNG CLASS vào NHẸ + NHANH + ĐỒNG BỘ
+        // thành 1 nhóm (đồng bộ hoá: trước đây SavedGames/Achievements/Puzzles/Language không animate).
         View[] heroViews = {btnPlayPvP, btnPlayPvE};
-        View[] secondaryViews = {btnStats, btnRules, btnSaved, btnAch, btnLanguage};
+        View[] secondaryViews = {btnStats, btnRules, btnSaved, btnAch, btnPuz, btnLanguage};
         View[] bottomViews = {btnRateApp, btnMoreApps, btnShareApp, btnVip};
 
         for (View v : topViews) { v.setAlpha(0f); v.setTranslationY(-50f); }

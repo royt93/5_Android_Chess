@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">20手以内で勝つ。</string>
     <string name="ach_marathon_title">マラソン</string>
     <string name="ach_marathon_desc">合計1時間プレイする。</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">パズル</string>
+    <string name="puzzle_item">パズル %1$d</string>
+    <string name="puzzle_mate_in_1">1手詰め</string>
+    <string name="puzzle_try_again">詰みではない — もう一度</string>
+    <string name="puzzle_solved_title">正解！</string>
+    <string name="puzzle_solved_message">チェックメイト！お見事。</string>
+    <string name="puzzle_next">次のパズル</string>
+    <string name="puzzle_back_list">パズル</string>
+    <string name="puzzle_mate_in_2">2手詰め</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ 駒</string>
+    <string name="pieceset_title">駒セット</string>
+    <string name="pieceset_classic">クラシック</string>
+    <string name="pieceset_gold">ゴールド</string>
+    <string name="pieceset_neon">ネオン</string>
+    <string name="pieceset_royal">ロイヤル</string>
+    <string name="pieceset_ember">残り火</string>
 </resources>

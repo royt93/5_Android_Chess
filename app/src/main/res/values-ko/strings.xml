@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">20수 이내로 승리하세요.</string>
     <string name="ach_marathon_title">마라톤</string>
     <string name="ach_marathon_desc">총 1시간 플레이하세요.</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">퍼즐</string>
+    <string name="puzzle_item">퍼즐 %1$d</string>
+    <string name="puzzle_mate_in_1">1수 메이트</string>
+    <string name="puzzle_try_again">메이트가 아님 — 다시</string>
+    <string name="puzzle_solved_title">해결!</string>
+    <string name="puzzle_solved_message">체크메이트! 잘했어요.</string>
+    <string name="puzzle_next">다음 퍼즐</string>
+    <string name="puzzle_back_list">퍼즐</string>
+    <string name="puzzle_mate_in_2">2수 메이트</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ 기물</string>
+    <string name="pieceset_title">기물 세트</string>
+    <string name="pieceset_classic">클래식</string>
+    <string name="pieceset_gold">골드</string>
+    <string name="pieceset_neon">네온</string>
+    <string name="pieceset_royal">로열</string>
+    <string name="pieceset_ember">잉걸</string>
 </resources>

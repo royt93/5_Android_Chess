@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">ឈ្នះក្នុង ២០ ជំហានឬតិច។</string>
     <string name="ach_marathon_title">ម៉ារ៉ាតុង</string>
     <string name="ach_marathon_desc">លេងសរុប ១ ម៉ោង។</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">ល្បែងផ្គុំ</string>
+    <string name="puzzle_item">ល្បែង %1$d</string>
+    <string name="puzzle_mate_in_1">អុកស្លាប់ ១ ជំហាន</string>
+    <string name="puzzle_try_again">មិនទាន់ស្លាប់ — សាកម្ដងទៀត</string>
+    <string name="puzzle_solved_title">ដោះស្រាយរួច!</string>
+    <string name="puzzle_solved_message">អុកស្លាប់! ល្អណាស់។</string>
+    <string name="puzzle_next">ល្បែងបន្ទាប់</string>
+    <string name="puzzle_back_list">ល្បែងផ្គុំ</string>
+    <string name="puzzle_mate_in_2">អុកស្លាប់ ២ ជំហាន</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ អុក</string>
+    <string name="pieceset_title">សំណុំអុក</string>
+    <string name="pieceset_classic">បុរាណ</string>
+    <string name="pieceset_gold">មាស</string>
+    <string name="pieceset_neon">នេអុង</string>
+    <string name="pieceset_royal">រាជវង្ស</string>
+    <string name="pieceset_ember">រងើក</string>
 </resources>

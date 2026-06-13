@@ -53,6 +53,7 @@ public abstract class Chessman {
     public Chess parent;
     public int width;
     public int minDimension;
+    public int pieceResId; // resId PNG quân (để render lại khi đổi bộ quân)
 
     public ArrayList<Point> getMoves() {
         return moves;
@@ -74,6 +75,7 @@ public abstract class Chessman {
         ImageButton btn = new ImageButton(ctx);
         width = minDimension / 8;
         this.minDimension = minDimension;
+        this.pieceResId = resId;
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, width);
 
         lp.setMargins(width * getPoint().x, width * getPoint().y, minDimension - (width * getPoint().x + width),
@@ -123,6 +125,15 @@ public abstract class Chessman {
     /** Legacy overload — kept for compatibility, delegates to new 3D method */
     public void createButton(Drawable icon, int minDimension, Context ctx) {
         createButton(icon, 0, false, minDimension, ctx);
+    }
+
+    /** Render lại drawable quân theo bộ quân hiện hành (gọi khi đổi piece set). */
+    public void refreshDrawable() {
+        if (button == null || parent == null || pieceResId == 0) return;
+        Context ctx = parent.getCtx();
+        if (ctx == null) return;
+        BitmapDrawable d3 = PieceRenderer.get3dPiece(ctx, pieceResId, color == PlayerColor.White, width);
+        if (d3 != null) button.setImageDrawable(d3);
     }
 
     // Method to reset all animation properties (including position)

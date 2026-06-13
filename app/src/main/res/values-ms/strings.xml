@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">Menang dalam 20 langkah atau kurang.</string>
     <string name="ach_marathon_title">Maraton</string>
     <string name="ach_marathon_desc">Main 1 jam keseluruhan.</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">Teka-teki</string>
+    <string name="puzzle_item">Teka-teki %1$d</string>
+    <string name="puzzle_mate_in_1">Syahmat dalam 1</string>
+    <string name="puzzle_try_again">Bukan syahmat — cuba lagi</string>
+    <string name="puzzle_solved_title">Selesai!</string>
+    <string name="puzzle_solved_message">Syahmat! Syabas.</string>
+    <string name="puzzle_next">Seterusnya</string>
+    <string name="puzzle_back_list">Teka-teki</string>
+    <string name="puzzle_mate_in_2">Syahmat dalam 2</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ Buah</string>
+    <string name="pieceset_title">Set buah</string>
+    <string name="pieceset_classic">Klasik</string>
+    <string name="pieceset_gold">Emas</string>
+    <string name="pieceset_neon">Neon</string>
+    <string name="pieceset_royal">Diraja</string>
+    <string name="pieceset_ember">Bara</string>
 </resources>

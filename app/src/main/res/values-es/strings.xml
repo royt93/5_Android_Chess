@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">Gana en 20 medios movimientos o menos.</string>
     <string name="ach_marathon_title">Maratón</string>
     <string name="ach_marathon_desc">Juega 1 hora en total.</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">Problemas</string>
+    <string name="puzzle_item">Problema %1$d</string>
+    <string name="puzzle_mate_in_1">Mate en 1</string>
+    <string name="puzzle_try_again">No es mate — inténtalo</string>
+    <string name="puzzle_solved_title">¡Resuelto!</string>
+    <string name="puzzle_solved_message">¡Jaque mate! Bien hecho.</string>
+    <string name="puzzle_next">Siguiente</string>
+    <string name="puzzle_back_list">Problemas</string>
+    <string name="puzzle_mate_in_2">Mate en 2</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ Piezas</string>
+    <string name="pieceset_title">Juego de piezas</string>
+    <string name="pieceset_classic">Clásico</string>
+    <string name="pieceset_gold">Oro</string>
+    <string name="pieceset_neon">Neón</string>
+    <string name="pieceset_royal">Real</string>
+    <string name="pieceset_ember">Brasa</string>
 </resources>

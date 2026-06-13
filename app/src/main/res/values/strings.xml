@@ -229,4 +229,22 @@ Checkmate the opponent\'s King.<br/><br/>
     <string name="ach_quick_desc">Win in 20 plies or fewer.</string>
     <string name="ach_marathon_title">Marathon</string>
     <string name="ach_marathon_desc">Play 1 hour in total.</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">Puzzles</string>
+    <string name="puzzle_item">Puzzle %1$d</string>
+    <string name="puzzle_mate_in_1">Mate in 1</string>
+    <string name="puzzle_try_again">Not mate — try again</string>
+    <string name="puzzle_solved_title">Solved!</string>
+    <string name="puzzle_solved_message">Checkmate! Well done.</string>
+    <string name="puzzle_next">Next puzzle</string>
+    <string name="puzzle_back_list">Puzzles</string>
+    <string name="puzzle_mate_in_2">Mate in 2</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ Pieces</string>
+    <string name="pieceset_title">Piece set</string>
+    <string name="pieceset_classic">Classic</string>
+    <string name="pieceset_gold">Gold</string>
+    <string name="pieceset_neon">Neon</string>
+    <string name="pieceset_royal">Royal</string>
+    <string name="pieceset_ember">Ember</string>
 </resources>

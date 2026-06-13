@@ -213,4 +213,22 @@
     <string name="ach_quick_desc">Thắng trong 20 nửa-nước trở xuống.</string>
     <string name="ach_marathon_title">Marathon</string>
     <string name="ach_marathon_desc">Chơi tổng cộng 1 giờ.</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">Câu đố</string>
+    <string name="puzzle_item">Câu %1$d</string>
+    <string name="puzzle_mate_in_1">Chiếu hết 1 nước</string>
+    <string name="puzzle_try_again">Chưa chiếu hết — thử lại</string>
+    <string name="puzzle_solved_title">Giải xong!</string>
+    <string name="puzzle_solved_message">Chiếu hết! Tuyệt vời.</string>
+    <string name="puzzle_next">Câu tiếp</string>
+    <string name="puzzle_back_list">Danh sách</string>
+    <string name="puzzle_mate_in_2">Chiếu hết 2 nước</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ Quân cờ</string>
+    <string name="pieceset_title">Bộ quân cờ</string>
+    <string name="pieceset_classic">Cổ điển</string>
+    <string name="pieceset_gold">Vàng</string>
+    <string name="pieceset_neon">Neon</string>
+    <string name="pieceset_royal">Hoàng gia</string>
+    <string name="pieceset_ember">Lửa</string>
 </resources>

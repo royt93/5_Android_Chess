@@ -209,4 +209,22 @@
     <string name="ach_quick_desc">Gewinne in 20 Halbzügen oder weniger.</string>
     <string name="ach_marathon_title">Marathon</string>
     <string name="ach_marathon_desc">Spiele insgesamt 1 Stunde.</string>
+    <!-- Puzzles (câu đố) -->
+    <string name="puzzles_title">Rätsel</string>
+    <string name="puzzle_item">Rätsel %1$d</string>
+    <string name="puzzle_mate_in_1">Matt in 1</string>
+    <string name="puzzle_try_again">Kein Matt — nochmal</string>
+    <string name="puzzle_solved_title">Gelöst!</string>
+    <string name="puzzle_solved_message">Schachmatt! Gut gemacht.</string>
+    <string name="puzzle_next">Nächstes Rätsel</string>
+    <string name="puzzle_back_list">Rätsel</string>
+    <string name="puzzle_mate_in_2">Matt in 2</string>
+    <!-- Piece sets (bộ quân cờ) -->
+    <string name="pieceset_select">♟ Steine</string>
+    <string name="pieceset_title">Spielsteine</string>
+    <string name="pieceset_classic">Klassisch</string>
+    <string name="pieceset_gold">Gold</string>
+    <string name="pieceset_neon">Neon</string>
+    <string name="pieceset_royal">Königlich</string>
+    <string name="pieceset_ember">Glut</string>
 </resources>
