@@ -84,10 +84,10 @@ public class MainActivity extends BaseActivity {
         btnLanguage = findViewById(R.id.btnLanguage);
         tvCurrentLanguage = findViewById(R.id.tvCurrentLanguage);
         
+        // Ô ngôn ngữ ở hàng icon dưới rất hẹp (5 cột) → CHỈ hiện mã 2 ký tự (EN/VI/KO…),
+        // không hiện tên đầy đủ ("ENGLISH") để label không tràn khỏi card.
         String lang = com.saigonphantomlabs.language.LanguageManager.INSTANCE.getLanguage(this);
-        java.util.Locale locale = new java.util.Locale(lang);
-        String displayLang = locale.getDisplayLanguage(locale);
-        tvCurrentLanguage.setText("🌐 " + displayLang.toUpperCase());
+        tvCurrentLanguage.setText("🌐 " + lang.toUpperCase());
 
         String versionName = BuildConfig.VERSION_NAME;
         tvVersion.setText(getString(R.string.version_format, versionName));
