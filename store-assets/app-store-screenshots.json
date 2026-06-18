@@ -1,0 +1,368 @@
+{
+  "schemaVersion": 2,
+  "appName": "Quick Chess",
+  "themeId": "dark-bold",
+  "connectedCanvas": true,
+  "locales": [
+    "en"
+  ],
+  "locale": "en",
+  "device": "iphone",
+  "orientation": "portrait",
+  "appIcon": "/app-icon.png",
+  "slidesByDevice": {
+    "iphone": [
+      {
+        "id": "iphone-01",
+        "layout": "split-landscape",
+        "label": {
+          "en": "QUICK CHESS"
+        },
+        "headline": {
+          "en": "Make Every Move\nFeel Brilliant"
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/01.png"
+      },
+      {
+        "id": "iphone-02",
+        "layout": "device-bottom",
+        "label": {
+          "en": "SMART OPPONENTS"
+        },
+        "headline": {
+          "en": "Train Your Game\nAt Your Pace"
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/02.png"
+      },
+      {
+        "id": "iphone-03",
+        "layout": "device-top",
+        "label": {
+          "en": "FAST OR FOCUSED"
+        },
+        "headline": {
+          "en": "Pick The Clock\nThat Fits You"
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/03.png",
+        "inverted": true
+      },
+      {
+        "id": "iphone-04",
+        "layout": "two-devices",
+        "label": {
+          "en": "PLAY ANYWHERE"
+        },
+        "headline": {
+          "en": "A Real Board\nIn Your Pocket"
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/04.png",
+        "screenshotSecondary": "/screenshots/apple/iphone/{locale}/05.png"
+      },
+      {
+        "id": "iphone-05",
+        "layout": "device-bottom",
+        "label": {
+          "en": "YOUR BOARD"
+        },
+        "headline": {
+          "en": "Dress The Board\nYour Way"
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/05.png"
+      },
+      {
+        "id": "iphone-06",
+        "layout": "device-top",
+        "label": {
+          "en": "LEARN THE GAME"
+        },
+        "headline": {
+          "en": "Learn Fast\nPlay Smarter"
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/06.png",
+        "inverted": true
+      },
+      {
+        "id": "iphone-07",
+        "layout": "two-devices",
+        "label": {
+          "en": "EVERY SESSION COUNTS"
+        },
+        "headline": {
+          "en": "Track Every\nSmall Win"
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/07.png",
+        "screenshotSecondary": "/screenshots/apple/iphone/{locale}/08.png"
+      },
+      {
+        "id": "iphone-08",
+        "layout": "device-bottom",
+        "label": {
+          "en": "KEEP CLIMBING"
+        },
+        "headline": {
+          "en": "Chase Trophies\nStay Sharp"
+        },
+        "screenshot": "/screenshots/apple/iphone/{locale}/08.png"
+      }
+    ],
+    "android": [
+      {
+        "id": "s_mppgoot8_5",
+        "layout": "hero",
+        "label": {
+          "en": "MEET YOUR APP"
+        },
+        "headline": {
+          "en": "Sell one\nidea per slide."
+        },
+        "screenshot": "",
+        "transforms": {
+          "device": {
+            "x": 221.0133038940457,
+            "y": 677.042167580437,
+            "width": 678.5844380403457,
+            "height": 1470.266282420749,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_mppgoot8_6",
+        "layout": "device-bottom",
+        "label": {
+          "en": "FEATURE 01"
+        },
+        "headline": {
+          "en": "Your headline\nlives here."
+        },
+        "screenshot": "",
+        "transforms": {
+          "device": {
+            "x": 191.68310412906385,
+            "y": 659.512330975256,
+            "width": 678.5844380403457,
+            "height": 1470.266282420749,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_mppgoot8_7",
+        "layout": "two-devices",
+        "label": {
+          "en": "FEATURE 02"
+        },
+        "headline": {
+          "en": "Show two\nscreens at once."
+        },
+        "screenshot": "",
+        "screenshotSecondary": "",
+        "transforms": {
+          "deviceSecondary": {
+            "x": 280.3938895417132,
+            "y": 525.2025777437636,
+            "width": 678.5844380403457,
+            "height": 1470.266282420749,
+            "rotation": 0,
+            "zIndex": 2
+          },
+          "device": {
+            "x": 143.75673196815296,
+            "y": 569.6411918847805,
+            "width": 610.7259942363112,
+            "height": 1323.239654178674,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_mppgoot8_8",
+        "layout": "device-top",
+        "label": {
+          "en": "FEATURE 03"
+        },
+        "headline": {
+          "en": "Flip the contrast\nfor visual rhythm."
+        },
+        "screenshot": "",
+        "inverted": true
+      },
+      {
+        "id": "s_mppgoot8_9",
+        "layout": "no-device",
+        "label": {
+          "en": "MORE"
+        },
+        "headline": {
+          "en": "And so\nmuch more."
+        },
+        "screenshot": ""
+      }
+    ],
+    "ipad": [
+      {
+        "id": "ipad-01",
+        "layout": "hero",
+        "label": {
+          "en": "QUICK CHESS"
+        },
+        "headline": {
+          "en": "Make Every Move\nFeel Brilliant"
+        },
+        "screenshot": "/screenshots/apple/ipad/{locale}/01.png"
+      },
+      {
+        "id": "ipad-02",
+        "layout": "device-bottom",
+        "label": {
+          "en": "SMART OPPONENTS"
+        },
+        "headline": {
+          "en": "Train Your Game\nAt Your Pace"
+        },
+        "screenshot": "/screenshots/apple/ipad/{locale}/02.png"
+      },
+      {
+        "id": "ipad-03",
+        "layout": "device-top",
+        "label": {
+          "en": "FAST OR FOCUSED"
+        },
+        "headline": {
+          "en": "Pick The Clock\nThat Fits You"
+        },
+        "screenshot": "/screenshots/apple/ipad/{locale}/03.png",
+        "inverted": true
+      },
+      {
+        "id": "ipad-04",
+        "layout": "two-devices",
+        "label": {
+          "en": "PLAY ANYWHERE"
+        },
+        "headline": {
+          "en": "A Real Board\nIn Your Pocket"
+        },
+        "screenshot": "/screenshots/apple/ipad/{locale}/04.png",
+        "screenshotSecondary": "/screenshots/apple/ipad/{locale}/05.png"
+      },
+      {
+        "id": "ipad-05",
+        "layout": "device-bottom",
+        "label": {
+          "en": "YOUR BOARD"
+        },
+        "headline": {
+          "en": "Dress The Board\nYour Way"
+        },
+        "screenshot": "/screenshots/apple/ipad/{locale}/05.png"
+      },
+      {
+        "id": "ipad-06",
+        "layout": "device-top",
+        "label": {
+          "en": "LEARN THE GAME"
+        },
+        "headline": {
+          "en": "Learn Fast\nPlay Smarter"
+        },
+        "screenshot": "/screenshots/apple/ipad/{locale}/06.png",
+        "inverted": true
+      },
+      {
+        "id": "ipad-07",
+        "layout": "two-devices",
+        "label": {
+          "en": "EVERY SESSION COUNTS"
+        },
+        "headline": {
+          "en": "Track Every\nSmall Win"
+        },
+        "screenshot": "/screenshots/apple/ipad/{locale}/07.png",
+        "screenshotSecondary": "/screenshots/apple/ipad/{locale}/08.png"
+      },
+      {
+        "id": "ipad-08",
+        "layout": "device-bottom",
+        "label": {
+          "en": "KEEP CLIMBING"
+        },
+        "headline": {
+          "en": "Chase Trophies\nStay Sharp"
+        },
+        "screenshot": "/screenshots/apple/ipad/{locale}/08.png"
+      }
+    ],
+    "android-7": [
+      {
+        "id": "s_mppgoot8_d",
+        "layout": "hero",
+        "label": {
+          "en": "MEET YOUR APP"
+        },
+        "headline": {
+          "en": "Pocket-sized\npower."
+        },
+        "screenshot": ""
+      },
+      {
+        "id": "s_mppgoot8_e",
+        "layout": "split-landscape",
+        "label": {
+          "en": "FEATURE 01"
+        },
+        "headline": {
+          "en": "Wide canvas,\nbigger ideas."
+        },
+        "screenshot": ""
+      }
+    ],
+    "android-10": [
+      {
+        "id": "s_mppgoot8_f",
+        "layout": "hero",
+        "label": {
+          "en": "MEET YOUR APP"
+        },
+        "headline": {
+          "en": "Made for\nthe big screen."
+        },
+        "screenshot": ""
+      },
+      {
+        "id": "s_mppgoot8_g",
+        "layout": "split-landscape",
+        "label": {
+          "en": "FEATURE 01"
+        },
+        "headline": {
+          "en": "Wide canvas,\nbigger ideas."
+        },
+        "screenshot": ""
+      }
+    ],
+    "feature-graphic": [
+      {
+        "id": "s_mppgoot8_h",
+        "layout": "feature-graphic",
+        "label": {},
+        "headline": {
+          "en": "Your tagline goes here."
+        },
+        "screenshot": ""
+      }
+    ]
+  },
+  "crossScreenMockupsByDevice": {
+    "iphone": [],
+    "ipad": [],
+    "android": [],
+    "android-7": [],
+    "android-10": [],
+    "feature-graphic": []
+  },
+  "tagline": "Fast chess, sharper thinking."
+}
