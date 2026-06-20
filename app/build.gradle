@@ -12,8 +12,8 @@ android {
         applicationId "com.saigonphantomlabs.chess"
         minSdkVersion 24
         targetSdkVersion 37
-        versionCode 20260611
-        versionName "2026.06.11"
+        versionCode 20260620
+        versionName "2026.06.20"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -151,7 +151,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     // Use lighter Glide configuration for size optimization
-    implementation ('com.github.bumptech.glide:glide:5.0.5') {
+    implementation('com.github.bumptech.glide:glide:5.0.5') {
         exclude group: 'com.android.support'
     }
 
