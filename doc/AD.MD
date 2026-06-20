@@ -162,8 +162,8 @@
 | `APPLOVIN_REWARDED_ID` | `0cf28eca430409d9` (debug + release) ✅ |
 | `ADMOB_REWARDED_ID` | test ID `ca-app-pub-3940256099942544/5224354917` (cả debug + release — AppLovin active nên admob không chạy runtime) ✅ |
 | `PRIVACY_POLICY_URL` | `https://loitp.notion.site/Term-Privacy-Policy-Disclaimer-319b1cd8783942fa8923d2a3c9bce60f` ✅ |
-| VIP key 30 ngày | `9fA0q7eN!27cLx04@21993Y2u0I7#Q0` → Base64 hardcode |
-| VIP key 3 ngày | `eQ7@93L0f!2Y2707xN04021993u0I#2aK` → Base64 hardcode |
+| VIP key 30 ngày | `<REDACTED>` → Base64 hardcode |
+| VIP key 3 ngày | `<REDACTED>` → Base64 hardcode |
 
 **Quyết định triển khai:**
 - SDK: **1.1.5** · VIP host: **VipActivity** (Kotlin, extends BaseActivity) · scope: **Full**.

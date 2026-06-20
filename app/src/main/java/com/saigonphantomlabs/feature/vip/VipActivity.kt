@@ -16,6 +16,7 @@ import com.google.android.ump.ConsentInformation
 import com.google.android.ump.UserMessagingPlatform
 import com.saigonphantomlabs.BaseActivity
 import com.saigonphantomlabs.DialogUtils
+import com.saigonphantomlabs.SafeClickListener
 import com.saigonphantomlabs.chess.R
 import com.saigonphantomlabs.chess.databinding.AVipManagementBinding
 import com.saigonphantomlabs.common.consts.AdKeys
@@ -83,7 +84,9 @@ class VipActivity : BaseActivity() {
             override fun afterTextChanged(s: android.text.Editable?) = updateActivateEnabled()
         })
         updateActivateEnabled()
-        binding.btnWatchAd.setOnClickListener { onWatchAdClicked() }
+        binding.btnWatchAd.setOnClickListener(object : SafeClickListener() {
+            override fun onSafeClick(view: View?) { onWatchAdClicked() }
+        })
         binding.btnRevoke.setOnClickListener { confirmRevoke() }
         binding.btnRevokeAll.setOnClickListener { confirmRevoke() }
         binding.tvPrivacy.setOnClickListener { openPrivacyPolicy() }
@@ -307,17 +310,37 @@ class VipActivity : BaseActivity() {
     }
 
     private fun onWatchAdClicked() {
-        // Đánh dấu rewarded đang dở → onResume (khi quay lại lúc ad dismiss) sẽ KHÔNG reload,
-        // để onAdHidden của ad cũ fire bình thường và trả reward.
+        // Đánh dấu rewarded đang dở → onResume KHÔNG reload để tránh hủy instance ad đang xem.
         rewardedInFlight = true
         AdManager.showRewarded(this) { earned ->
-            // onAdHidden đã fire xong (đây là callback của nó) → cho phép reload lại từ đây.
             rewardedInFlight = false
-            // KHÔNG guard theo _binding — grant phải chạy dù activity đã pause/recreate.
-            // earned=false (chưa sẵn sàng/đóng sớm) → vẫn thưởng 3 ngày (thiết kế AD.MD).
-            grantViaRewarded()
-            // Preload cho lượt xem kế tiếp (giờ ad cũ đã dismiss xong, an toàn).
-            AdManager.loadRewarded(applicationContext)
+            if (earned) {
+                // User xem đủ ad → grant VIP.
+                // KHÔNG guard theo _binding — grant phải chạy dù activity đã pause/recreate.
+                // SDK tự auto-reload sau dismiss: AppLovin qua onAdHidden, AdMob qua requestPreloadRewarded.
+                grantViaRewarded()
+            } else {
+                // earned=false: rewarded chưa load (null/no-network), fail-to-show, hoặc user đóng sớm.
+                // Fallback: thử show interstitial; grant VIP nếu thành công.
+                // Guard isFinishing/isDestroyed: tránh BadTokenException khi Activity đã destroy
+                // mà SDK vẫn cố attach fullscreen window vào Window token không còn hợp lệ.
+                if (!isFinishing && !isDestroyed) {
+                    AdManager.showInterstitial(this) { shown ->
+                        if (shown) {
+                            grantViaRewarded()
+                        } else if (_binding != null && !isFinishing) {
+                            Toast.makeText(applicationContext, R.string.vip_reward_failed, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                // Reload cho lần sau:
+                // - fail-to-show: SDK không auto-reload → lệnh này cần thiết.
+                // - no-network (ad null): network check trong SDK return sớm → no-op thực sự.
+                // - closed-early: AppLovin/AdMob đều auto-reload trước khi callback return →
+                //   lệnh này destroy ongoing load + tạo instance mới (double-load). AppLovin
+                //   xử lý gracefully; chấp nhận để đảm bảo coverage cho fail-to-show.
+                AdManager.loadRewarded(applicationContext)
+            }
         }
     }
 
@@ -383,6 +406,9 @@ class VipActivity : BaseActivity() {
             Runnable {
                 AdManager.clearVipByKey()
                 vipPrefs.clearGrantedAtMs()
+                // Preload ngay sau revoke: isVIP đã false → loadRewarded không bị VIP-gate.
+                // Watch Ad button sẽ có ad sẵn sàng thay vì toast "not available" nếu bấm ngay.
+                AdManager.loadRewarded(applicationContext)
                 bindUi()
             },
             null,

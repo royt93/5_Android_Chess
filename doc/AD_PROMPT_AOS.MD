@@ -25,8 +25,8 @@
 | AdMob interstitial ID | `<hỏi user — dừng nếu thiếu>` |
 | AdMob app open ID | `<hỏi user — dừng nếu thiếu>` |
 | AdMob rewarded ID | `<hỏi user — dừng nếu thiếu>` |
-| VIP key 30 ngày (plain) | `9fA0q7eN!27cLx04@21993Y2u0I7#Q0` |
-| VIP key 3 ngày (plain) | `eQ7@93L0f!2Y2707xN04021993u0I#2aK` |
+| VIP key 30 ngày (plain) | `<REDACTED — lưu trong password manager, không commit>` |
+| VIP key 3 ngày (plain) | `<REDACTED — lưu trong password manager, không commit>` |
 | Mức che giấu VIP key | Base64 hardcode (AI tự encode plain → Base64 khi compile vào code) |
 | Privacy Policy URL | `<hỏi user — dừng nếu thiếu>` (sẽ nhúng vào VIP screen footer + consent dialog) |
 
